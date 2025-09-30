@@ -1,123 +1,431 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MockForge - API Mocking Framework</title>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — A comprehensive mocking framework</title>
+    <meta name="description" content="MockForge is a comprehensive mocking framework for REST, gRPC, and WebSockets with intelligent data synthesis and a modern admin UI." />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:title" content="MockForge — A comprehensive mocking framework" />
+    <meta property="og:description" content="MockForge helps developers mock APIs and generate realistic data for testing and development." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mockforge.dev/" />
+    <meta property="og:image" content="/public/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <meta property="og:image" content="/public/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Tailwind (CDN for quick start). Swap to built CSS in production. -->
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                orange: '#D35400',
+                dark: '#2C3E50',
+              },
+              text: {
+                primary: '#2E2E2E',
+                secondary: '#6B7280'
+              },
+              surface: {
+                base: '#FFFFFF',
+                subtle: '#F9FAFB'
+              }
+            },
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+              mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
+            },
+            boxShadow: {
+              soft: '0 2px 10px rgba(0,0,0,0.06)'
+            }
+          }
+        }
+      }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            line-height: 1.6;
-            color: #333;
-        }
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        h1 {
-            color: #2563eb;
-            margin-bottom: 0.5rem;
-        }
-        .subtitle {
-            color: #666;
-            font-size: 1.2rem;
-        }
-        .links {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin: 2rem 0;
-        }
-        .btn {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: #2563eb;
-            color: white;
-            text-decoration: none;
-            border-radius: 0.375rem;
-            transition: background 0.2s;
-        }
-        .btn:hover {
-            background: #1d4ed8;
-        }
-        .btn.secondary {
-            background: #6b7280;
-        }
-        .btn.secondary:hover {
-            background: #4b5563;
-        }
-        .features {
-            margin: 3rem 0;
-        }
-        .features h2 {
-            text-align: center;
-            color: #2563eb;
-        }
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        .feature {
-            padding: 1.5rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-        }
-        .feature h3 {
-            margin-top: 0;
-            color: #1f2937;
-        }
-        footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #e5e7eb;
-            color: #666;
-        }
+      html, body { height: 100%; }
+
+      /* Dark mode transitions */
+      * {
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+      }
+
+      /* Dark mode base styles */
+      html.dark {
+        color-scheme: dark;
+      }
+      html.dark body {
+        background-color: #0f172a;
+        color: #e2e8f0;
+      }
+
+      /* Dark mode card backgrounds */
+      html.dark .bg-white {
+        background-color: #1e293b !important;
+      }
+
+      /* Dark mode subtle backgrounds */
+      html.dark .bg-surface-subtle,
+      html.dark section:not(.bg-white):not([style*="background"]) {
+        background-color: #0f172a;
+      }
+
+      /* Dark mode text colors */
+      html.dark .text-text-primary {
+        color: #f1f5f9 !important;
+      }
+      html.dark .text-text-secondary {
+        color: #cbd5e1 !important;
+      }
+      html.dark .text-brand-dark {
+        color: #f1f5f9 !important;
+      }
+
+      /* Dark mode header */
+      html.dark header {
+        background-color: #0f172a !important;
+        border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+      }
+
+      /* Dark mode header nav links */
+      html.dark header nav a {
+        color: #e2e8f0 !important;
+      }
+      html.dark header nav a:hover {
+        color: #ffffff !important;
+      }
+
+      /* Dark mode borders */
+      html.dark .border-black\/5 {
+        border-color: rgba(255, 255, 255, 0.1) !important;
+      }
+      html.dark .ring-black\/5 {
+        --tw-ring-color: rgba(255, 255, 255, 0.1) !important;
+      }
+
+      /* Dark mode shadows */
+      html.dark .shadow-soft {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Dark mode code blocks */
+      html.dark code {
+        background-color: #1e293b;
+        color: #e2e8f0;
+      }
     </style>
-</head>
-<body>
-    <header>
-        <img src="public/mockforge-logo.png" alt="MockForge Logo" style="width: 200px; height: auto; margin-bottom: 1rem;">
-        <h1>MockForge</h1>
-        <p class="subtitle">A comprehensive mocking framework for APIs, gRPC services, and WebSockets</p>
+  </head>
+  <body class="bg-surface-subtle dark:bg-gray-900 text-text-primary dark:text-gray-100 antialiased">
+    <!-- Header / Nav -->
+    <header class="sticky top-0 z-40 backdrop-blur bg-white/90 dark:bg-slate-900 border-b border-black/5 dark:border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="#top" class="flex items-center gap-3">
+            <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-8 w-8" />
+            <span class="font-semibold tracking-tight text-brand-dark dark:text-white">MockForge</span>
+          </a>
+          <nav class="hidden md:flex items-center gap-3 lg:gap-4">
+            <a href="https://docs.mockforge.dev" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Docs</a>
+            <a href="#features" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Features</a>
+            <a href="#how" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">How it works</a>
+            <a href="#faq" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">FAQ</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 lg:px-3 lg:py-2 rounded-lg text-white hover:opacity-90 shadow-soft whitespace-nowrap text-sm" style="background-color: #D35400;">
+              <svg aria-hidden="true" viewBox="0 0 16 16" class="h-4 w-4 flex-shrink-0" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+              <span class="hidden lg:inline">Star on GitHub</span>
+              <span class="lg:hidden">GitHub</span>
+            </a>
+            <button id="themeToggle" class="p-2 rounded-lg border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10" aria-label="Toggle dark mode">
+              <svg id="sun" class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M7.05 7.05 5.636 5.636m12.728 0-1.414 1.414M7.05 16.95l-1.414 1.414"/><circle cx="12" cy="12" r="4"/></svg>
+              <svg id="moon" class="h-5 w-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+            </button>
+          </nav>
+          <button id="menuBtn" class="md:hidden p-2 rounded-lg border border-black/10 dark:border-white/20" aria-label="Open menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+          </button>
+        </div>
+      </div>
+      <!-- Mobile menu -->
+      <div id="mobileMenu" class="md:hidden hidden border-t border-black/5 dark:border-white/10 bg-white dark:bg-brand-dark">
+        <div class="px-4 py-3 space-y-2">
+          <a href="https://docs.mockforge.dev" class="block text-text-primary dark:text-white">Docs</a>
+          <a href="#features" class="block text-text-primary dark:text-white">Features</a>
+          <a href="#how" class="block text-text-primary dark:text-white">How it works</a>
+          <a href="#faq" class="block text-text-primary dark:text-white">FAQ</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-white hover:opacity-90 shadow-soft" style="background-color: #D35400;">Star on GitHub</a>
+        </div>
+      </div>
     </header>
 
-    <div class="links">
-        <a href="https://docs.mockforge.dev" class="btn">📚 Documentation</a>
-        <a href="https://github.com/SaaSy-Solutions/mockforge" class="btn secondary">🐙 GitHub</a>
-        <a href="https://crates.io/crates/mockforge" class="btn secondary">📦 Crates.io</a>
-    </div>
-
-    <section class="features">
-        <h2>✨ Features</h2>
-        <div class="feature-grid">
-            <div class="feature">
-                <h3>Multi-Protocol Support</h3>
-                <p>HTTP REST APIs, gRPC services, and WebSocket connections with unified interface.</p>
+    <!-- Hero -->
+    <section id="top" class="relative overflow-hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="py-20 sm:py-28 grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-slate-800 shadow-soft text-text-secondary dark:text-gray-300 text-xs">
+              <span class="w-2 h-2 rounded-full bg-green-500"></span>
+              Open source • MIT or Apache-2.0
             </div>
-            <div class="feature">
-                <h3>Advanced Data Synthesis</h3>
-                <p>Intelligent mock data generation with smart field inference and RAG-driven creation.</p>
+            <h1 class="mt-5 text-4xl sm:text-5xl font-semibold tracking-tight text-brand-dark dark:text-white">
+              Comprehensive API mocking for REST, gRPC, GraphQL & WebSockets
+            </h1>
+            <p class="mt-5 text-lg text-text-secondary max-w-2xl">
+              Spin up realistic mock services in minutes. Generate intelligent synthetic data with RAG, inject latency & failures, and manage everything in a modern admin UI.
+            </p>
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+              <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-white hover:opacity-90 shadow-soft whitespace-nowrap" style="background-color: #D35400;">
+                <svg aria-hidden="true" viewBox="0 0 16 16" class="h-5 w-5 flex-shrink-0" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                <span class="font-medium">Star on GitHub</span>
+              </a>
+              <a href="https://docs.mockforge.dev" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-black/10 text-text-primary hover:bg-black/5">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+                <span class="font-medium">Read the Docs</span>
+              </a>
             </div>
-            <div class="feature">
-                <h3>Admin UI</h3>
-                <p>Modern web-based interface for managing mock servers and viewing metrics.</p>
+            <div class="mt-8 text-sm text-text-secondary">
+              <code class="font-mono bg-black/5 dark:bg-white/10 rounded-lg px-3 py-2 block w-full"># Install (example)
+$ cargo install mockforge-cli</code>
             </div>
-            <div class="feature">
-                <h3>Extensible Architecture</h3>
-                <p>Plugin system for custom response generators and data sources.</p>
+          </div>
+          <div class="relative">
+            <div class="rounded-2xl shadow-soft ring-1 ring-black/5 overflow-hidden bg-white dark:bg-brand-dark">
+              <img src="/public/admin-screenshot.png" alt="MockForge Admin UI screenshot" class="w-full h-auto" />
             </div>
+            <div class="absolute -bottom-6 -left-6 hidden sm:block">
+              <div class="px-4 py-3 rounded-xl bg-white shadow-soft border border-black/5 text-sm text-text-secondary">
+                Realistic data • Latency profiles • Record & replay
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
-    <footer>
-        <p>© 2025 MockForge. Licensed under MIT OR Apache-2.0.</p>
+    <!-- Logos / Social proof (optional) -->
+    <!-- Add when available -->
+
+    <!-- Features -->
+    <section id="features" class="py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto">
+          <h2 class="text-3xl font-semibold text-brand-dark dark:text-white">Features developers care about</h2>
+          <p class="mt-3 text-text-secondary">Everything you need to simulate complex services and ship faster, without waiting on real backends.</p>
+        </div>
+        <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Feature card -->
+          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
+            <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            </div>
+            <h3 class="mt-4 font-semibold">Multi‑Protocol</h3>
+            <p class="mt-2 text-sm text-text-secondary">Mock HTTP REST, gRPC, GraphQL, and WebSocket endpoints with a unified interface. Includes HTTP Bridge for automatic gRPC-to-REST conversion.</p>
+          </div>
+          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
+            <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <h3 class="mt-4 font-semibold">Advanced Data Synthesis</h3>
+            <p class="mt-2 text-sm text-text-secondary">RAG-driven intelligent data generation with smart field inference, deterministic seeding, relationship awareness, and template tokens like <code class="font-mono">{{uuid}}</code> and <code class="font-mono">{{faker.email}}</code>.</p>
+          </div>
+          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
+            <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <h3 class="mt-4 font-semibold">Latency & Fault Injection</h3>
+            <p class="mt-2 text-sm text-text-secondary">Operation‑aware latency/failure profiles to test real‑world conditions.</p>
+          </div>
+          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
+            <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            </div>
+            <h3 class="mt-4 font-semibold">Record & Replay</h3>
+            <p class="mt-2 text-sm text-text-secondary">Capture live traffic and replay scenarios to debug and benchmark.</p>
+          </div>
+          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
+            <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M16 15l5-5-5-5"/></svg>
+            </div>
+            <h3 class="mt-4 font-semibold">Extensible Plugins</h3>
+            <p class="mt-2 text-sm text-text-secondary">Add custom generators, data sources, and overrides with a clean plugin system.</p>
+          </div>
+          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
+            <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <h3 class="mt-4 font-semibold">Modern Admin UI</h3>
+            <p class="mt-2 text-sm text-text-secondary">Web‑based interface for managing servers, overrides, and metrics.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how" class="py-20 bg-white dark:bg-brand-dark/50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-10 items-start">
+          <div>
+            <h2 class="text-3xl font-semibold text-brand-dark dark:text-white">How it works</h2>
+            <ol class="mt-6 space-y-5 text-text-secondary">
+              <li class="flex gap-3">
+                <span class="flex-none w-8 h-8 rounded-full bg-brand-orange text-white flex items-center justify-center font-semibold">1</span>
+                <div>
+                  <p class="font-medium text-text-primary">Define your API & rules</p>
+                  <p class="text-sm">Describe endpoints and schemas. Configure latency/failure profiles and overrides per operation.</p>
+                </div>
+              </li>
+              <li class="flex gap-3">
+                <span class="flex-none w-8 h-8 rounded-full bg-brand-orange text-white flex items-center justify-center font-semibold">2</span>
+                <div>
+                  <p class="font-medium text-text-primary">Generate realistic data</p>
+                  <p class="text-sm">Use built‑in tokens (<code class="font-mono">{{uuid}}</code>, <code class="font-mono">{{now}}</code>, etc.) or plug in custom generators.</p>
+                </div>
+              </li>
+              <li class="flex gap-3">
+                <span class="flex-none w-8 h-8 rounded-full bg-brand-orange text-white flex items-center justify-center font-semibold">3</span>
+                <div>
+                  <p class="font-medium text-text-primary">Run & iterate</p>
+                  <p class="text-sm">Start the mock server, inspect requests in the Admin UI, and fine‑tune behaviors as you build.</p>
+                </div>
+              </li>
+            </ol>
+          </div>
+          <div>
+            <div class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 overflow-hidden shadow-soft">
+              <pre class="bg-black text-white p-5 text-sm leading-6 font-mono"><code># Quick start (example)
+$ mockforge init
+✔ Created mockforge.yaml
+
+# Add an endpoint override
+$ mockforge add /users/{id} --status 200 \
+  --body '{ "id": "{{uuid}}", "name": "{{name}}" }'
+
+# Run server
+$ mockforge serve --port 8080
+Listening on http://localhost:8080</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonial / Quote (placeholder) -->
+    <section class="py-16">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="p-8 bg-white dark:bg-brand-dark rounded-2xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
+          <blockquote class="text-xl text-brand-dark dark:text-white">
+            “MockForge let our frontend team build weeks faster by simulating gRPC services with realistic data.”
+          </blockquote>
+          <p class="mt-4 text-sm text-text-secondary">— Engineer, Early Adopter</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="py-20 bg-gradient-to-b from-white to-surface-subtle dark:from-brand-dark dark:to-brand-dark">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-semibold text-brand-dark dark:text-white">Ready to build without waiting on backends?</h2>
+        <p class="mt-3 text-text-secondary max-w-2xl mx-auto">Get the repo, run the quick start, and start shipping faster.</p>
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white hover:opacity-90 shadow-soft whitespace-nowrap" style="background-color: #D35400;">
+            <svg aria-hidden="true" viewBox="0 0 16 16" class="h-5 w-5 flex-shrink-0" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+            <span class="font-medium">Star on GitHub</span>
+          </a>
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-black/10 text-text-primary hover:bg-black/5">Read the Docs</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="py-20">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-semibold text-brand-dark dark:text-white">FAQ</h2>
+        <dl class="mt-8 space-y-6">
+          <div>
+            <dt class="font-medium">Is MockForge open source?</dt>
+            <dd class="text-sm text-text-secondary mt-1">Yes. It’s open‑source and permissively licensed. Contributions are welcome.</dd>
+          </div>
+          <div>
+            <dt class="font-medium">Which protocols are supported?</dt>
+            <dd class="text-sm text-text-secondary mt-1">HTTP/REST, gRPC, and WebSockets out of the box. More via plugins.</dd>
+          </div>
+          <div>
+            <dt class="font-medium">Can I use it in CI?</dt>
+            <dd class="text-sm text-text-secondary mt-1">Absolutely. Spin up MockForge alongside your tests to provide stable, realistic endpoints.</dd>
+          </div>
+          <div>
+            <dt class="font-medium">Does it support record/replay?</dt>
+            <dd class="text-sm text-text-secondary mt-1">Yes. Capture live traffic, store fixtures, and replay them deterministically.</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-10 border-t border-black/5 dark:border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-6 w-6" />
+          <span class="text-sm text-text-secondary">© <span id="year"></span> MockForge. MIT or Apache‑2.0.</span>
+        </div>
+        <div class="flex items-center gap-4 text-sm">
+          <a href="https://docs.mockforge.dev" class="text-text-secondary hover:text-text-primary">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary hover:text-text-primary">GitHub</a>
+        </div>
+      </div>
     </footer>
-</body>
+
+    <script>
+      // Wait for DOM to be ready
+      document.addEventListener('DOMContentLoaded', function() {
+        // Dark mode toggle
+        const toggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const year = document.getElementById('year');
+
+        if (year) {
+          year.textContent = new Date().getFullYear();
+        }
+
+        // Initialize theme from localStorage or system preference
+        const storedTheme = localStorage.getItem('theme');
+        if (storedTheme === 'dark' || (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          html.classList.add('dark');
+        }
+
+        // Theme toggle button
+        if (toggle) {
+          toggle.addEventListener('click', function() {
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            console.log('Theme toggled to:', isDark ? 'dark' : 'light');
+          });
+        }
+
+        // Mobile menu toggle
+        if (menuBtn && mobileMenu) {
+          menuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+          });
+        }
+      });
+    </script>
+  </body>
 </html>
