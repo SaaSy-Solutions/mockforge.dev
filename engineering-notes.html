@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — Engineering Notes</title>
+    <meta name="description" content="Engineering notes and release deep dives from MockForge." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased">
+    <header class="sticky top-0 z-40 backdrop-blur bg-white/90 border-b border-black/5">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="/" class="font-semibold tracking-tight text-slate-900">MockForge</a>
+          <nav class="flex items-center gap-4 text-sm">
+            <a href="/" class="text-slate-600 hover:text-slate-900">Home</a>
+            <a href="https://docs.mockforge.dev" class="text-slate-600 hover:text-slate-900">Docs</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-slate-600 hover:text-slate-900">GitHub</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <h1 class="text-3xl font-semibold">Engineering Notes</h1>
+      <p class="mt-3 text-slate-600">Technical updates, release rationale, and implementation notes from the MockForge project.</p>
+
+      <section class="mt-10 space-y-6">
+        <article class="bg-white rounded-xl p-6 shadow-sm ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">March 11, 2026</p>
+          <h2 class="mt-2 text-xl font-semibold">How We Use Scenario Switching to Keep Mocks Honest</h2>
+          <p class="mt-3 text-slate-700">Scenario switching helps teams test stateful behavior instead of static happy-path fixtures. This note outlines a practical scenario model and why it improves integration confidence.</p>
+          <div class="mt-4 flex gap-4 text-sm">
+            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Read docs</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-orange-700 hover:text-orange-800">View GitHub</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-xl p-6 shadow-sm ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">March 19, 2026</p>
+          <h2 class="mt-2 text-xl font-semibold">Release Engineering Note: Security Guardrails from v0.2.x</h2>
+          <p class="mt-3 text-slate-700">A focused review of v0.2.x hardening work: validation defaults, auth-related flow safety, and migration priorities for teams upgrading from earlier versions.</p>
+          <div class="mt-4 flex gap-4 text-sm">
+            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Changelog & migration docs</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-orange-700 hover:text-orange-800">View GitHub</a>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
