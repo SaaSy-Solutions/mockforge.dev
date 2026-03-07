@@ -6,14 +6,23 @@
     <title>MockForge — Engineering Notes</title>
     <meta name="description" content="Engineering notes and release deep dives from MockForge." />
     <link rel="icon" href="/public/favicon.ico" sizes="any">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/public/styles.css" />
     <meta name="ga-measurement-id" content="" />
 </head>
-  <body class="bg-slate-50 text-slate-900 antialiased">
+  <body class="bg-stone-50 text-slate-900 antialiased font-sans">
     <header class="sticky top-0 z-40 backdrop-blur bg-white/90 border-b border-black/5">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
-          <a href="/" class="font-semibold tracking-tight text-slate-900">MockForge</a>
+          <a href="/" class="flex items-center gap-3 font-semibold tracking-tight text-brand-ink">
+            <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-8 w-8" />
+            <span>MockForge</span>
+          </a>
           <nav class="flex items-center gap-4 text-sm">
             <a href="/" class="text-slate-600 hover:text-slate-900">Home</a>
             <a href="https://docs.mockforge.dev" class="text-slate-600 hover:text-slate-900">Docs</a>
@@ -24,56 +33,29 @@
     </header>
 
     <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 class="text-3xl font-semibold">Engineering Notes</h1>
-      <p class="mt-3 text-slate-600">Technical updates, release rationale, and implementation notes from the MockForge project.</p>
-      <div class="mt-4 flex flex-wrap gap-3">
-        <a href="https://docs.mockforge.dev" class="px-4 py-2 rounded-lg bg-orange-600 text-white text-sm">Read Docs</a>
-        <a href="https://github.com/SaaSy-Solutions/mockforge" class="px-4 py-2 rounded-lg border text-sm">View GitHub</a>
-      </div>
+      <section class="rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 px-8 py-10 text-white shadow-note">
+        <p class="text-sm uppercase tracking-[0.24em] text-orange-200">Engineering Notes</p>
+        <h1 class="mt-4 text-3xl font-semibold sm:text-4xl">Release context, implementation decisions, and technical tradeoffs.</h1>
+        <p class="mt-4 max-w-3xl text-slate-300">A running log of product decisions behind MockForge, from scenario modeling and test hardening to release safety and client generation tradeoffs.</p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700">Read Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-white/15 px-4 py-2 text-sm font-medium text-white hover:bg-white/5">View GitHub</a>
+        </div>
+      </section>
 
       <section class="mt-10 space-y-6">
-        <article class="bg-white rounded-xl p-6 shadow-sm ring-1 ring-black/5">
-          <p class="text-xs uppercase tracking-wide text-slate-500">January 21, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Release Cadence and Risk: How We Keep Fast Iteration Safe</h2>
-          <p class="mt-3 text-slate-700">How we sequence fixes, hardening, and communication so release speed does not become release risk.</p>
+        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">March 5, 2026</p>
+          <h2 class="mt-2 text-xl font-semibold">Release Engineering Note: Security Guardrails from v0.2.x</h2>
+          <p class="mt-3 text-slate-700">A focused review of v0.2.x hardening work: validation defaults, auth-related flow safety, and migration priorities for teams upgrading from earlier versions.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-release-cadence-and-risk.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-security-guardrails-v0-2x.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Changelog & migration docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-xl p-6 shadow-sm ring-1 ring-black/5">
-          <p class="text-xs uppercase tracking-wide text-slate-500">December 10, 2025</p>
-          <h2 class="mt-2 text-xl font-semibold">Client Generation Tradeoffs: Safety, Speed, and Developer Experience</h2>
-          <p class="mt-3 text-slate-700">A practical note on balancing strict schema fidelity with developer velocity in generated clients.</p>
-          <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-client-generation-tradeoffs.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
-          </div>
-        </article>
-
-        <article class="bg-white rounded-xl p-6 shadow-sm ring-1 ring-black/5">
-          <p class="text-xs uppercase tracking-wide text-slate-500">November 5, 2025</p>
-          <h2 class="mt-2 text-xl font-semibold">Why Failure-Path Testing Should Be a First-Class Mocking Requirement</h2>
-          <p class="mt-3 text-slate-700">Controlled failure profiles expose retry and fallback weaknesses before integration surprises hit teams.</p>
-          <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-testing-failure-paths.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
-          </div>
-        </article>
-
-        <article class="bg-white rounded-xl p-6 shadow-sm ring-1 ring-black/5">
-          <p class="text-xs uppercase tracking-wide text-slate-500">October 8, 2025</p>
-          <h2 class="mt-2 text-xl font-semibold">Migration Guide: Moving from Static Fixtures to Stateful Mocks</h2>
-          <p class="mt-3 text-slate-700">A staged migration path from static fixtures to state-aware scenario switching for better integration confidence.</p>
-          <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-migration-from-static-fixtures.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
-          </div>
-        </article>
-
-        <article class="bg-white rounded-xl p-6 shadow-sm ring-1 ring-black/5">
-          <p class="text-xs uppercase tracking-wide text-slate-500">March 11, 2026</p>
+        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">March 3, 2026</p>
           <h2 class="mt-2 text-xl font-semibold">How We Use Scenario Switching to Keep Mocks Honest</h2>
           <p class="mt-3 text-slate-700">Scenario switching helps teams test stateful behavior instead of static happy-path fixtures. This note outlines a practical scenario model and why it improves integration confidence.</p>
           <div class="mt-4 flex gap-4 text-sm">
@@ -83,18 +65,60 @@
           </div>
         </article>
 
-        <article class="bg-white rounded-xl p-6 shadow-sm ring-1 ring-black/5">
-          <p class="text-xs uppercase tracking-wide text-slate-500">March 19, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Release Engineering Note: Security Guardrails from v0.2.x</h2>
-          <p class="mt-3 text-slate-700">A focused review of v0.2.x hardening work: validation defaults, auth-related flow safety, and migration priorities for teams upgrading from earlier versions.</p>
+        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">January 21, 2026</p>
+          <h2 class="mt-2 text-xl font-semibold">Release Cadence and Risk: How We Keep Fast Iteration Safe</h2>
+          <p class="mt-3 text-slate-700">How we sequence fixes, hardening, and communication so release speed does not become release risk.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-security-guardrails-v0-2x.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Changelog & migration docs</a>
-            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-orange-700 hover:text-orange-800">View GitHub</a>
+            <a href="/note-release-cadence-and-risk.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">December 10, 2025</p>
+          <h2 class="mt-2 text-xl font-semibold">Client Generation Tradeoffs: Safety, Speed, and Developer Experience</h2>
+          <p class="mt-3 text-slate-700">A practical note on balancing strict schema fidelity with developer velocity in generated clients.</p>
+          <div class="mt-4 flex gap-4 text-sm">
+            <a href="/note-client-generation-tradeoffs.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">November 5, 2025</p>
+          <h2 class="mt-2 text-xl font-semibold">Why Failure-Path Testing Should Be a First-Class Mocking Requirement</h2>
+          <p class="mt-3 text-slate-700">Controlled failure profiles expose retry and fallback weaknesses before integration surprises hit teams.</p>
+          <div class="mt-4 flex gap-4 text-sm">
+            <a href="/note-testing-failure-paths.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">October 8, 2025</p>
+          <h2 class="mt-2 text-xl font-semibold">Migration Guide: Moving from Static Fixtures to Stateful Mocks</h2>
+          <p class="mt-3 text-slate-700">A staged migration path from static fixtures to state-aware scenario switching for better integration confidence.</p>
+          <div class="mt-4 flex gap-4 text-sm">
+            <a href="/note-migration-from-static-fixtures.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
           </div>
         </article>
       </section>
+
+      <section class="mt-10 rounded-2xl border border-dashed border-slate-300 px-6 py-5 text-sm text-slate-600">
+        Want release notes in product context instead of changelog fragments? Start with the notes here, then jump into the full docs for commands, schemas, and migration detail.
+      </section>
     </main>
+    <footer class="border-t border-black/5 bg-white/70">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-sm text-slate-600">MockForge engineering notes for operators building realistic test environments.</p>
+        <div class="flex items-center gap-4 text-sm">
+          <a href="https://docs.mockforge.dev" class="text-slate-600 hover:text-slate-900">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-slate-600 hover:text-slate-900">GitHub</a>
+        </div>
+      </div>
+    </footer>
   
 <script>
 document.addEventListener('click', function (e) {

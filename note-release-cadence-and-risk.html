@@ -1,1 +1,86 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>MockForge — Release Cadence and Risk</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-slate-50 text-slate-900"><main class="max-w-3xl mx-auto px-4 py-12"><a href="/engineering-notes.html" class="text-sm text-orange-700">← Back to Engineering Notes</a><p class="mt-6 text-xs uppercase tracking-wide text-slate-500">January 21, 2026</p><h1 class="mt-2 text-3xl font-semibold">Release Cadence and Risk: How We Keep Fast Iteration Safe</h1><p class="mt-4">Fast release cadence can increase risk unless guardrails are explicit. This note explains how we sequence fixes, hardening, and communication across releases.</p><div class="mt-8 flex gap-4 text-sm"><a href="https://docs.mockforge.dev" class="text-orange-700">Docs</a><a href="https://github.com/SaaSy-Solutions/mockforge" class="text-orange-700">GitHub</a></div></main></body></html>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — Release Cadence and Risk</title>
+    <meta name="description" content="How MockForge balances release speed with explicit hardening and communication guardrails." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/public/styles.css" />
+    <meta name="ga-measurement-id" content="" />
+  </head>
+  <body class="bg-stone-50 text-slate-900 antialiased font-sans">
+    <header class="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur">
+      <div class="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <a href="/" class="flex items-center gap-3 font-semibold tracking-tight text-brand-ink">
+          <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-8 w-8" />
+          <span>MockForge</span>
+        </a>
+        <nav class="flex items-center gap-4 text-sm">
+          <a href="/" class="text-slate-600 hover:text-slate-900">Home</a>
+          <a href="/engineering-notes.html" class="text-slate-600 hover:text-slate-900">Notes</a>
+          <a href="https://docs.mockforge.dev" class="text-slate-600 hover:text-slate-900">Docs</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">← Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">January 21, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Release Cadence and Risk: How We Keep Fast Iteration Safe</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Fast release cadence only works when teams can see what changed, why it changed, and how to validate the risk.</p>
+        <p class="mt-5 leading-8 text-slate-700">Our working model is simple: ship small, separate hardening work from feature noise, and make migration consequences explicit. That keeps velocity high without forcing downstream users to decode release intent from commit history.</p>
+        <p class="mt-5 leading-8 text-slate-700">When a release touches core request handling, validation, or generated client behavior, the notes should call that out directly. Speed is valuable, but ambiguity is expensive.</p>
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    <footer class="border-t border-black/5 bg-white/70">
+      <div class="mx-auto flex max-w-3xl flex-col gap-3 px-4 py-6 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <p>MockForge engineering notes for realistic test environments.</p>
+        <a href="/engineering-notes.html" class="hover:text-slate-900">More notes</a>
+      </div>
+    </footer>
+
+    <script>
+    document.addEventListener('click', function (e) {
+      const link = e.target.closest('a');
+      if (!link || typeof window.gtag !== 'function') return;
+      window.gtag('event', 'cta_click', {
+        cta_text: (link.textContent || '').trim().slice(0, 80),
+        cta_href: link.getAttribute('href') || '',
+        page_path: window.location.pathname
+      });
+    });
+    </script>
+
+    <script>
+    (function () {
+      var meta = document.querySelector('meta[name="ga-measurement-id"]');
+      var id = (meta && meta.content || '').trim();
+      if (!id || typeof window.gtag === 'function') return;
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', id, { page_path: window.location.pathname });
+
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+      document.head.appendChild(s);
+    })();
+    </script>
+  </body>
+</html>

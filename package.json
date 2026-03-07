@@ -1,0 +1,10 @@
+{
+  "name": "mockforge-dev-site",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -c tailwind.config.js -i ./styles.css -o ./public/styles.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17"
+  }
+}

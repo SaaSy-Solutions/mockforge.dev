@@ -26,38 +26,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
-    <!-- Tailwind (CDN for quick start). Swap to built CSS in production. -->
+    <link rel="stylesheet" href="/public/styles.css" />
     <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              brand: {
-                orange: '#D35400',
-                dark: '#2C3E50',
-              },
-              text: {
-                primary: '#2E2E2E',
-                secondary: '#6B7280'
-              },
-              surface: {
-                base: '#FFFFFF',
-                subtle: '#F9FAFB'
-              }
-            },
-            fontFamily: {
-              sans: ['Inter', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
-              mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
-            },
-            boxShadow: {
-              soft: '0 2px 10px rgba(0,0,0,0.06)'
-            }
+      (function () {
+        try {
+          var storedTheme = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
           }
+        } catch (error) {
+          console.warn('Theme initialization failed:', error);
         }
-      }
+      })();
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
       html, body { height: 100%; }
 
@@ -485,11 +467,6 @@ Listening on http://localhost:8080</code></pre>
         }
 
         // Initialize theme from localStorage or system preference
-        const storedTheme = localStorage.getItem('theme');
-        if (storedTheme === 'dark' || (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-          html.classList.add('dark');
-        }
-
         // Theme toggle button
         if (toggle) {
           toggle.addEventListener('click', function() {
@@ -504,6 +481,12 @@ Listening on http://localhost:8080</code></pre>
         if (menuBtn && mobileMenu) {
           menuBtn.addEventListener('click', function() {
             mobileMenu.classList.toggle('hidden');
+          });
+
+          mobileMenu.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+              mobileMenu.classList.add('hidden');
+            });
           });
         }
       });
