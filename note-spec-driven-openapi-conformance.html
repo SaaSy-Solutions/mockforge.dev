@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — Spec-Driven OpenAPI Conformance Testing</title>
+    <meta name="description" content="How MockForge moved from generic API checks to spec-driven OpenAPI conformance testing with schema validation and SARIF output." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/public/styles.css" />
+    <meta name="ga-measurement-id" content="" />
+  </head>
+  <body class="bg-stone-50 text-slate-900 antialiased font-sans">
+    <header class="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur">
+      <div class="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <a href="/" class="flex items-center gap-3 font-semibold tracking-tight text-brand-ink">
+          <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-8 w-8" />
+          <span>MockForge</span>
+        </a>
+        <nav class="flex items-center gap-4 text-sm">
+          <a href="/" class="text-slate-600 hover:text-slate-900">Home</a>
+          <a href="/engineering-notes.html" class="text-slate-600 hover:text-slate-900">Notes</a>
+          <a href="https://docs.mockforge.dev" class="text-slate-600 hover:text-slate-900">Docs</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">← Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">March 7, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Spec-Driven OpenAPI Conformance Testing in MockForge</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Most API teams can generate requests. Fewer can prove that an implementation conforms to the OpenAPI features their spec actually depends on.</p>
+        <p class="mt-5 leading-8 text-slate-700">The `0.3.55` through `0.3.57` release arc moved MockForge from broad conformance coverage into spec-driven conformance. Instead of testing only a canned reference surface, MockForge can analyze a real OpenAPI spec, detect which features it exercises, generate checks for those features, validate response bodies against response schemas, and emit SARIF output that fits into CI review workflows.</p>
+        <h2 class="mt-8 text-xl font-semibold text-brand-ink">What changed in practice</h2>
+        <ul class="mt-4 list-disc space-y-2 pl-6 leading-8 text-slate-700">
+          <li>`0.3.55` added OpenAPI 3.0.0 conformance testing across 47 features and 10 categories, plus per-server stats and per-target spec support.</li>
+          <li>`0.3.56` added spec-driven conformance, response schema validation, category filtering, and SARIF 2.1.0 output.</li>
+          <li>`0.3.57` tightened feature detection for global security requirements, security scheme type resolution, and content negotiation.</li>
+        </ul>
+        <h2 class="mt-8 text-xl font-semibold text-brand-ink">Why this matters</h2>
+        <p class="mt-4 leading-8 text-slate-700">Generic test suites tell you whether an endpoint returned something. Spec-driven conformance tells you whether the implementation matches the behaviors your OpenAPI document promises. That distinction matters when you are validating security schemes, multiple content types, response shapes, and feature-specific behaviors that usually drift quietly until integration or audit time.</p>
+        <div class="mt-8 rounded-2xl bg-slate-950 p-5 text-sm text-slate-100">
+          <p class="font-mono text-slate-300">Release spine</p>
+          <p class="mt-2 leading-7">OpenAPI conformance launch in `0.3.55`, real-spec analysis and schema validation in `0.3.56`, then detection accuracy fixes in `0.3.57`.</p>
+        </div>
+        <p class="mt-8 leading-8 text-slate-700">The result is a more useful workflow for platform teams and QA leads: point MockForge at the spec you already own, run conformance against the features your API actually uses, and export findings in formats your CI stack already understands.</p>
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Read Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">View GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    <footer class="border-t border-black/5 bg-white/70">
+      <div class="mx-auto flex max-w-3xl flex-col gap-3 px-4 py-6 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <p>MockForge engineering notes for realistic test environments.</p>
+        <a href="/engineering-notes.html" class="hover:text-slate-900">More notes</a>
+      </div>
+    </footer>
+
+    <script>
+    document.addEventListener('click', function (e) {
+      const link = e.target.closest('a');
+      if (!link || typeof window.gtag !== 'function') return;
+      window.gtag('event', 'cta_click', {
+        cta_text: (link.textContent || '').trim().slice(0, 80),
+        cta_href: link.getAttribute('href') || '',
+        page_path: window.location.pathname
+      });
+    });
+    </script>
+
+    <script>
+    (function () {
+      var meta = document.querySelector('meta[name="ga-measurement-id"]');
+      var id = (meta && meta.content || '').trim();
+      if (!id || typeof window.gtag === 'function') return;
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', id, { page_path: window.location.pathname });
+
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+      document.head.appendChild(s);
+    })();
+    </script>
+  </body>
+</html>
