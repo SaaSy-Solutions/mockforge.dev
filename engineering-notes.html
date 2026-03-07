@@ -25,6 +25,10 @@
     <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <h1 class="text-3xl font-semibold">Engineering Notes</h1>
       <p class="mt-3 text-slate-600">Technical updates, release rationale, and implementation notes from the MockForge project.</p>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <a href="https://docs.mockforge.dev" class="px-4 py-2 rounded-lg bg-orange-600 text-white text-sm">Read Docs</a>
+        <a href="https://github.com/SaaSy-Solutions/mockforge" class="px-4 py-2 rounded-lg border text-sm">View GitHub</a>
+      </div>
 
       <section class="mt-10 space-y-6">
         <article class="bg-white rounded-xl p-6 shadow-sm ring-1 ring-black/5">
@@ -90,5 +94,17 @@
         </article>
       </section>
     </main>
-  </body>
+  
+<script>
+document.addEventListener('click', function (e) {
+  const link = e.target.closest('a');
+  if (!link || typeof window.gtag !== 'function') return;
+  window.gtag('event', 'cta_click', {
+    cta_text: (link.textContent || '').trim().slice(0, 80),
+    cta_href: link.getAttribute('href') || '',
+    page_path: window.location.pathname
+  });
+});
+</script>
+</body>
 </html>
