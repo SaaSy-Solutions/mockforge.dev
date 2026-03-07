@@ -7,7 +7,8 @@
     <meta name="description" content="Engineering notes and release deep dives from MockForge." />
     <link rel="icon" href="/public/favicon.ico" sizes="any">
     <script src="https://cdn.tailwindcss.com"></script>
-  </head>
+    <meta name="ga-measurement-id" content="" />
+</head>
   <body class="bg-slate-50 text-slate-900 antialiased">
     <header class="sticky top-0 z-40 backdrop-blur bg-white/90 border-b border-black/5">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -106,5 +107,25 @@ document.addEventListener('click', function (e) {
   });
 });
 </script>
+
+<script>
+(function () {
+  var meta = document.querySelector('meta[name="ga-measurement-id"]');
+  var id = (meta && meta.content || '').trim();
+  if (!id || typeof window.gtag === 'function') return;
+
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', id, { page_path: window.location.pathname });
+
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  document.head.appendChild(s);
+})();
+</script>
+
 </body>
 </html>

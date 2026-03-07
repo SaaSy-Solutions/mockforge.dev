@@ -130,7 +130,8 @@
         color: #e2e8f0;
       }
     </style>
-  </head>
+    <meta name="ga-measurement-id" content="" />
+</head>
   <body class="bg-surface-subtle dark:bg-gray-900 text-text-primary dark:text-gray-100 antialiased">
     <!-- Header / Nav -->
     <header class="sticky top-0 z-40 backdrop-blur bg-white/90 dark:bg-slate-900 border-b border-black/5 dark:border-white/10">
@@ -519,5 +520,25 @@ document.addEventListener('click', function (e) {
   });
 });
 </script>
+
+<script>
+(function () {
+  var meta = document.querySelector('meta[name="ga-measurement-id"]');
+  var id = (meta && meta.content || '').trim();
+  if (!id || typeof window.gtag === 'function') return;
+
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', id, { page_path: window.location.pathname });
+
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  document.head.appendChild(s);
+})();
+</script>
+
 </body>
 </html>
