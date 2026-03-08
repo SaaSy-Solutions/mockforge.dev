@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "build:css": "tailwindcss -c tailwind.config.js -i ./styles.css -o ./public/styles.css --minify",
-    "sync:shells": "node ./scripts/sync-shells.js"
+    "build:pages": "node ./scripts/build-pages.js",
+    "sync:shells": "npm run build:pages"
   },
   "devDependencies": {
     "tailwindcss": "3.4.17"

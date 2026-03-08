@@ -1,15 +1,15 @@
 # MockForge Website
 
-This repository contains the landing page for [mockforge.dev](https://mockforge.dev).
+This repository contains the static marketing site for [mockforge.dev](https://mockforge.dev).
 
 ## Development
 
-This is a simple static HTML site. To make changes:
+This site builds plain HTML files for GitHub Pages. To make changes:
 
-1. Edit the relevant HTML page content
-2. If you change shared navigation, footer, or theme shell behavior, run `npm run sync:shells`
+1. Edit the relevant page source in `src/pages/`
+2. Run `npm run build:pages` to regenerate the root HTML files
 3. If you change Tailwind source styles, run `npm run build:css`
-4. Commit and push to deploy via GitHub Pages
+4. Commit both the source and generated output, then push
 
 ## Deployment
 
@@ -20,16 +20,20 @@ This site is deployed using GitHub Pages:
 - Source: Root directory
 - Custom domain: `mockforge.dev`
 
+GitHub Pages still serves the generated root HTML files. No host migration is required.
+
 ## File Structure
 
 ```
 .
+├── .github/workflows/verify-pages-build.yml
+├── src/pages/
 ├── index.html
 ├── pricing.html
 ├── compare-*.html
 ├── note-*.html
 ├── engineering-notes.html
-├── scripts/sync-shells.js
+├── scripts/build-pages.js
 ├── styles.css
 └── public/styles.css
 ```

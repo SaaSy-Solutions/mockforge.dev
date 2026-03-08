@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — Migration from Static Fixtures</title>
+    <meta name="description" content="A staged migration path from static fixtures to stateful mocks in MockForge." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">← Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">October 8, 2025</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Migration Guide: Moving from Static Fixtures to Stateful Mocks</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Most teams start with static fixtures because they are fast to stand up. The problem is that static fixtures eventually stop matching the behavior you need to test.</p>
+        <p class="mt-5 leading-8 text-slate-700">The safest migration path is incremental. Pick the handful of integration flows that create the most churn, then replace one-off fixture files with scenario-aware responses and explicit state transitions.</p>
+        <ol class="mt-6 list-decimal space-y-2 pl-6 leading-8 text-slate-700">
+          <li>Identify the top flaky or highest-risk integration paths.</li>
+          <li>Introduce scenario states for those paths instead of one default response.</li>
+          <li>Add latency and failure profiles once state handling is stable.</li>
+        </ol>
+        <p class="mt-5 leading-8 text-slate-700">This keeps adoption manageable while improving test realism where it matters first.</p>
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

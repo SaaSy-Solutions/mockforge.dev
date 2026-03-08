@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — Client Generation Tradeoffs</title>
+    <meta name="description" content="How MockForge balances strict schema fidelity with practical developer experience in generated clients." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">← Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">December 10, 2025</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Client Generation Tradeoffs: Safety, Speed, and Developer Experience</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Generated clients accelerate teams, but the defaults you choose decide whether that speed creates confidence or drift.</p>
+        <p class="mt-5 leading-8 text-slate-700">At MockForge, we optimize for predictable behavior first. Strict schema fidelity protects contracts and catches breaking changes early, but overly rigid output can slow teams that need quick mocks to unblock frontend and QA work.</p>
+        <p class="mt-5 leading-8 text-slate-700">The practical middle ground is explicitness. Keep generated clients strongly typed and schema-aware, then make escape hatches obvious: override rules, fixture injection, and scenario-based response shaping should be available without forcing teams to fork the generator.</p>
+        <div class="mt-8 rounded-2xl bg-slate-950 p-5 text-sm text-slate-100">
+          <p class="font-mono text-slate-300">Working rule</p>
+          <p class="mt-2 leading-7">Use strict generation for contracts, flexible overrides for workflows, and never hide fallback behavior behind silent defaults.</p>
+        </div>
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

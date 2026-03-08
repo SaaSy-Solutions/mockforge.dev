@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — Reliability Updates for Admin and Conformance</title>
+    <meta name="description" content="Recent MockForge reliability updates across admin startup, failure reporting, and conformance accuracy." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">← Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">March 7, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Recent MockForge Reliability Updates: Admin Startup, Better Failure Reporting, and Correct Response-Code Checks</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Reliability work is often the difference between an interesting tool and one that teams actually adopt.</p>
+        <p class="mt-5 leading-8 text-slate-700">The `0.3.72` and `0.3.73` releases focused on first-run usability and output accuracy. The admin UI now starts cleanly even when production auth is not configured, failed conformance checks are easier to inspect, and response-code and schema validation checks are based on the server returning the status codes and types the spec actually declares.</p>
+        <h2 class="mt-8 text-xl font-semibold text-brand-ink">What improved</h2>
+        <ul class="mt-4 list-disc space-y-2 pl-6 leading-8 text-slate-700">
+          <li>`0.3.72` stopped `mockforge serve --admin` from panicking when no production auth is configured, added an auto-generated JWT secret fallback, and seeded default users so login works immediately.</li>
+          <li>`0.3.72` also added failed-check reporting with pass/fail counts so conformance results are easier to debug.</li>
+          <li>`0.3.73` added `X-Mockforge-Response-Status` handling so `response:400` and `response:404` checks can validate the intended response code instead of defaulting to the first status in the spec.</li>
+          <li>`0.3.73` also corrected object and array generation so schema validation does not fail because a mock response used a placeholder string where the schema expected structured data.</li>
+        </ul>
+        <h2 class="mt-8 text-xl font-semibold text-brand-ink">Why this matters</h2>
+        <p class="mt-4 leading-8 text-slate-700">These are not cosmetic fixes. They reduce setup friction, improve trust in first-run behavior, and make conformance results more believable. A failing check is only useful if the report is clear and the underlying mock server is returning the right shape and status code for the scenario being tested.</p>
+        <div class="mt-8 rounded-2xl bg-slate-950 p-5 text-sm text-slate-100">
+          <p class="font-mono text-slate-300">Practical outcome</p>
+          <p class="mt-2 leading-7">Better first-run admin startup, clearer failed-check output, and conformance checks that line up with real response codes and schema types.</p>
+        </div>
+        <p class="mt-8 leading-8 text-slate-700">This is the kind of release work that makes a product feel dependable: fewer surprises on startup, better visibility when checks fail, and fewer false negatives caused by mock generation shortcuts.</p>
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Read Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">View GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

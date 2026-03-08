@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — Scenario Switching Engineering Note</title>
+    <meta name="description" content="How MockForge uses scenario switching to model realistic API state behavior." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">← Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">March 3, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">How We Use Scenario Switching to Keep Mocks Honest</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Real APIs do not stay in one state. Your mocks should not either.</p>
+        <p class="mt-5 leading-8 text-slate-700">Scenario switching exists for one reason: your test environment should reflect changing application conditions, not static happy-path responses. That means response bodies, latency, and even failure semantics can change as a workflow progresses.</p>
+        <h2 class="mt-8 text-xl font-semibold text-brand-ink">Why this matters</h2>
+        <ul class="mt-4 list-disc space-y-2 pl-6 leading-8 text-slate-700">
+          <li>Frontend state handling gets exercised under real transitions.</li>
+          <li>Retry and failure paths stop being skipped during local development.</li>
+          <li>Integration confidence improves because mocks behave like systems, not screenshots.</li>
+        </ul>
+        <h2 class="mt-8 text-xl font-semibold text-brand-ink">Practical pattern</h2>
+        <p class="mt-4 leading-8 text-slate-700">Define states such as <code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-sm">initial</code>, <code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-sm">in_progress</code>, <code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-sm">degraded</code>, and <code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-sm">recovered</code>, then map responses by scenario instead of relying on one static fixture.</p>
+        <h2 class="mt-8 text-xl font-semibold text-brand-ink">Result</h2>
+        <p class="mt-4 leading-8 text-slate-700">You get test flows that look closer to production behavior, with less drift between local development and integration environments.</p>
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev?utm_source=mockforge_notes&utm_medium=referral&utm_campaign=week1_distribution" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge?utm_source=mockforge_notes&utm_medium=referral&utm_campaign=week1_distribution" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+          <a href="https://saasierinc.com/updates.html?utm_source=mockforge_notes&utm_medium=referral&utm_campaign=week1_distribution" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">Portfolio Updates</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

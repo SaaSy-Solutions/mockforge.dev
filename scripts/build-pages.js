@@ -3,7 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const root = process.argv[2] ? path.resolve(process.argv[2]) : path.resolve(__dirname, '..');
+const projectRoot = path.resolve(__dirname, '..');
+const sourceRoot = path.join(projectRoot, 'src', 'pages');
 
 function renderSharedHeadBlock(includeGaMeta) {
   return `
@@ -123,7 +124,8 @@ function renderFooter() {
   `.trim();
 }
 
-const shellScript = `
+function renderShellScript() {
+  return `
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         var toggle = document.getElementById('themeToggle');
@@ -155,78 +157,50 @@ const shellScript = `
         }
       });
     </script>
-`.trim();
-
-const pages = [
-  { file: 'index.html', logoHref: '#top', featuresHref: '#features' },
-  { file: 'pricing.html', logoHref: '/', featuresHref: '/#features' },
-  { file: 'compare-wiremock.html', logoHref: '/', featuresHref: '/#features' },
-  { file: 'compare-mockserver.html', logoHref: '/', featuresHref: '/#features' },
-  { file: 'engineering-notes.html', logoHref: '/', featuresHref: '/#features' },
-  ...fs.readdirSync(root)
-    .filter((name) => /^note-.*\.html$/.test(name))
-    .map((file) => ({ file, logoHref: '/', featuresHref: '/#features' })),
-];
-
-function replaceOnce(text, regex, replacement, file, label) {
-  if (!regex.test(text)) {
-    throw new Error(`Could not find ${label} in ${file}`);
-  }
-  return text.replace(regex, replacement);
+  `.trim();
 }
 
-const nextContents = new Map();
-
-for (const page of pages) {
-  const filePath = path.join(root, page.file);
-  let text = fs.readFileSync(filePath, 'utf8');
-  const includeGaMeta = text.includes('<meta name="ga-measurement-id" content="" />');
-
-  text = replaceOnce(
-    text,
-    includeGaMeta
-      ? /<link rel="stylesheet" href="\/public\/styles\.css" \/>[\s\S]*?<meta name="ga-measurement-id" content="" \/>/
-      : /<link rel="stylesheet" href="\/public\/styles\.css" \/>[\s\S]*?<\/head>/,
-    includeGaMeta
-      ? renderSharedHeadBlock(true)
-      : `${renderSharedHeadBlock(false)}\n  </head>`,
-    page.file,
-    'shared head block'
-  );
-
-  text = replaceOnce(
-    text,
-    /<header class="sticky top-0 z-40[\s\S]*?<\/header>/,
-    renderHeader(page),
-    page.file,
-    'header'
-  );
-
-  text = replaceOnce(
-    text,
-    /<footer class="[\s\S]*?<\/footer>/,
-    renderFooter(),
-    page.file,
-    'footer'
-  );
-
-  if (text.includes(`document.addEventListener('DOMContentLoaded'`) && text.includes('themeToggle')) {
-    text = replaceOnce(
-      text,
-      /(<\/footer>\s*)<script>\s*[\s\S]*?document\.addEventListener\('DOMContentLoaded', function\s*\(\)\s*\{[\s\S]*?(?:getElementById\('themeToggle'\)|themeToggle)[\s\S]*?<\/script>/,
-      `$1${shellScript}`,
-      page.file,
-      'shell script'
-    );
-  } else {
-    text = text.replace('</body>', `${shellScript}\n  </body>`);
+function getPageConfig(file) {
+  if (file === 'index.html') {
+    return { logoHref: '#top', featuresHref: '#features', includeGaMeta: true };
   }
 
-  nextContents.set(filePath, text);
+  if (file === 'compare-wiremock.html' || file === 'compare-mockserver.html') {
+    return { logoHref: '/', featuresHref: '/#features', includeGaMeta: false };
+  }
+
+  return { logoHref: '/', featuresHref: '/#features', includeGaMeta: true };
 }
 
-for (const [filePath, text] of nextContents) {
-  fs.writeFileSync(filePath, text);
+function ensurePlaceholder(text, placeholder, file) {
+  if (!text.includes(placeholder)) {
+    throw new Error(`Missing placeholder ${placeholder} in ${file}`);
+  }
 }
 
-console.log(`Synced shared shells for ${pages.length} pages.`);
+if (!fs.existsSync(sourceRoot)) {
+  throw new Error(`Missing source directory: ${sourceRoot}`);
+}
+
+const pageFiles = fs.readdirSync(sourceRoot).filter((name) => name.endsWith('.html')).sort();
+
+for (const file of pageFiles) {
+  const config = getPageConfig(file);
+  const sourcePath = path.join(sourceRoot, file);
+  const outputPath = path.join(projectRoot, file);
+  let text = fs.readFileSync(sourcePath, 'utf8');
+
+  ensurePlaceholder(text, '{{SHARED_HEAD_BLOCK}}', file);
+  ensurePlaceholder(text, '{{HEADER}}', file);
+  ensurePlaceholder(text, '{{FOOTER}}', file);
+  ensurePlaceholder(text, '{{SHELL_SCRIPT}}', file);
+
+  text = text.replace('{{SHARED_HEAD_BLOCK}}', renderSharedHeadBlock(config.includeGaMeta));
+  text = text.replace('{{HEADER}}', renderHeader(config));
+  text = text.replace('{{FOOTER}}', renderFooter());
+  text = text.replace('{{SHELL_SCRIPT}}', renderShellScript());
+
+  fs.writeFileSync(outputPath, text);
+}
+
+console.log(`Built ${pageFiles.length} pages from src/pages.`);

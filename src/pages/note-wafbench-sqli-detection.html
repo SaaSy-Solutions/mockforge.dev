@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — WAFBench SQLi Detection Improvements</title>
+    <meta name="description" content="How MockForge improved WAFBench SQLi detection from 37/46 to 46/46 by fixing payload delivery semantics." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">← Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">March 7, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">How We Took WAFBench SQLi Detection from 37/46 to 46/46</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Security testing fails quietly when payload delivery is wrong. A benchmark can look comprehensive while still missing the conditions a WAF actually inspects.</p>
+        <p class="mt-5 leading-8 text-slate-700">The `0.3.46` through `0.3.54` release arc was a sustained hardening pass on MockForge bench security testing. The work was not about adding a bigger payload catalog. It was about getting transport semantics right: distributing payloads across VUs, applying them to generated requests, handling cookie jar behavior correctly, grouping multi-part CRS cases together, decoding form and URI payloads properly, and delivering path and body attacks in the formats WAF rules expect.</p>
+        <h2 class="mt-8 text-xl font-semibold text-brand-ink">What changed</h2>
+        <ul class="mt-4 list-disc space-y-2 pl-6 leading-8 text-slate-700">
+          <li>`0.3.46` improved attack coverage by distributing payloads across VUs and honoring custom headers in OWASP API tests.</li>
+          <li>`0.3.47` and `0.3.43` ensured security payloads were actually injected into generated k6 requests.</li>
+          <li>`0.3.48` through `0.3.52` fixed cookie handling, accepted all CRS payloads, and grouped URI, header, and body payloads into single realistic requests.</li>
+          <li>`0.3.53` and `0.3.54` refined URI encoding, form handling, and path injection semantics for better CRS rule inspection.</li>
+        </ul>
+        <h2 class="mt-8 text-xl font-semibold text-brand-ink">Why this matters</h2>
+        <p class="mt-4 leading-8 text-slate-700">A WAF benchmark is only trustworthy if payloads are delivered in the same shapes and locations a real attack would occupy. When cookies collide, grouped attacks split apart, or form bodies arrive in the wrong encoding, the result is a misleading score. These releases corrected those details so security test results better reflect real request inspection.</p>
+        <div class="mt-8 rounded-2xl bg-slate-950 p-5 text-sm text-slate-100">
+          <p class="font-mono text-slate-300">Measured progression</p>
+          <p class="mt-2 leading-7">The changelog tracks expected SQLi detection improvement from `37/46` to `44/46`, then `45/46`, and finally `46/46` after path and form-delivery fixes landed.</p>
+        </div>
+        <p class="mt-8 leading-8 text-slate-700">The engineering lesson is straightforward: security tooling is often won or lost in request semantics, not just payload count. MockForge’s WAFBench hardening work was about fixing the harness until the benchmark meant something.</p>
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Read Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">View GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>
