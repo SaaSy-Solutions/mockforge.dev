@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — v0.3 Migration Playbook</title>
+    <meta name="description" content="A short migration playbook for teams moving into the MockForge v0.3 line with less risk." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/public/styles.css" />
+    <meta name="ga-measurement-id" content="" />
+  </head>
+  <body class="bg-stone-50 text-slate-900 antialiased font-sans">
+    <header class="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur">
+      <div class="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <a href="/" class="flex items-center gap-3 font-semibold tracking-tight text-brand-ink">
+          <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-8 w-8" />
+          <span>MockForge</span>
+        </a>
+        <nav class="flex items-center gap-4 text-sm">
+          <a href="/" class="text-slate-600 hover:text-slate-900">Home</a>
+          <a href="/engineering-notes.html" class="text-slate-600 hover:text-slate-900">Notes</a>
+          <a href="https://docs.mockforge.dev" class="text-slate-600 hover:text-slate-900">Docs</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">← Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">March 8, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">v0.3 Migration Playbook: Reduce Upgrade Risk in Three Passes</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">The safest migrations are staged migrations. We use three passes to keep teams shipping while upgrading.</p>
+        <p class="mt-5 leading-8 text-slate-700"><strong>Pass 1:</strong> run conformance checks in read-only mode and baseline current drift. <strong>Pass 2:</strong> enable strict validation for non-critical endpoints first. <strong>Pass 3:</strong> move critical paths with explicit rollback toggles and release notes tied to endpoint ownership.</p>
+        <p class="mt-5 leading-8 text-slate-700">This sequence keeps test confidence high while preventing broad rollback events caused by one incompatible contract edge case.</p>
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Migration docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    <footer class="border-t border-black/5 bg-white/70">
+      <div class="mx-auto flex max-w-3xl flex-col gap-3 px-4 py-6 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <p>MockForge engineering notes for realistic test environments.</p>
+        <a href="/engineering-notes.html" class="hover:text-slate-900">More notes</a>
+      </div>
+    </footer>
+  </body>
+</html>
