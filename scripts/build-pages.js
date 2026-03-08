@@ -5,6 +5,7 @@ const path = require('path');
 
 const projectRoot = path.resolve(__dirname, '..');
 const sourceRoot = path.join(projectRoot, 'src', 'pages');
+const outputRoot = process.argv[2] ? path.resolve(projectRoot, process.argv[2]) : projectRoot;
 
 function renderSharedHeadBlock(includeGaMeta) {
   return `
@@ -178,8 +179,38 @@ function ensurePlaceholder(text, placeholder, file) {
   }
 }
 
+function removeDir(targetPath) {
+  if (fs.existsSync(targetPath)) {
+    fs.rmSync(targetPath, { recursive: true, force: true });
+  }
+}
+
+function ensureDir(targetPath) {
+  fs.mkdirSync(targetPath, { recursive: true });
+}
+
+function copyRecursive(sourcePath, targetPath) {
+  const stats = fs.statSync(sourcePath);
+
+  if (stats.isDirectory()) {
+    ensureDir(targetPath);
+    for (const entry of fs.readdirSync(sourcePath)) {
+      copyRecursive(path.join(sourcePath, entry), path.join(targetPath, entry));
+    }
+    return;
+  }
+
+  ensureDir(path.dirname(targetPath));
+  fs.copyFileSync(sourcePath, targetPath);
+}
+
 if (!fs.existsSync(sourceRoot)) {
   throw new Error(`Missing source directory: ${sourceRoot}`);
+}
+
+if (outputRoot !== projectRoot) {
+  removeDir(outputRoot);
+  ensureDir(outputRoot);
 }
 
 const pageFiles = fs.readdirSync(sourceRoot).filter((name) => name.endsWith('.html')).sort();
@@ -187,7 +218,7 @@ const pageFiles = fs.readdirSync(sourceRoot).filter((name) => name.endsWith('.ht
 for (const file of pageFiles) {
   const config = getPageConfig(file);
   const sourcePath = path.join(sourceRoot, file);
-  const outputPath = path.join(projectRoot, file);
+  const outputPath = path.join(outputRoot, file);
   let text = fs.readFileSync(sourcePath, 'utf8');
 
   ensurePlaceholder(text, '{{SHARED_HEAD_BLOCK}}', file);
@@ -203,4 +234,13 @@ for (const file of pageFiles) {
   fs.writeFileSync(outputPath, text);
 }
 
-console.log(`Built ${pageFiles.length} pages from src/pages.`);
+if (outputRoot !== projectRoot) {
+  copyRecursive(path.join(projectRoot, 'public'), path.join(outputRoot, 'public'));
+
+  const cnamePath = path.join(projectRoot, 'CNAME');
+  if (fs.existsSync(cnamePath)) {
+    fs.copyFileSync(cnamePath, path.join(outputRoot, 'CNAME'));
+  }
+}
+
+console.log(`Built ${pageFiles.length} pages from src/pages into ${path.relative(projectRoot, outputRoot) || '.'}.`);

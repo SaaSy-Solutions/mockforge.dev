@@ -4,6 +4,7 @@
   "scripts": {
     "build:css": "tailwindcss -c tailwind.config.js -i ./styles.css -o ./public/styles.css --minify",
     "build:pages": "node ./scripts/build-pages.js",
+    "build:site": "node ./scripts/build-pages.js dist",
     "sync:shells": "npm run build:pages"
   },
   "devDependencies": {
