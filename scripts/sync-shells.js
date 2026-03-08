@@ -1,17 +1,12 @@
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MockForge — Client Generation Tradeoffs</title>
-    <meta name="description" content="How MockForge balances strict schema fidelity with practical developer experience in generated clients." />
-    <link rel="icon" href="/public/favicon.ico" sizes="any">
-    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+
+const root = process.argv[2] ? path.resolve(process.argv[2]) : path.resolve(__dirname, '..');
+
+function renderSharedHeadBlock(includeGaMeta) {
+  return `
     <link rel="stylesheet" href="/public/styles.css" />
     <script>
       (function () {
@@ -49,29 +44,32 @@
       html.dark header { background-color: #0f172a !important; border-bottom-color: rgba(255, 255, 255, 0.1) !important; }
       html.dark header nav a { color: #e2e8f0 !important; }
       html.dark header nav a:hover { color: #ffffff !important; }
-      html.dark .border-black\/5,
-      html.dark .border-black\/10,
+      html.dark .border-black\\/5,
+      html.dark .border-black\\/10,
       html.dark .border-slate-200,
       html.dark .border-slate-300 { border-color: rgba(255, 255, 255, 0.1) !important; }
-      html.dark .ring-black\/5 { --tw-ring-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark .ring-black\\/5 { --tw-ring-color: rgba(255, 255, 255, 0.1) !important; }
       html.dark .shadow-soft { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); }
       html.dark .shadow-note { box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35); }
       html.dark code { background-color: #1e293b; color: #e2e8f0; }
     </style>
-    <meta name="ga-measurement-id" content="" />
-  </head>
-  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    ${includeGaMeta ? '<meta name="ga-measurement-id" content="" />' : ''}
+  `.trim();
+}
+
+function renderHeader({ logoHref, featuresHref }) {
+  return `
     <header class="sticky top-0 z-40 backdrop-blur bg-white/90 dark:bg-slate-900 border-b border-black/5 dark:border-white/10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
-          <a href="/" class="flex items-center gap-3">
+          <a href="${logoHref}" class="flex items-center gap-3">
             <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-8 w-8" />
             <span class="font-semibold tracking-tight text-brand-dark dark:text-white">MockForge</span>
           </a>
           <nav class="hidden md:flex items-center gap-3 lg:gap-4">
             <a href="https://docs.mockforge.dev" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Docs</a>
             <a href="/engineering-notes.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Notes</a>
-            <a href="/#features" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Features</a>
+            <a href="${featuresHref}" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Features</a>
             <a href="/pricing.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Pricing</a>
             <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">GitHub</a>
             <a href="https://app.mockforge.dev/login" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Log In</a>
@@ -92,7 +90,7 @@
         <div class="px-4 py-3 space-y-2">
           <a href="https://docs.mockforge.dev" class="block text-text-primary dark:text-white">Docs</a>
           <a href="/engineering-notes.html" class="block text-text-primary dark:text-white">Notes</a>
-          <a href="/#features" class="block text-text-primary dark:text-white">Features</a>
+          <a href="${featuresHref}" class="block text-text-primary dark:text-white">Features</a>
           <a href="/pricing.html" class="block text-text-primary dark:text-white">Pricing</a>
           <a href="https://github.com/SaaSy-Solutions/mockforge" class="block text-text-primary dark:text-white">GitHub</a>
           <a href="https://app.mockforge.dev/login" class="block text-text-primary dark:text-white">Log In</a>
@@ -100,26 +98,11 @@
         </div>
       </div>
     </header>
+  `.trim();
+}
 
-    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
-      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
-        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">← Back to Engineering Notes</a>
-        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">December 10, 2025</p>
-        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Client Generation Tradeoffs: Safety, Speed, and Developer Experience</h1>
-        <p class="mt-6 text-lg leading-8 text-slate-700">Generated clients accelerate teams, but the defaults you choose decide whether that speed creates confidence or drift.</p>
-        <p class="mt-5 leading-8 text-slate-700">At MockForge, we optimize for predictable behavior first. Strict schema fidelity protects contracts and catches breaking changes early, but overly rigid output can slow teams that need quick mocks to unblock frontend and QA work.</p>
-        <p class="mt-5 leading-8 text-slate-700">The practical middle ground is explicitness. Keep generated clients strongly typed and schema-aware, then make escape hatches obvious: override rules, fixture injection, and scenario-based response shaping should be available without forcing teams to fork the generator.</p>
-        <div class="mt-8 rounded-2xl bg-slate-950 p-5 text-sm text-slate-100">
-          <p class="font-mono text-slate-300">Working rule</p>
-          <p class="mt-2 leading-7">Use strict generation for contracts, flexible overrides for workflows, and never hide fallback behavior behind silent defaults.</p>
-        </div>
-        <div class="mt-8 flex flex-wrap gap-3 text-sm">
-          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
-          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
-        </div>
-      </article>
-    </main>
-
+function renderFooter() {
+  return `
     <footer class="py-10 border-t border-black/5 dark:border-white/10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-3">
@@ -137,7 +120,10 @@
         </div>
       </div>
     </footer>
+  `.trim();
+}
 
+const shellScript = `
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         var toggle = document.getElementById('themeToggle');
@@ -169,5 +155,78 @@
         }
       });
     </script>
-  </body>
-</html>
+`.trim();
+
+const pages = [
+  { file: 'index.html', logoHref: '#top', featuresHref: '#features' },
+  { file: 'pricing.html', logoHref: '/', featuresHref: '/#features' },
+  { file: 'compare-wiremock.html', logoHref: '/', featuresHref: '/#features' },
+  { file: 'compare-mockserver.html', logoHref: '/', featuresHref: '/#features' },
+  { file: 'engineering-notes.html', logoHref: '/', featuresHref: '/#features' },
+  ...fs.readdirSync(root)
+    .filter((name) => /^note-.*\.html$/.test(name))
+    .map((file) => ({ file, logoHref: '/', featuresHref: '/#features' })),
+];
+
+function replaceOnce(text, regex, replacement, file, label) {
+  if (!regex.test(text)) {
+    throw new Error(`Could not find ${label} in ${file}`);
+  }
+  return text.replace(regex, replacement);
+}
+
+const nextContents = new Map();
+
+for (const page of pages) {
+  const filePath = path.join(root, page.file);
+  let text = fs.readFileSync(filePath, 'utf8');
+  const includeGaMeta = text.includes('<meta name="ga-measurement-id" content="" />');
+
+  text = replaceOnce(
+    text,
+    includeGaMeta
+      ? /<link rel="stylesheet" href="\/public\/styles\.css" \/>[\s\S]*?<meta name="ga-measurement-id" content="" \/>/
+      : /<link rel="stylesheet" href="\/public\/styles\.css" \/>[\s\S]*?<\/head>/,
+    includeGaMeta
+      ? renderSharedHeadBlock(true)
+      : `${renderSharedHeadBlock(false)}\n  </head>`,
+    page.file,
+    'shared head block'
+  );
+
+  text = replaceOnce(
+    text,
+    /<header class="sticky top-0 z-40[\s\S]*?<\/header>/,
+    renderHeader(page),
+    page.file,
+    'header'
+  );
+
+  text = replaceOnce(
+    text,
+    /<footer class="[\s\S]*?<\/footer>/,
+    renderFooter(),
+    page.file,
+    'footer'
+  );
+
+  if (text.includes(`document.addEventListener('DOMContentLoaded'`) && text.includes('themeToggle')) {
+    text = replaceOnce(
+      text,
+      /(<\/footer>\s*)<script>\s*[\s\S]*?document\.addEventListener\('DOMContentLoaded', function\s*\(\)\s*\{[\s\S]*?(?:getElementById\('themeToggle'\)|themeToggle)[\s\S]*?<\/script>/,
+      `$1${shellScript}`,
+      page.file,
+      'shell script'
+    );
+  } else {
+    text = text.replace('</body>', `${shellScript}\n  </body>`);
+  }
+
+  nextContents.set(filePath, text);
+}
+
+for (const [filePath, text] of nextContents) {
+  fs.writeFileSync(filePath, text);
+}
+
+console.log(`Synced shared shells for ${pages.length} pages.`);

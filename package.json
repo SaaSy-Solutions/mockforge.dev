@@ -2,7 +2,8 @@
   "name": "mockforge-dev-site",
   "private": true,
   "scripts": {
-    "build:css": "tailwindcss -c tailwind.config.js -i ./styles.css -o ./public/styles.css --minify"
+    "build:css": "tailwindcss -c tailwind.config.js -i ./styles.css -o ./public/styles.css --minify",
+    "sync:shells": "node ./scripts/sync-shells.js"
   },
   "devDependencies": {
     "tailwindcss": "3.4.17"

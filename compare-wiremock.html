@@ -45,78 +45,36 @@
       })();
     </script>
     <style>
-      html,
-      body {
-        height: 100%;
-      }
-
-      * {
-        transition: background-color 0.2s ease, border-color 0.2s ease;
-      }
-
-      html.dark {
-        color-scheme: dark;
-      }
-
-      html.dark body {
-        background-color: #0f172a;
-        color: #e2e8f0;
-      }
-
-      html.dark .bg-white {
-        background-color: #1e293b !important;
-      }
-
+      html, body { height: 100%; }
+      * { transition: background-color 0.2s ease, border-color 0.2s ease; }
+      html.dark { color-scheme: dark; }
+      html.dark body { background-color: #0f172a; color: #e2e8f0; }
+      html.dark .bg-white { background-color: #1e293b !important; }
       html.dark .bg-surface-subtle,
-      html.dark section:not(.bg-white):not([style*='background']) {
-        background-color: #0f172a;
-      }
-
-      html.dark .text-text-primary {
-        color: #f1f5f9 !important;
-      }
-
-      html.dark .text-text-secondary {
-        color: #cbd5e1 !important;
-      }
-
-      html.dark .text-brand-dark {
-        color: #f1f5f9 !important;
-      }
-
-      html.dark header {
-        background-color: #0f172a !important;
-        border-bottom-color: rgba(255, 255, 255, 0.1) !important;
-      }
-
-      html.dark header nav a {
-        color: #e2e8f0 !important;
-      }
-
-      html.dark header nav a:hover {
-        color: #ffffff !important;
-      }
-
-      html.dark .border-black\/5 {
-        border-color: rgba(255, 255, 255, 0.1) !important;
-      }
-
-      html.dark .border-black\/10 {
-        border-color: rgba(255, 255, 255, 0.14) !important;
-      }
-
-      html.dark .ring-black\/5 {
-        --tw-ring-color: rgba(255, 255, 255, 0.1) !important;
-      }
-
-      html.dark .shadow-soft {
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-      }
-
-      html.dark code {
-        background-color: #1e293b;
-        color: #e2e8f0;
-      }
+      html.dark .bg-stone-50,
+      html.dark section:not(.bg-white):not([style*="background"]) { background-color: #0f172a; }
+      html.dark .text-text-primary,
+      html.dark .text-slate-900,
+      html.dark .text-brand-ink,
+      html.dark .text-brand-dark { color: #f1f5f9 !important; }
+      html.dark .text-text-secondary,
+      html.dark .text-slate-700,
+      html.dark .text-slate-600,
+      html.dark .text-slate-500,
+      html.dark .text-slate-300 { color: #cbd5e1 !important; }
+      html.dark .text-orange-700,
+      html.dark .text-orange-200 { color: #fdba74 !important; }
+      html.dark header { background-color: #0f172a !important; border-bottom-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark header nav a { color: #e2e8f0 !important; }
+      html.dark header nav a:hover { color: #ffffff !important; }
+      html.dark .border-black\/5,
+      html.dark .border-black\/10,
+      html.dark .border-slate-200,
+      html.dark .border-slate-300 { border-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark .ring-black\/5 { --tw-ring-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark .shadow-soft { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); }
+      html.dark .shadow-note { box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35); }
+      html.dark code { background-color: #1e293b; color: #e2e8f0; }
     </style>
   </head>
   <body class="bg-surface-subtle dark:bg-gray-900 text-text-primary dark:text-gray-100 antialiased">
@@ -324,20 +282,18 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        const toggle = document.getElementById('themeToggle');
-        const html = document.documentElement;
-        const menuBtn = document.getElementById('menuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const year = document.getElementById('year');
+        var toggle = document.getElementById('themeToggle');
+        var html = document.documentElement;
+        var menuBtn = document.getElementById('menuBtn');
+        var mobileMenu = document.getElementById('mobileMenu');
+        var year = document.getElementById('year');
 
-        if (year) {
-          year.textContent = new Date().getFullYear();
-        }
+        if (year) year.textContent = new Date().getFullYear();
 
         if (toggle) {
           toggle.addEventListener('click', function () {
             html.classList.toggle('dark');
-            const isDark = html.classList.contains('dark');
+            var isDark = html.classList.contains('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
           });
         }
