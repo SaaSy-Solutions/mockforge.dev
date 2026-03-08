@@ -13,22 +13,83 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/public/styles.css" />
+    <script>
+      (function () {
+        try {
+          var storedTheme = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (error) {
+          console.warn('Theme initialization failed:', error);
+        }
+      })();
+    </script>
+    <style>
+      html, body { height: 100%; }
+      * { transition: background-color 0.2s ease, border-color 0.2s ease; }
+      html.dark { color-scheme: dark; }
+      html.dark body { background-color: #0f172a; color: #e2e8f0; }
+      html.dark .bg-white { background-color: #1e293b !important; }
+      html.dark .bg-stone-50 { background-color: #0f172a !important; }
+      html.dark .text-slate-900 { color: #f1f5f9 !important; }
+      html.dark .text-slate-700,
+      html.dark .text-slate-600,
+      html.dark .text-slate-500,
+      html.dark .text-slate-300 { color: #cbd5e1 !important; }
+      html.dark .text-brand-ink,
+      html.dark .text-brand-dark { color: #f1f5f9 !important; }
+      html.dark .text-orange-700 { color: #fdba74 !important; }
+      html.dark header { background-color: #0f172a !important; border-bottom-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark header nav a { color: #e2e8f0 !important; }
+      html.dark header nav a:hover { color: #ffffff !important; }
+      html.dark .border-black\/5,
+      html.dark .border-slate-200,
+      html.dark .border-slate-300 { border-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark .ring-black\/5 { --tw-ring-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark .shadow-note { box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35); }
+    </style>
     <meta name="ga-measurement-id" content="" />
   </head>
-  <body class="bg-stone-50 text-slate-900 antialiased font-sans">
-    <header class="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur">
-      <div class="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <a href="/" class="flex items-center gap-3 font-semibold tracking-tight text-brand-ink">
-          <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-8 w-8" />
-          <span>MockForge</span>
-        </a>
-        <nav class="flex items-center gap-4 text-sm">
-          <a href="/" class="text-slate-600 hover:text-slate-900">Home</a>
-          <a href="https://docs.mockforge.dev" class="text-slate-600 hover:text-slate-900">Docs</a>
-          <a href="/engineering-notes.html" class="text-slate-600 hover:text-slate-900">Notes</a>
-          <a href="/pricing.html" class="text-slate-600 hover:text-slate-900">Pricing</a>
-          <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-slate-600 hover:text-slate-900">GitHub</a>
-        </nav>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    <header class="sticky top-0 z-40 backdrop-blur bg-white/90 dark:bg-slate-900 border-b border-black/5 dark:border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="/" class="flex items-center gap-3">
+            <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-8 w-8" />
+            <span class="font-semibold tracking-tight text-brand-dark dark:text-white">MockForge</span>
+          </a>
+          <nav class="hidden md:flex items-center gap-3 lg:gap-4">
+            <a href="https://docs.mockforge.dev" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Docs</a>
+            <a href="/engineering-notes.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Notes</a>
+            <a href="/#features" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Features</a>
+            <a href="/pricing.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Pricing</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">GitHub</a>
+            <a href="https://app.mockforge.dev/login" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Log In</a>
+            <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 lg:px-3 lg:py-2 rounded-lg text-white hover:opacity-90 shadow-soft whitespace-nowrap text-sm" style="background-color: #D35400;">
+              <span>Sign Up Free</span>
+            </a>
+            <button id="themeToggle" class="p-2 rounded-lg border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10" aria-label="Toggle dark mode">
+              <svg id="sun" class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M7.05 7.05 5.636 5.636m12.728 0-1.414 1.414M7.05 16.95l-1.414 1.414"/><circle cx="12" cy="12" r="4"/></svg>
+              <svg id="moon" class="h-5 w-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+            </button>
+          </nav>
+          <button id="menuBtn" class="md:hidden p-2 rounded-lg border border-black/10 dark:border-white/20" aria-label="Open menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="mobileMenu" class="md:hidden hidden border-t border-black/5 dark:border-white/10 bg-white dark:bg-brand-dark">
+        <div class="px-4 py-3 space-y-2">
+          <a href="https://docs.mockforge.dev" class="block text-text-primary dark:text-white">Docs</a>
+          <a href="/engineering-notes.html" class="block text-text-primary dark:text-white">Notes</a>
+          <a href="/#features" class="block text-text-primary dark:text-white">Features</a>
+          <a href="/pricing.html" class="block text-text-primary dark:text-white">Pricing</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="block text-text-primary dark:text-white">GitHub</a>
+          <a href="https://app.mockforge.dev/login" class="block text-text-primary dark:text-white">Log In</a>
+          <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-white hover:opacity-90 shadow-soft" style="background-color: #D35400;">Sign Up Free</a>
+        </div>
       </div>
     </header>
 
