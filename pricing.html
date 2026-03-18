@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pricing — MockForge</title>
+    <meta name="description" content="MockForge pricing plans. Start free, scale with Pro or Team plans for hosted mocks, multi-protocol support, and collaboration." />
+
+    <meta property="og:title" content="Pricing — MockForge" />
+    <meta property="og:description" content="Transparent pricing for cloud-hosted mock APIs. Free tier included." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mockforge.dev/pricing" />
+
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/public/styles.css" />
+    <script>
+      (function () {
+        try {
+          var storedTheme = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (error) {
+          console.warn('Theme initialization failed:', error);
+        }
+      })();
+    </script>
+    <style>
+      html, body { height: 100%; }
+      * { transition: background-color 0.2s ease, border-color 0.2s ease; }
+      html.dark { color-scheme: dark; }
+      html.dark body { background-color: #0f172a; color: #e2e8f0; }
+      html.dark .bg-white { background-color: #1e293b !important; }
+      html.dark .bg-surface-subtle,
+      html.dark .bg-stone-50,
+      html.dark section:not(.bg-white):not([style*="background"]) { background-color: #0f172a; }
+      html.dark .text-text-primary,
+      html.dark .text-slate-900,
+      html.dark .text-brand-ink,
+      html.dark .text-brand-dark { color: #f1f5f9 !important; }
+      html.dark .text-text-secondary,
+      html.dark .text-slate-700,
+      html.dark .text-slate-600,
+      html.dark .text-slate-500,
+      html.dark .text-slate-300 { color: #cbd5e1 !important; }
+      html.dark .text-orange-700,
+      html.dark .text-orange-200 { color: #fdba74 !important; }
+      html.dark header { background-color: #0f172a !important; border-bottom-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark header nav a { color: #e2e8f0 !important; }
+      html.dark header nav a:hover { color: #ffffff !important; }
+      html.dark .border-black\/5,
+      html.dark .border-black\/10,
+      html.dark .border-slate-200,
+      html.dark .border-slate-300 { border-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark .ring-black\/5 { --tw-ring-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark .shadow-soft { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); }
+      html.dark .shadow-note { box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35); }
+      html.dark code { background-color: #1e293b; color: #e2e8f0; }
+    </style>
+    <meta name="ga-measurement-id" content="" />
+  </head>
+  <body class="bg-surface-subtle dark:bg-gray-900 text-text-primary dark:text-gray-100 antialiased">
+    <!-- Header / Nav -->
+    <header class="sticky top-0 z-40 backdrop-blur bg-white/90 dark:bg-slate-900 border-b border-black/5 dark:border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="/" class="flex items-center gap-3">
+            <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-8 w-8" />
+            <span class="font-semibold tracking-tight text-brand-dark dark:text-white">MockForge</span>
+          </a>
+          <nav class="hidden md:flex items-center gap-3 lg:gap-4">
+            <a href="https://docs.mockforge.dev" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Docs</a>
+            <a href="/engineering-notes.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Notes</a>
+            <a href="/#features" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Features</a>
+            <a href="/pricing.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Pricing</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">GitHub</a>
+            <a href="https://app.mockforge.dev/login" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Log In</a>
+            <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 lg:px-3 lg:py-2 rounded-lg text-white hover:opacity-90 shadow-soft whitespace-nowrap text-sm" style="background-color: #D35400;">
+              <span>Sign Up Free</span>
+            </a>
+            <button id="themeToggle" class="p-2 rounded-lg border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10" aria-label="Toggle dark mode">
+              <svg id="sun" class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M7.05 7.05 5.636 5.636m12.728 0-1.414 1.414M7.05 16.95l-1.414 1.414"/><circle cx="12" cy="12" r="4"/></svg>
+              <svg id="moon" class="h-5 w-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+            </button>
+          </nav>
+          <button id="menuBtn" class="md:hidden p-2 rounded-lg border border-black/10 dark:border-white/20" aria-label="Open menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="mobileMenu" class="md:hidden hidden border-t border-black/5 dark:border-white/10 bg-white dark:bg-brand-dark">
+        <div class="px-4 py-3 space-y-2">
+          <a href="https://docs.mockforge.dev" class="block text-text-primary dark:text-white">Docs</a>
+          <a href="/engineering-notes.html" class="block text-text-primary dark:text-white">Notes</a>
+          <a href="/#features" class="block text-text-primary dark:text-white">Features</a>
+          <a href="/pricing.html" class="block text-text-primary dark:text-white">Pricing</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="block text-text-primary dark:text-white">GitHub</a>
+          <a href="https://app.mockforge.dev/login" class="block text-text-primary dark:text-white">Log In</a>
+          <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-white hover:opacity-90 shadow-soft" style="background-color: #D35400;">Sign Up Free</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Pricing Hero -->
+    <section class="py-16 sm:py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl sm:text-5xl font-semibold tracking-tight text-brand-dark dark:text-white">
+          Simple, transparent pricing
+        </h1>
+        <p class="mt-4 text-lg text-text-secondary max-w-2xl mx-auto">
+          Start free with the open-source CLI. Add cloud hosting when you need it.
+        </p>
+      </div>
+    </section>
+
+    <!-- Pricing Cards -->
+    <section class="pb-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+
+          <!-- Free -->
+          <div class="p-8 bg-white dark:bg-brand-dark rounded-2xl shadow-soft ring-1 ring-black/5 dark:ring-white/10 flex flex-col">
+            <div>
+              <h3 class="text-lg font-semibold">Free</h3>
+              <div class="mt-4 flex items-baseline gap-1">
+                <span class="text-4xl font-semibold text-brand-dark dark:text-white">$0</span>
+                <span class="text-text-secondary">/month</span>
+              </div>
+              <p class="mt-3 text-sm text-text-secondary">For individual developers exploring locally.</p>
+            </div>
+            <ul class="mt-8 space-y-3 text-sm flex-grow">
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>10,000 requests/month</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>Local mocks only (no cloud hosting)</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>HTTP protocol</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>1 collaborator</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>Community support</span>
+              </li>
+            </ul>
+            <a href="https://app.mockforge.dev/register" class="mt-8 block w-full text-center px-5 py-3 rounded-xl border border-black/10 dark:border-white/20 text-text-primary dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10 font-medium">
+              Get Started
+            </a>
+          </div>
+
+          <!-- Pro (highlighted) -->
+          <div class="p-8 bg-white dark:bg-brand-dark rounded-2xl shadow-soft ring-2 dark:ring-white/20 flex flex-col relative" style="ring-color: #D35400; --tw-ring-color: #D35400;">
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+              <span class="px-3 py-1 rounded-full text-white text-xs font-medium" style="background-color: #D35400;">Most Popular</span>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold">Pro</h3>
+              <div class="mt-4 flex items-baseline gap-1">
+                <span class="text-4xl font-semibold text-brand-dark dark:text-white">$29</span>
+                <span class="text-text-secondary">/month</span>
+              </div>
+              <p class="mt-3 text-sm text-text-secondary">For freelancers and small teams shipping APIs.</p>
+            </div>
+            <ul class="mt-8 space-y-3 text-sm flex-grow">
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>250,000 requests/month</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span><strong>3 hosted mocks</strong> (cloud-deployed)</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>HTTP + gRPC protocols</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>5 collaborators</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>Custom subdomain</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>Email support</span>
+              </li>
+            </ul>
+            <a href="https://app.mockforge.dev/register?plan=pro" class="mt-8 block w-full text-center px-5 py-3 rounded-xl text-white hover:opacity-90 shadow-soft font-medium" style="background-color: #D35400;">
+              Start Pro Trial
+            </a>
+          </div>
+
+          <!-- Team -->
+          <div class="p-8 bg-white dark:bg-brand-dark rounded-2xl shadow-soft ring-1 ring-black/5 dark:ring-white/10 flex flex-col">
+            <div>
+              <h3 class="text-lg font-semibold">Team</h3>
+              <div class="mt-4 flex items-baseline gap-1">
+                <span class="text-4xl font-semibold text-brand-dark dark:text-white">$99</span>
+                <span class="text-text-secondary">/month</span>
+              </div>
+              <p class="mt-3 text-sm text-text-secondary">For growing teams with multi-protocol needs.</p>
+            </div>
+            <ul class="mt-8 space-y-3 text-sm flex-grow">
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>1,000,000 requests/month</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span><strong>Unlimited hosted mocks</strong></span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>All 10+ protocols (HTTP, gRPC, GraphQL, WebSocket, Kafka, MQTT, AMQP, SMTP, FTP, TCP)</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>20 collaborators</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>SSO / RBAC</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>Custom subdomain</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="h-5 w-5 flex-shrink-0 text-green-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>Priority support</span>
+              </li>
+            </ul>
+            <a href="https://app.mockforge.dev/register?plan=team" class="mt-8 block w-full text-center px-5 py-3 rounded-xl border border-black/10 dark:border-white/20 text-text-primary dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10 font-medium">
+              Start Team Trial
+            </a>
+          </div>
+        </div>
+
+        <!-- Enterprise callout -->
+        <div class="mt-12 max-w-3xl mx-auto text-center p-8 bg-white dark:bg-brand-dark rounded-2xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
+          <h3 class="text-xl font-semibold text-brand-dark dark:text-white">Enterprise</h3>
+          <p class="mt-2 text-text-secondary">Need dedicated infrastructure, SLAs, custom integrations, or volume pricing?</p>
+          <a href="https://saasysolutionsllc.com/#contact" class="mt-4 inline-flex items-center gap-2 text-sm font-medium" style="color:#D35400;">Contact sales &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature comparison table -->
+    <section class="py-16 bg-white dark:bg-brand-dark/50">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-semibold text-brand-dark dark:text-white text-center mb-8">Compare plans</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-black/10 dark:border-white/10">
+                <th class="text-left py-3 pr-4 font-medium text-text-secondary">Feature</th>
+                <th class="text-center py-3 px-4 font-medium">Free</th>
+                <th class="text-center py-3 px-4 font-medium" style="color: #D35400;">Pro</th>
+                <th class="text-center py-3 px-4 font-medium">Team</th>
+              </tr>
+            </thead>
+            <tbody class="text-text-secondary">
+              <tr class="border-b border-black/5 dark:border-white/5">
+                <td class="py-3 pr-4">Requests / month</td>
+                <td class="text-center py-3 px-4">10K</td>
+                <td class="text-center py-3 px-4">250K</td>
+                <td class="text-center py-3 px-4">1M</td>
+              </tr>
+              <tr class="border-b border-black/5 dark:border-white/5">
+                <td class="py-3 pr-4">Hosted mocks</td>
+                <td class="text-center py-3 px-4">0</td>
+                <td class="text-center py-3 px-4">3</td>
+                <td class="text-center py-3 px-4">Unlimited</td>
+              </tr>
+              <tr class="border-b border-black/5 dark:border-white/5">
+                <td class="py-3 pr-4">Protocols</td>
+                <td class="text-center py-3 px-4">HTTP</td>
+                <td class="text-center py-3 px-4">HTTP + gRPC</td>
+                <td class="text-center py-3 px-4">All 10+</td>
+              </tr>
+              <tr class="border-b border-black/5 dark:border-white/5">
+                <td class="py-3 pr-4">Collaborators</td>
+                <td class="text-center py-3 px-4">1</td>
+                <td class="text-center py-3 px-4">5</td>
+                <td class="text-center py-3 px-4">20</td>
+              </tr>
+              <tr class="border-b border-black/5 dark:border-white/5">
+                <td class="py-3 pr-4">SSO / RBAC</td>
+                <td class="text-center py-3 px-4">&mdash;</td>
+                <td class="text-center py-3 px-4">&mdash;</td>
+                <td class="text-center py-3 px-4">
+                  <svg class="h-5 w-5 text-green-500 mx-auto" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                </td>
+              </tr>
+              <tr class="border-b border-black/5 dark:border-white/5">
+                <td class="py-3 pr-4">Custom subdomain</td>
+                <td class="text-center py-3 px-4">&mdash;</td>
+                <td class="text-center py-3 px-4">
+                  <svg class="h-5 w-5 text-green-500 mx-auto" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                </td>
+                <td class="text-center py-3 px-4">
+                  <svg class="h-5 w-5 text-green-500 mx-auto" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                </td>
+              </tr>
+              <tr class="border-b border-black/5 dark:border-white/5">
+                <td class="py-3 pr-4">Admin UI</td>
+                <td class="text-center py-3 px-4">
+                  <svg class="h-5 w-5 text-green-500 mx-auto" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                </td>
+                <td class="text-center py-3 px-4">
+                  <svg class="h-5 w-5 text-green-500 mx-auto" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                </td>
+                <td class="text-center py-3 px-4">
+                  <svg class="h-5 w-5 text-green-500 mx-auto" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3 pr-4">Support</td>
+                <td class="text-center py-3 px-4">Community</td>
+                <td class="text-center py-3 px-4">Email</td>
+                <td class="text-center py-3 px-4">Priority</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-16">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-semibold text-brand-dark dark:text-white text-center mb-8">Pricing FAQ</h2>
+        <dl class="space-y-6">
+          <div>
+            <dt class="font-medium">Can I use MockForge for free?</dt>
+            <dd class="text-sm text-text-secondary mt-1">Yes. The CLI is open source (MIT/Apache-2.0) and always free for local development. The Free cloud tier includes 10K requests/month.</dd>
+          </div>
+          <div>
+            <dt class="font-medium">What happens if I exceed my request limit?</dt>
+            <dd class="text-sm text-text-secondary mt-1">Your mocks will continue to respond, but you'll receive a notification to upgrade. We don't cut you off mid-sprint.</dd>
+          </div>
+          <div>
+            <dt class="font-medium">Can I change plans at any time?</dt>
+            <dd class="text-sm text-text-secondary mt-1">Yes. Upgrades take effect immediately. Downgrades apply at the next billing cycle.</dd>
+          </div>
+          <div>
+            <dt class="font-medium">Do you offer annual pricing?</dt>
+            <dd class="text-sm text-text-secondary mt-1">Yes. Annual plans receive 2 months free. Contact us for details.</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- Email capture / Join the beta -->
+    <section class="py-16 bg-surface-subtle dark:bg-slate-900">
+      <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-2xl font-semibold text-brand-dark dark:text-white">Not ready to commit?</h2>
+        <p class="mt-2 text-text-secondary">Join the beta list and we'll notify you when cloud hosting launches.</p>
+        <form id="waitlistForm" class="mt-6 flex flex-col sm:flex-row gap-3">
+          <input
+            type="email"
+            name="email"
+            required
+            placeholder="you@company.com"
+            class="flex-1 px-4 py-3 rounded-xl border border-black/10 dark:border-white/20 bg-white dark:bg-slate-800 text-text-primary dark:text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-orange"
+          />
+          <button type="submit" class="px-6 py-3 rounded-xl text-white font-medium hover:opacity-90 shadow-soft whitespace-nowrap" style="background-color: #D35400;">
+            Notify Me
+          </button>
+        </form>
+        <p id="waitlistMessage" class="mt-3 text-sm text-text-secondary hidden"></p>
+        <p class="mt-2 text-xs text-text-secondary">No credit card required. Unsubscribe anytime.</p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-10 border-t border-black/5 dark:border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-6 w-6" />
+          <span class="text-sm text-text-secondary">© <span id="year"></span> MockForge. MIT or Apache-2.0.</span>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-4 text-sm">
+          <a href="https://docs.mockforge.dev" class="text-text-secondary hover:text-text-primary">Docs</a>
+          <a href="/engineering-notes.html" class="text-text-secondary hover:text-text-primary">Notes</a>
+          <a href="/pricing.html" class="text-text-secondary hover:text-text-primary">Pricing</a>
+          <a href="/compare-wiremock.html" class="text-text-secondary hover:text-text-primary">Compare: WireMock</a>
+          <a href="/compare-mockserver.html" class="text-text-secondary hover:text-text-primary">Compare: MockServer</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary hover:text-text-primary">GitHub</a>
+          <a href="https://www.linkedin.com/company/mockforge" class="text-text-secondary hover:text-text-primary" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var toggle = document.getElementById('themeToggle');
+        var html = document.documentElement;
+        var menuBtn = document.getElementById('menuBtn');
+        var mobileMenu = document.getElementById('mobileMenu');
+        var year = document.getElementById('year');
+
+        if (year) year.textContent = new Date().getFullYear();
+
+        if (toggle) {
+          toggle.addEventListener('click', function () {
+            html.classList.toggle('dark');
+            var isDark = html.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          });
+        }
+
+        if (menuBtn && mobileMenu) {
+          menuBtn.addEventListener('click', function () {
+            mobileMenu.classList.toggle('hidden');
+          });
+
+          mobileMenu.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+              mobileMenu.classList.add('hidden');
+            });
+          });
+        }
+      });
+    </script>
+
+    <script>
+    // Waitlist form handler
+    document.addEventListener('DOMContentLoaded', function () {
+      var form = document.getElementById('waitlistForm');
+      var msg = document.getElementById('waitlistMessage');
+      if (!form || !msg) return;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var email = form.querySelector('input[name="email"]').value.trim();
+        if (!email) return;
+
+        var btn = form.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = 'Submitting...';
+
+        fetch('https://api.mockforge.dev/api/v1/waitlist/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, source: 'pricing_page' })
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          msg.textContent = data.message || "You're on the list!";
+          msg.classList.remove('hidden');
+          msg.style.color = '#16a34a';
+          form.querySelector('input[name="email"]').value = '';
+          if (typeof window.gtag === 'function') {
+            window.gtag('event', 'sign_up', { method: 'waitlist', page_path: window.location.pathname });
+          }
+        })
+        .catch(function () {
+          msg.textContent = 'Something went wrong. Please try again.';
+          msg.classList.remove('hidden');
+          msg.style.color = '#dc2626';
+        })
+        .finally(function () {
+          btn.disabled = false;
+          btn.textContent = 'Notify Me';
+        });
+      });
+    });
+    </script>
+
+    <script>
+    // CTA click + sign-up conversion tracking
+    document.addEventListener('click', function (e) {
+      var link = e.target.closest('a');
+      if (!link || typeof window.gtag !== 'function') return;
+      var href = link.getAttribute('href') || '';
+      window.gtag('event', 'cta_click', {
+        cta_text: (link.textContent || '').trim().slice(0, 80),
+        cta_href: href,
+        page_path: window.location.pathname
+      });
+      if (href.indexOf('/register') !== -1) {
+        window.gtag('event', 'begin_sign_up', { page_path: window.location.pathname });
+      }
+    });
+    </script>
+
+    <script>
+    (function () {
+      var meta = document.querySelector('meta[name="ga-measurement-id"]');
+      var id = (meta && meta.content || '').trim();
+      if (!id || typeof window.gtag === 'function') return;
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', id, { page_path: window.location.pathname });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+      document.head.appendChild(s);
+    })();
+    </script>
+  </body>
+</html>
