@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — Introducing MockForge: First Public Release (v0.1.2)</title>
+    <meta name="description" content="MockForge v0.1.2 marked the first public release of our multi-protocol mocking framework built in Rust with AI-powered data generation, gRPC support, and enterprise security." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">October 23, 2025</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Introducing MockForge: First Public Release (v0.1.2)</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">The first public release of MockForge introduced AI-powered API mocking for REST, gRPC, GraphQL, WebSockets, and SMTP in a unified framework built in Rust.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">The Problem</h2>
+        <p class="mt-4 leading-8 text-slate-700">Modern development teams face fragmented mocking tools, unrealistic test data, and weeks lost waiting for backend services. Each protocol requires a different tool, and keeping mocks realistic is manual and error-prone.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">What v0.1.2 Delivered</h2>
+        <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc pl-6">
+          <li><strong>Multi-protocol support</strong> &mdash; REST with OpenAPI validation, gRPC with automatic HTTP bridge, GraphQL, WebSockets, and SMTP email testing in a single binary</li>
+          <li><strong>AI-powered data generation</strong> &mdash; LLM-driven mock generation (OpenAI, Anthropic, Ollama) with template tokens, deterministic seeding, and smart field inference at roughly $0.01 per 1,000 requests</li>
+          <li><strong>Enterprise security</strong> &mdash; AES-256-GCM and ChaCha20-Poly1305 encryption, request validation, secure credential handling, and audit logging</li>
+          <li><strong>Developer experience</strong> &mdash; Web-based admin UI, real-time monitoring via SSE, Git workspace sync, hot-reload, Docker and Kubernetes deployment</li>
+          <li><strong>Advanced testing</strong> &mdash; Operation-aware latency profiles, configurable failure rates, record-replay, data drift simulation, cross-endpoint validation</li>
+          <li><strong>Extensibility</strong> &mdash; Sandboxed WASM plugin system for custom generators, auth providers, and middleware</li>
+        </ul>
+
+        <h2 class="mt-8 text-xl font-semibold">Performance</h2>
+        <p class="mt-4 leading-8 text-slate-700">Sub-millisecond median latency (p99 under 5 ms), 10K+ requests per second on a single instance, and under 50 MB memory at idle.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Getting Started</h2>
+        <p class="mt-4 leading-8 text-slate-700">Install via <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">cargo install mockforge-cli</code>, initialize with <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">mockforge init my-service</code>, and run with <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">mockforge serve --port 8080</code>. Dual-licensed under MIT and Apache 2.0.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

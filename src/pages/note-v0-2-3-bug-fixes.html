@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — v0.2.3: Bug Fixes &amp; Stability Improvements</title>
+    <meta name="description" content="MockForge v0.2.3 fixes critical issues in OpenAPI example extraction, request body parameter generation, and React client generator template logic." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">October 31, 2025</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">v0.2.3: Bug Fixes &amp; Stability Improvements</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">A stability release addressing critical bugs in OpenAPI example extraction, request body parameter generation, and React client generator templates.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">OpenAPI Example Extraction Fix</h2>
+        <p class="mt-4 leading-8 text-slate-700">Explicit examples from OpenAPI schemas and properties are now correctly prioritized over generated mock data. Previously, specified examples at the schema or property level were sometimes ignored in favor of random generated values.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Request Body Parameter Generation Fix</h2>
+        <p class="mt-4 leading-8 text-slate-700">The React client generator now correctly generates <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">data</code> parameters for POST, PUT, PATCH, and DELETE operations with proper JSON serialization via <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">JSON.stringify(data)</code>.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Template Logic Fixes</h2>
+        <p class="mt-4 leading-8 text-slate-700">Handlebars template logic for request body type generation now correctly handles complex schemas and nested types. React hook <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">useCallback</code> dependency arrays are properly formatted, preventing React warnings.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Test Coverage</h2>
+        <p class="mt-4 leading-8 text-slate-700">Comprehensive test coverage added for request body parameter scenarios (all HTTP methods), complex nested schemas, array request bodies, multiple Content-Type support, and example extraction priority.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

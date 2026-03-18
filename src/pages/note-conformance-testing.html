@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — Spec-Driven OpenAPI Conformance Testing</title>
+    <meta name="description" content="MockForge now analyzes real OpenAPI specs, validates response schemas, and emits SARIF-friendly results so teams can verify what their APIs actually promise." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">March 7, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Spec-Driven OpenAPI Conformance Testing</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Most API teams can generate traffic. Fewer can prove that an implementation conforms to the OpenAPI behaviors their spec actually depends on. That is the real value behind the 0.3.55 through 0.3.57 release arc.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Why This Matters</h2>
+        <p class="mt-4 leading-8 text-slate-700">Most API testing stops at "did the endpoint return something" and "did the status code look right." Spec-driven conformance closes that gap, providing confidence in security scheme behavior, response schema correctness, content negotiation support, and category-specific contract coverage.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">What Changed</h2>
+        <p class="mt-4 leading-8 text-slate-700">Across 0.3.55 to 0.3.57, MockForge added OpenAPI 3.0.0 conformance testing across 47 features and 10 categories, per-target spec support for multi-target mode, spec-driven conformance against a real OpenAPI file, response schema validation, conformance category filtering, SARIF 2.1.0 output for CI and scanning workflows, and fixes for global security detection, security scheme type resolution, and content negotiation.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Who Should Care</h2>
+        <p class="mt-4 leading-8 text-slate-700">This is especially relevant if you operate a platform or API program, own integration quality across multiple services, need better proof in CI than "the endpoint returned 200," or want contract-aware testing without building custom conformance tooling.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Strategic Value</h2>
+        <p class="mt-4 leading-8 text-slate-700">The closer your test workflow gets to the spec your consumers depend on, the fewer surprises you leave for downstream teams. Point MockForge at the spec you already own, then validate the behaviors your API actually uses instead of a generic sample surface.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

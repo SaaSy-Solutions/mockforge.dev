@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — v0.2.7: API Sync, TCP Support &amp; Advanced Mocking</title>
+    <meta name="description" content="MockForge v0.2.7 introduces automatic API sync with change detection, raw TCP protocol support, advanced response selection modes, and webhook HTTP execution." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">November 5, 2025</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">v0.2.7: API Sync, TCP Support &amp; Advanced Mocking</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Intelligent API synchronization with change detection, TCP protocol mocking, flexible response selection, and real webhook execution.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Automatic API Sync &amp; Change Detection</h2>
+        <p class="mt-4 leading-8 text-slate-700">Periodic polling of upstream APIs with configurable intervals (default: 1 hour). Deep response comparison detects changes in status codes, headers, and body content. Optional automatic fixture updates, manual sync trigger via <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">POST /api/recorder/sync/now</code>, and detailed change reports with before/after comparisons. Configurable upstream URL, headers, timeout, and max requests.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">TCP Protocol Support</h2>
+        <p class="mt-4 leading-8 text-slate-700">The new <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">mockforge-tcp</code> crate enables raw TCP protocol mocking with fixture-based message matching, echo mode for testing clients, TLS/SSL support for encrypted connections, optional delimiter-based message framing, configurable buffer sizes and connection limits, and a <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">--tcp-port</code> CLI flag.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Response Selection Modes</h2>
+        <p class="mt-4 leading-8 text-slate-700">When multiple OpenAPI examples are available: sequential (round-robin) for systematic testing, random for unpredictable variation, and weighted random with custom per-example weights to control selection probability.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Webhook HTTP Execution</h2>
+        <p class="mt-4 leading-8 text-slate-700"><code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">HookAction::HttpRequest</code> now executes actual outbound HTTP requests (GET, POST, PUT, DELETE, PATCH) with configurable body and headers. Fire-and-forget execution so failures do not block orchestration.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Enhanced Documentation</h2>
+        <p class="mt-4 leading-8 text-slate-700">Complete CRUD simulation guide with stateful data store implementation, and full webhooks and callbacks guide covering hook chains, scripts, and real-world integration patterns.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

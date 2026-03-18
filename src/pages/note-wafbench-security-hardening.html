@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — WAFBench Security Hardening: From 37/46 to 46/46</title>
+    <meta name="description" content="MockForge improved WAFBench SQLi detection by fixing payload delivery semantics, cookie behavior, grouped CRS requests, and form/path injection handling." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">March 7, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">WAFBench Security Hardening: From 37/46 to 46/46</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Security testing fails quietly when payload delivery is wrong. The MockForge 0.3.46 through 0.3.54 release arc fixed the mechanics of how attacks are delivered so the WAFBench benchmark result means something.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">What Was Hardened</h2>
+        <p class="mt-4 leading-8 text-slate-700">Payload distribution across virtual users, actual security payload injection into generated requests, cookie jar behavior and header interactions, acceptance of all WAFBench CRS payloads, grouping of multi-part URI/header/body payloads into single requests, URL decoding and form handling, and explicit path injection and form-encoded body delivery.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Benchmark Progression</h2>
+        <p class="mt-4 leading-8 text-slate-700">Expected SQLi detection improved from 37/46, to 44/46, then 45/46, and finally 46/46. The signal is that request semantics were corrected until the benchmark became substantially more trustworthy.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Broader Implications</h2>
+        <p class="mt-4 leading-8 text-slate-700">If your security test harness splits grouped attacks across separate requests, encodes body or URI payloads incorrectly, lets cookie state interfere with intended headers, or sends traffic in formats the target does not actually inspect, then your benchmark is not giving you the answer you think it is.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Practical Takeaway</h2>
+        <p class="mt-4 leading-8 text-slate-700">The credibility of a security benchmark depends on transport semantics, not just the size of the attack catalog. Fix the harness, verify the delivery shape, then trust the score.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

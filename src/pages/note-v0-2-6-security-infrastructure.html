@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — v0.2.6: Production Security &amp; Infrastructure</title>
+    <meta name="description" content="MockForge v0.2.6 introduces TLS/HTTPS and mTLS support, built-in tunneling service, and completes SDK implementation phases 1 and 2." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">November 4, 2025</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">v0.2.6: Production Security &amp; Infrastructure</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Production readiness with enterprise-grade TLS/HTTPS and mutual TLS support, built-in tunneling for local development, and completed SDK implementation.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">TLS/HTTPS and mTLS Support</h2>
+        <p class="mt-4 leading-8 text-slate-700">Comprehensive TLS/HTTPS with configurable certificate and key file paths for all HTTP endpoints. Optional mutual TLS (mTLS) adds client certificate authentication with configurable client CA chains, ensuring only authorized clients connect.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Built-in Tunneling Service</h2>
+        <p class="mt-4 leading-8 text-slate-700">Expose local MockForge instances publicly via <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">mockforge serve --tunnel</code>. Automatic public URL generation for webhook testing, OAuth callback URLs, mobile app development, and remote team collaboration.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">SDK Implementation Complete</h2>
+        <p class="mt-4 leading-8 text-slate-700">Phase 1 and 2 of the MockForge SDK are complete: production-ready client generators for React, Vue, Svelte, and Angular with comprehensive documentation, real-world examples, and full TypeScript support.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Infrastructure Improvements</h2>
+        <p class="mt-4 leading-8 text-slate-700">Unified versioning across all workspace crates, fixed version mismatches in UI and plugin loader. Added mockforge-tcp and mockforge-test to the publish script. Fixed Axum 0.8 compatibility in proxy server and MQTT error types for async/await. Improved module-level documentation consistency.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

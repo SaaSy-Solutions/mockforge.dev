@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — v0.2.0: Multi-Framework Client Generation</title>
+    <meta name="description" content="MockForge v0.2.0 introduces multi-framework client generation for React, Vue, Angular, and Svelte, along with enhanced mock data generation, unified spec parsing, and browser mobile proxy mode." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">October 29, 2025</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">v0.2.0: Multi-Framework Client Generation</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">A major leap forward in developer experience: generate type-safe API clients for React, Vue, Angular, and Svelte from OpenAPI specifications, combined with enhanced mock data generation and a unified spec parser.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Multi-Framework Client Generation</h2>
+        <p class="mt-4 leading-8 text-slate-700">Generate framework-specific clients from your OpenAPI spec: React hooks with React Query integration, Vue composables, Angular injectable services with RxJS observables, and Svelte stores. Full TypeScript type generation, request/response validation, error handling, retry logic, customizable templates, and tree-shakeable output.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Unified Spec Parser</h2>
+        <p class="mt-4 leading-8 text-slate-700">Enhanced OpenAPI 3.0 and 3.1 schema validation with correct <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">$ref</code> resolution, detailed error messages with file locations, and YAML/JSON support. Catch spec issues early with clear validation reports.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Enhanced Mock Data Generation</h2>
+        <p class="mt-4 leading-8 text-slate-700">Schema-aware data generation that understands types, formats, and constraints. Maintains relationships between entities and generates realistic email addresses, names, and domain-specific values.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Browser Mobile Proxy Mode</h2>
+        <p class="mt-4 leading-8 text-slate-700">Intercept and mock API calls from iOS and Android devices via browser proxy. View and modify requests in real-time for mobile app testing without deploying backend services.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">CLI Enhancements</h2>
+        <p class="mt-4 leading-8 text-slate-700">Progress indicators for long operations, better error handling, color-coded output, verbose mode for debugging, and dry-run mode to preview changes.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

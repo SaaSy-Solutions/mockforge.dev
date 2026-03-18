@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — v0.2.5: Enterprise Security &amp; OAuth2</title>
+    <meta name="description" content="MockForge v0.2.5 introduces complete OAuth2 support with PKCE, enterprise error handling, request/response validation, interceptors, and comprehensive security features." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">November 2, 2025</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">v0.2.5: Enterprise Security &amp; OAuth2</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">A major release transforming generated API clients into production-ready, enterprise-grade solutions with complete OAuth2, structured error handling, request validation, and interceptors.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Complete OAuth2 Flow Support</h2>
+        <p class="mt-4 leading-8 text-slate-700">All standard OAuth2 flows: Authorization Code with PKCE (RFC 7636, SHA256), Client Credentials, Password, and Implicit. Includes cryptographically random code verifier generation, state parameter CSRF protection, token storage with expiration tracking, and automatic token refresh.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Enterprise Error Handling</h2>
+        <p class="mt-4 leading-8 text-slate-700">Structured <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">ApiError</code> class with status codes, <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">isClientError()</code>/<code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">isServerError()</code> helpers, and error body. <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">RequiredError</code> for missing fields with <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">getErrorDetails()</code> and <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">getVerboseMessage()</code>.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Request/Response Validation</h2>
+        <p class="mt-4 leading-8 text-slate-700">Built-in validation catches missing required fields and type errors before requests are sent. Configurable via <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">validateRequests</code> flag with detailed error messages.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Request/Response Interceptors</h2>
+        <p class="mt-4 leading-8 text-slate-700">Full control over the request/response lifecycle. Request interceptors for adding headers and logging, response interceptors for data normalization, and error interceptors for global error handling (e.g., 401 redirect to login).</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Multiple Authentication Methods</h2>
+        <p class="mt-4 leading-8 text-slate-700">Bearer token (static or dynamic), API Key, Basic Auth, and OAuth2. OAuth2 takes priority when configured. Includes security warnings for client secrets in browser code and XSS vulnerability alerts for localStorage token storage.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Additional Features</h2>
+        <p class="mt-4 leading-8 text-slate-700">Configurable request timeouts (default 30s, per-client or per-request), React Query integration examples, and comprehensive security documentation in generated READMEs.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>
