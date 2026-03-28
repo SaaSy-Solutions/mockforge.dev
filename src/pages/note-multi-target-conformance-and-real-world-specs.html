@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — Multi-Target Testing, Real-World Spec Support, and Conformance Maturity</title>
+    <meta name="description" content="MockForge v0.3.91–v0.3.103 adds multi-target load and conformance testing, real-world OpenAPI spec compatibility, HAR-to-YAML generation, and field-level schema validation errors." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">March 28, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Multi-Target Testing, Real-World Spec Support, and Conformance Maturity</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Versions 0.3.91 through 0.3.103 represent two weeks of intensive field testing with a community user running MockForge against production proxy infrastructure with 66+ targets and real-world OpenAPI specs from GitHub, Amazon S3, Xero, and custom enterprise APIs. The result is a significantly more robust tool for large-scale API testing.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Multi-Target Load Testing</h2>
+        <p class="mt-4 leading-8 text-slate-700">MockForge now handles parallel load testing across dozens of targets reliably. Each k6 instance gets a unique API server port to prevent conflicts. The summary parser correctly handles k6 threshold exits and newer k6 versions that deprecated <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">--summary-export</code>. Per-target results are exported as both JSON and CSV for easy analysis.</p>
+        <pre class="mt-4 rounded-xl bg-slate-900 p-4 text-sm text-green-400 overflow-x-auto"><code>mockforge bench --spec api.json --targets-file targets.json \
+  --vus 2 --max-concurrency 20 -d 1800s --insecure</code></pre>
+        <p class="mt-4 leading-8 text-slate-700">The JSON targets file supports per-target headers, auth tokens, and even per-target OpenAPI specs&mdash;critical when testing heterogeneous proxy deployments where each target needs different Referer or Origin headers.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Multi-Target Conformance</h2>
+        <p class="mt-4 leading-8 text-slate-700"><code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">--conformance</code> combined with <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">--targets-file</code> now runs conformance tests against each target sequentially, producing per-target reports and a combined summary. This enables validating API contract compliance across an entire fleet from a single command.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Real-World OpenAPI Spec Compatibility</h2>
+        <p class="mt-4 leading-8 text-slate-700">Loading the GitHub API spec (1,078 routes) previously caused a panic due to conflicting parameter names at the same path position. MockForge now canonicalizes parameter names across the route tree, handling specs from GitHub, Xero, Amazon, and other large APIs without crashes. Swagger 2.0 specs with <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">formData</code> parameters are now properly converted to OpenAPI 3 request bodies.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">HAR-to-YAML Generator</h2>
+        <p class="mt-4 leading-8 text-slate-700">A new command converts browser HAR captures directly into custom conformance YAML:</p>
+        <pre class="mt-4 rounded-xl bg-slate-900 p-4 text-sm text-green-400 overflow-x-auto"><code>mockforge har-to-conformance --har recording.har --output checks.yaml</code></pre>
+        <p class="mt-4 leading-8 text-slate-700">This auto-detects the base URL, filters static assets, and extracts response headers and JSON body field types. The output plugs directly into <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">--conformance-custom</code> for regression testing against real API behavior.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Field-Level Schema Validation</h2>
+        <p class="mt-4 leading-8 text-slate-700">Conformance failures now pinpoint exactly which field violated the schema&mdash;not just that validation failed. Each violation includes the JSON path, violation type, and expected vs actual values. This transforms schema errors from opaque failures into actionable diagnostics.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Quality-of-Life Improvements</h2>
+        <ul class="mt-4 space-y-2 leading-8 text-slate-700">
+          <li>Host header and Client IP displayed in both the TUI dashboard and web admin UI</li>
+          <li>Total elapsed time and <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">all_targets.csv</code> in multi-target output</li>
+          <li>Cookie-based auth no longer conflicts with auto-generated Basic Auth headers</li>
+          <li>Contract diff warnings downgraded from WARN to DEBUG</li>
+          <li>OData function call paths supported over TLS</li>
+        </ul>
+
+        <h2 class="mt-8 text-xl font-semibold">What We Learned</h2>
+        <p class="mt-4 leading-8 text-slate-700">This cycle was driven entirely by field feedback&mdash;a single user systematically testing against real infrastructure exposed assumptions that unit tests missed. k6&rsquo;s deprecated <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">--summary-export</code>, matchit&rsquo;s parameter name constraints, and Swagger 2.0&rsquo;s formData semantics were all invisible until someone ran MockForge against production APIs at scale. The takeaway: real-world specs and real proxy topologies are the ultimate test suite.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>
