@@ -114,6 +114,76 @@
 
       <section class="mt-10 space-y-6">
         <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">May 18, 2026</p>
+          <h2 class="mt-2 text-xl font-semibold">Our $10/mo SaaS Infrastructure</h2>
+          <p class="mt-3 text-slate-700">A walkthrough of MockForge Cloud's hosting stack — Cloudflare Pages for the admin UI, Fly.io for compute, Neon for Postgres — and why it costs under $10/month at launch traffic.</p>
+          <div class="mt-4 flex gap-4 text-sm">
+            <a href="/note-our-saas-infrastructure.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-orange-700 hover:text-orange-800">GitHub</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">May 17, 2026</p>
+          <h2 class="mt-2 text-xl font-semibold">How We Built the Hosted-Mock Cost Cap</h2>
+          <p class="mt-3 text-slate-700">A pre-launch readiness review surfaced a 10x cost-leak risk on the $29 Pro plan. The retrospective on how we shipped body-size caps and per-deployment RPS limits in the week before going live.</p>
+          <div class="mt-4 flex gap-4 text-sm">
+            <a href="/note-cost-cap-design.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge/pull/481" class="text-orange-700 hover:text-orange-800">The PR</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">May 16, 2026</p>
+          <h2 class="mt-2 text-xl font-semibold">When WireMock Isn't Enough</h2>
+          <p class="mt-3 text-slate-700">WireMock has been the default HTTP mock server for fifteen years. The specific cases where it stops being the right tool — and the ones where switching would be a step backward.</p>
+          <div class="mt-4 flex gap-4 text-sm">
+            <a href="/note-when-wiremock-isnt-enough.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
+            <a href="/compare-wiremock.html" class="text-orange-700 hover:text-orange-800">Full Comparison</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">May 15, 2026</p>
+          <h2 class="mt-2 text-xl font-semibold">Mocking Kafka Producers Without a Real Broker</h2>
+          <p class="mt-3 text-slate-700">Three levels of fake, when each is the right choice, and how a wire-compatible Kafka mock fits between client-library stubs and full testcontainers — including failure-injection patterns you can't reproduce on a real broker.</p>
+          <div class="mt-4 flex gap-4 text-sm">
+            <a href="/note-mocking-kafka-without-broker.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
+            <a href="https://docs.mockforge.dev/kafka" class="text-orange-700 hover:text-orange-800">Kafka Docs</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">May 14, 2026</p>
+          <h2 class="mt-2 text-xl font-semibold">Why MockForge Stayed Multi-Protocol</h2>
+          <p class="mt-3 text-slate-700">The market is full of HTTP-only mock services. Why we took the harder path: protocols beyond HTTP, spec-driven mocking that generalizes, and what the trade actually costs.</p>
+          <div class="mt-4 flex gap-4 text-sm">
+            <a href="/note-why-multi-protocol.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
+            <a href="/pricing.html" class="text-orange-700 hover:text-orange-800">Pricing</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">May 13, 2026</p>
+          <h2 class="mt-2 text-xl font-semibold">How to Mock a gRPC Service in CI</h2>
+          <p class="mt-3 text-slate-700">A practical, copy-paste guide: from the proto file to a gRPC mock in CI, with custom response overlays and a GitHub Actions snippet. No JVM, no testcontainers.</p>
+          <div class="mt-4 flex gap-4 text-sm">
+            <a href="/note-grpc-mocking-in-ci.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
+            <a href="https://docs.mockforge.dev/grpc" class="text-orange-700 hover:text-orange-800">gRPC Docs</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+          <p class="text-xs uppercase tracking-wide text-slate-500">May 12, 2026</p>
+          <h2 class="mt-2 text-xl font-semibold">MockForge Cloud is Here</h2>
+          <p class="mt-3 text-slate-700">After two years building the OSS multi-protocol mock server, the managed version is live. Deploy a hosted mock from a spec in 30 seconds — and keep the OSS path you already had.</p>
+          <div class="mt-4 flex gap-4 text-sm">
+            <a href="/note-cloud-launch.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
+            <a href="https://app.mockforge.dev/register" class="text-orange-700 hover:text-orange-800">Sign Up</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
           <p class="text-xs uppercase tracking-wide text-slate-500">March 28, 2026</p>
           <h2 class="mt-2 text-xl font-semibold">Multi-Target Testing, Real-World Spec Support, and Conformance Maturity</h2>
           <p class="mt-3 text-slate-700">Two weeks of field testing against 66+ proxy targets and real-world specs from GitHub, Amazon S3, and Xero drove multi-target conformance, HAR-to-YAML generation, field-level schema errors, and Swagger 2.0 formData support.</p>

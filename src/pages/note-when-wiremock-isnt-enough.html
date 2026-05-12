@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>When WireMock Isn't Enough (And When It Still Is)</title>
+    <meta name="description" content="WireMock has been the default HTTP mock server for fifteen years. Here are the specific cases where it stops being the right tool — and the ones where it still is." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">May 16, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">When WireMock Isn't Enough</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">WireMock has been the default HTTP mock server for fifteen years, and that's not an accident — it's mature, stable, well-documented, and has a JVM-native API that works inside JUnit. If your team is on the JVM and your test surface is HTTP-only, you should probably keep using it. This post is about the cases where it stops being the right tool.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">The honest comparison</h2>
+        <p class="mt-4 leading-8 text-slate-700">We have a <a href="/compare-wiremock.html" class="text-orange-700 hover:text-orange-800">side-by-side feature comparison</a> with WireMock if you want the rapid version. This post is the longer one — the situations where the limits actually matter, not the marketing-page bullets.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Case 1: Your test surface has more than HTTP</h2>
+        <p class="mt-4 leading-8 text-slate-700">WireMock is HTTP-only. If your service consumes Kafka, exposes gRPC, talks WebSocket, or sends SMTP, WireMock covers the HTTP layer and you handle the rest with separate tools — testcontainers for Kafka, hand-rolled fakes for gRPC, an SMTP stub like MailHog for email. Three different config formats, three different test setup patterns, three different things to keep in sync as your spec evolves.</p>
+        <p class="mt-4 leading-8 text-slate-700">The cost isn't WireMock's failure to do these things — it's never claimed it could. The cost is that the team ends up maintaining four mock systems instead of one, and the failure modes that span protocols (an HTTP request that should trigger a Kafka event that should send an email) become tedious to test in isolation. A single tool that speaks all three lets you write one test for the whole sequence.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Case 2: You're testing failure paths, not happy paths</h2>
+        <p class="mt-4 leading-8 text-slate-700">WireMock's fault simulation is real — it has chunked-response truncation, delay, and a few connection-level faults. It's enough for "what happens when the upstream is slow." It's not enough for "what happens when the upstream returns the wrong content-length, or starts sending chunked data and then stops mid-stream, or drops the TCP connection during the response body."</p>
+        <p class="mt-4 leading-8 text-slate-700">These aren't theoretical failures — they're the production-incident category. The mock either reproduces them or you find them in production. MockForge's chaos primitives were built explicitly for this surface: partial-response simulation, payload corruption with specific patterns, TCP-level connection errors, per-request matchers so you can target chaos at a single endpoint without affecting the rest of the test.</p>
+        <p class="mt-4 leading-8 text-slate-700">If your testing is purely contract verification ("did the endpoint return 200 with the right shape"), this difference doesn't matter. If you're testing resilience, it's the whole point.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Case 3: Realistic data variability matters</h2>
+        <p class="mt-4 leading-8 text-slate-700">WireMock's response bodies are static — you save the response you want, the mock returns it. Templating is available but you write the rules. For tests that depend on volume — "process 10,000 orders, verify the throughput" — the static-response model means every order looks identical, which papers over the data-shape variability your real production system has to handle.</p>
+        <p class="mt-4 leading-8 text-slate-700">MockForge's data synthesis goes further: faker-driven generation against the OpenAPI schema, optional drift simulation that shifts response shapes over time the way real upstream APIs do, and AI-assisted generation for cases where realistic content (a customer comment, an address, a product description) matters more than schema correctness. Whether this matters depends on whether your tests are about data shape or data substance.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Case 4: You're outside the JVM</h2>
+        <p class="mt-4 leading-8 text-slate-700">WireMock is Java-first. It runs standalone or in Docker, so language doesn't strictly matter — but the documented test integration is JUnit, the rule API is Java, and the strongest stories are in Spring projects. Outside the JVM, you're using it as a network service from your test code, which works but feels like a workaround.</p>
+        <p class="mt-4 leading-8 text-slate-700">If your stack is Go, Rust, Node, or Python — and especially if your team is uneasy about a JVM in CI — the calculus changes. There's nothing wrong with running WireMock in Docker from a Go test, but it's friction you may not need.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">When WireMock is still the right call</h2>
+        <p class="mt-4 leading-8 text-slate-700">A few cases where switching would be a step backward:</p>
+        <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
+          <li><strong>Established JVM testing infrastructure.</strong> If you have WireMock embedded in a JUnit rule, dozens of test classes built around it, and a workflow your team is comfortable with — the switching cost is real, and the marginal value of multi-protocol may not justify it.</li>
+          <li><strong>Pure HTTP, single team, simple test surface.</strong> If your needs are "fake this third-party API in a few JUnit tests," WireMock is mature, well-supported, and free. Reach for the simpler thing.</li>
+          <li><strong>You need the WireMock ecosystem.</strong> Plugins, extensions, the recording-and-playback flow, the WireMock Cloud team-features — these have years of polish on them.</li>
+        </ul>
+
+        <h2 class="mt-8 text-xl font-semibold">How to know which side you're on</h2>
+        <p class="mt-4 leading-8 text-slate-700">A useful exercise: list the failure modes your tests are supposed to catch. If they're all variations on "did the endpoint return the right thing," WireMock is fine. If they include "what happens when this Kafka topic is slow," "what does the WebSocket client do when the server closes mid-message," or "did the SMTP send actually fire after the order succeeded" — that's MockForge's surface, and the multi-protocol design exists exactly for those tests.</p>
+        <p class="mt-4 leading-8 text-slate-700">The right mock tool is the one that turns a 30-line custom fake into a five-line config. For HTTP-only teams, that's frequently still WireMock. For everyone else, it's worth a closer look at what you're really testing.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="/compare-wiremock.html" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Full Comparison</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">Try MockForge</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>
