@@ -54,26 +54,9 @@ Listening on 0.0.0.0:50051 (gRPC reflection enabled)</code></pre>
 )</code></pre>
         <p class="mt-4 leading-8 text-slate-700">Use a fixed <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">ORDER_SERVICE_URL</code> env var in your CI workflow, and the tests run against the mock without code changes.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">Step 4: Customize specific responses</h2>
-        <p class="mt-4 leading-8 text-slate-700">Default behavior is "return any valid response for the proto." For tests that need specific data, drop a YAML overlay next to the proto:</p>
-        <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code># mockforge.yaml
-grpc:
-  overrides:
-    - service: OrderService
-      method: GetOrder
-      match:
-        order_id: "missing-001"
-      response:
-        status: NOT_FOUND
-        message: "order not found"
-    - service: OrderService
-      method: GetOrder
-      response:
-        body:
-          id: "{{request.order_id}}"
-          total_cents: 4299
-          currency: USD</code></pre>
-        <p class="mt-4 leading-8 text-slate-700">Now <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">GetOrder(order_id="missing-001")</code> returns NOT_FOUND, everything else returns a synthetic order echoing the requested ID. The Handlebars <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">{{request.field}}</code> templating works for both responses and partial matches.</p>
+        <h2 class="mt-8 text-xl font-semibold">Step 4: Shape the synthetic data</h2>
+        <p class="mt-4 leading-8 text-slate-700">Default behavior is "return a valid response for every method" — the mock infers types from the proto and emits schema-correct dummy data. That covers most CI tests where you just need the call to succeed.</p>
+        <p class="mt-4 leading-8 text-slate-700">When you need specific field values (a fixed order ID, a known total) the smart-mock generator accepts field-name overrides at startup, so a request for an <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">Order</code> response can be biased toward realistic content per field. Today this lives in code rather than config; the patterns are documented in the <a href="https://docs.mockforge.dev/user-guide/grpc-mocking.html" class="text-orange-700 hover:text-orange-800">gRPC mocking guide</a>, and richer YAML-driven per-method overrides are on the near-term roadmap. For the "does my retry-and-deadline logic work" class of tests, the default-generation behavior is usually enough.</p>
 
         <h2 class="mt-8 text-xl font-semibold">Step 5: Wire it into your CI workflow</h2>
         <p class="mt-4 leading-8 text-slate-700">For GitHub Actions, that's a single service block:</p>
@@ -96,7 +79,7 @@ grpc:
         <p class="mt-4 leading-8 text-slate-700">For everything else — feature work that depends on an unfinished service, CI tests that shouldn't hit production, isolated reproducer environments — a proto-driven mock is the cheapest path.</p>
 
         <div class="mt-8 flex flex-wrap gap-3 text-sm">
-          <a href="https://docs.mockforge.dev/grpc" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">gRPC Docs</a>
+          <a href="https://docs.mockforge.dev/user-guide/grpc-mocking.html" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">gRPC Docs</a>
           <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
         </div>
       </article>
