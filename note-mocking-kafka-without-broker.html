@@ -122,16 +122,21 @@
         <p class="mt-4 leading-8 text-slate-700">MockForge's Kafka listener falls in this category. So does <a href="https://github.com/confluentinc/kafka-rest" class="text-orange-700 hover:text-orange-800">Confluent's kafka-rest</a> for the REST proxy case, and parts of the <a href="https://github.com/charmbracelet/kafka" class="text-orange-700 hover:text-orange-800">Kafka Streams test utilities</a> if you're in the JVM world.</p>
 
         <h2 class="mt-8 text-xl font-semibold">Setting it up</h2>
-        <p class="mt-4 leading-8 text-slate-700">With MockForge installed (<code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">cargo install mockforge-cli</code>), bring up the Kafka listener with topic auto-creation enabled — your tests then produce or consume topics on demand without pre-declaring them:</p>
+        <p class="mt-4 leading-8 text-slate-700">With MockForge installed (<code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">cargo install mockforge-cli</code>), bring up the Kafka listener with topic auto-creation enabled and (optionally) seed messages your tests will consume:</p>
         <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code># mockforge.yaml
 kafka:
   enabled: true
   port: 9092
   auto_create_topics: true
   default_partitions: 3
-  default_replication_factor: 1</code></pre>
+  default_replication_factor: 1
+  seed_messages:
+    orders.created:
+      - key: "order-001"
+        value: '{"order_id":"order-001","total":4299}'</code></pre>
         <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>$ mockforge serve --config mockforge.yaml
-[kafka] Listening on 0.0.0.0:9092 (auto_create_topics: true)</code></pre>
+[kafka] Listening on 0.0.0.0:9092 (auto_create_topics: true)
+[kafka] Seeded 1 message across 1 topic at broker startup</code></pre>
 
         <h2 class="mt-8 text-xl font-semibold">Pointing your producer at it</h2>
         <p class="mt-4 leading-8 text-slate-700">Use whatever Kafka client you already have. The mock advertises <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">localhost:9092</code> through its metadata response so your client doesn't notice it's not a real broker. In Python with confluent-kafka:</p>
@@ -143,21 +148,30 @@ p.flush()</code></pre>
         <p class="mt-4 leading-8 text-slate-700">The producer's serialization, partitioning, and ack handling all run as they would against a real broker. If your config is wrong (a missing <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">key.serializer</code>, a bad compression setting), the mock surfaces the same error the real broker would.</p>
 
         <h2 class="mt-8 text-xl font-semibold">Testing the consumer side</h2>
-        <p class="mt-4 leading-8 text-slate-700">In the same test, publish the message you want the consumer to handle, then run it. Topic auto-creation means the produce + consume sequence works without any pre-declaration step:</p>
+        <p class="mt-4 leading-8 text-slate-700">Seeded messages from the config show up on the topic at offset 0 immediately — a consumer reading from beginning sees them without any setup. You can also publish from the test itself:</p>
         <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>def test_consumer_handles_order_created():
-    p = Producer({"bootstrap.servers": "localhost:9092"})
-    p.produce("orders.created", key="order-001",
-              value='{"order_id":"order-001","total":4299}')
-    p.flush()
-
+    # Mock broker already has order-001 seeded from mockforge.yaml
     handler = OrderHandler()
     handler.consume("localhost:9092", "orders.created", group_id="test-1")
     assert handler.processed_count == 1
     assert handler.last_order_id == "order-001"</code></pre>
-        <p class="mt-4 leading-8 text-slate-700">Each test starts the broker fresh (or resets offsets) so the produced message is the only one the consumer sees. Compared to testcontainers Kafka, the cycle is single-digit seconds and the failure modes are deterministic.</p>
+        <p class="mt-4 leading-8 text-slate-700">Same key always lands on the same partition (Kafka's hash-on-key contract), so seeded records distribute exactly the way real produced records would. Each test starts the broker fresh, so the only messages a consumer sees are the ones in <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">seed_messages</code> plus anything the test publishes inline.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">Where MockForge's Kafka mock is today</h2>
-        <p class="mt-4 leading-8 text-slate-700">The mock implements the protocol surface most clients care about: produce, fetch, metadata, group coordination, consumer offsets. It doesn't yet expose YAML-driven fault injection (produce throttling, offset-out-of-range simulation) the way the HTTP listener does — that's a roadmap item. If you need to test specific failure paths today, the broker can be killed and restarted between scenarios, or you can introduce errors at the client level. Watch <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-orange-700 hover:text-orange-800">the GitHub repo</a> for the Kafka-faults work.</p>
+        <h2 class="mt-8 text-xl font-semibold">Failure-injection: where mock brokers earn their keep</h2>
+        <p class="mt-4 leading-8 text-slate-700">The reason to use a mock instead of a real broker for tests isn't speed — it's that you can introduce specific failures deterministically. With MockForge, fault injection is config:</p>
+        <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>kafka:
+  port: 9092
+  faults:
+    - topic: orders.created
+      partition: 1
+      kind: produce_throttle
+      delay_ms: 2000
+    - topic: orders.shipped
+      kind: offset_out_of_range
+      probability: 0.05
+    - topic: critical-pipeline
+      kind: produce_not_leader</code></pre>
+        <p class="mt-4 leading-8 text-slate-700">Your retry-and-backoff code actually gets exercised. The 2-second produce throttle on partition 1 forces your client through its retry path. The 5% out-of-range error on <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">orders.shipped</code> surfaces consumer reset behavior. The <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">produce_not_leader</code> rule makes the client re-fetch metadata and retry. None of these is easy to reproduce on a real broker.</p>
 
         <h2 class="mt-8 text-xl font-semibold">Wiring into CI</h2>
         <p class="mt-4 leading-8 text-slate-700">GitHub Actions example. Background the mock, wait for the port to open, run the tests:</p>
@@ -173,7 +187,7 @@ p.flush()</code></pre>
         <p class="mt-4 leading-8 text-slate-700">For the case where you mostly want to know whether your producer config works and whether your consumer handles the messages it gets, a wire-compatible mock turns a flaky 30-second CI step into a reliable one-second one.</p>
 
         <div class="mt-8 flex flex-wrap gap-3 text-sm">
-          <a href="https://github.com/SaaSy-Solutions/mockforge/tree/main/crates/mockforge-kafka" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Kafka Source</a>
+          <a href="https://docs.mockforge.dev/user-guide/kafka-mocking.html" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Kafka Docs</a>
           <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
         </div>
       </article>
