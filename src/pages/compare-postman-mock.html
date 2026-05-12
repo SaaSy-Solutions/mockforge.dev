@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge vs Postman Mock Server</title>
+    <meta
+      name="description"
+      content="Compare MockForge and Postman Mock Server across protocol scope, behavior realism, deployment options, and pricing model."
+    />
+    <meta property="og:title" content="MockForge vs Postman Mock Server" />
+    <meta
+      property="og:description"
+      content="When Postman's built-in mock server is enough — and when you need multi-protocol, spec-driven mocking with realistic behavior."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mockforge.dev/compare-postman-mock.html" />
+    <meta property="og:image" content="/public/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/public/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-surface-subtle dark:bg-gray-900 text-text-primary dark:text-gray-100 antialiased">
+    {{HEADER}}
+
+    <section class="relative overflow-hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="py-20 sm:py-28 grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-slate-800 shadow-soft text-text-secondary dark:text-gray-300 text-xs">
+              <span class="w-2 h-2 rounded-full bg-green-500"></span>
+              Comparison guide
+            </div>
+            <h1 class="mt-5 text-4xl sm:text-5xl font-semibold tracking-tight text-brand-dark dark:text-white">
+              MockForge vs Postman Mock Server
+            </h1>
+            <p class="mt-5 text-lg text-text-secondary max-w-2xl">
+              Postman's mock server returns saved examples from your collections — convenient if your team already lives in Postman.
+              MockForge is built for teams that need multi-protocol simulation, realistic behavior, and a path that doesn't depend on staying
+              inside a single vendor's platform.
+            </p>
+            <p class="mt-4 text-sm text-text-secondary">Last updated May 12, 2026.</p>
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+              <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-black/10 dark:border-white/20 text-text-primary dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10">
+                <span class="font-medium">Start with OSS</span>
+              </a>
+              <a href="https://docs.mockforge.dev" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-black/10 dark:border-white/20 text-text-primary dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10">
+                <span class="font-medium">Read the Docs</span>
+              </a>
+              <a href="https://saasysolutionsllc.com/#contact" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-white hover:opacity-90 shadow-soft whitespace-nowrap" style="background-color: #D35400;">
+                <span class="font-medium">Book enterprise demo</span>
+              </a>
+            </div>
+          </div>
+          <div class="relative">
+            <div class="rounded-3xl shadow-soft ring-1 ring-black/5 overflow-hidden bg-white dark:bg-brand-dark p-8 sm:p-10">
+              <div class="text-xs uppercase tracking-[0.24em] text-text-secondary">Best fit by workflow</div>
+              <div class="mt-6 space-y-5">
+                <div class="rounded-2xl border border-black/5 bg-surface-subtle dark:bg-slate-800 p-5">
+                  <div class="text-sm font-semibold text-brand-dark dark:text-white">Choose MockForge when</div>
+                  <p class="mt-2 text-sm leading-6 text-text-secondary">
+                    You need protocols beyond HTTP (gRPC, WebSocket, GraphQL, Kafka, MQTT, etc.), realistic behavior simulation
+                    (latency, faults, data drift), or a self-hostable option that isn't tied to one vendor's collection format.
+                  </p>
+                </div>
+                <div class="rounded-2xl border border-black/5 bg-surface-subtle dark:bg-slate-800 p-5">
+                  <div class="text-sm font-semibold text-brand-dark dark:text-white">Choose Postman Mock when</div>
+                  <p class="mt-2 text-sm leading-6 text-text-secondary">
+                    Your team already authors API specs in Postman collections, you only need HTTP mocking, and per-seat
+                    pricing inside the Postman platform suits your billing structure.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl">
+          <h2 class="text-3xl font-semibold text-brand-dark dark:text-white">Capability comparison</h2>
+          <p class="mt-3 text-text-secondary">
+            Postman's mock server is built into the Postman product and reuses saved collection examples as mock responses.
+            MockForge is a standalone mocking platform built around realistic simulation across protocols.
+          </p>
+          <p class="mt-3 text-sm text-text-secondary">This page is a maintained workflow comparison, not a certification of every vendor feature or roadmap detail.</p>
+        </div>
+
+        <div class="mt-10 overflow-x-auto rounded-3xl shadow-soft ring-1 ring-black/5 bg-white dark:bg-brand-dark">
+          <table class="w-full text-sm">
+            <thead class="bg-black/5 dark:bg-white/10">
+              <tr>
+                <th class="text-left px-4 py-3 font-semibold text-brand-dark dark:text-white">Capability</th>
+                <th class="text-left px-4 py-3 font-semibold text-brand-dark dark:text-white">MockForge</th>
+                <th class="text-left px-4 py-3 font-semibold text-brand-dark dark:text-white">Postman Mock Server</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-t border-black/10">
+                <td class="px-4 py-3 font-medium text-brand-dark dark:text-white">Protocol scope</td>
+                <td class="px-4 py-3 text-text-secondary">HTTP, gRPC, WebSocket, GraphQL, Kafka, MQTT, AMQP, SMTP, FTP, TCP</td>
+                <td class="px-4 py-3 text-text-secondary">HTTP only</td>
+              </tr>
+              <tr class="border-t border-black/10">
+                <td class="px-4 py-3 font-medium text-brand-dark dark:text-white">Source of truth</td>
+                <td class="px-4 py-3 text-text-secondary">OpenAPI specs, gRPC protos, GraphQL schemas — or hand-authored route rules</td>
+                <td class="px-4 py-3 text-text-secondary">Postman Collections with saved response examples</td>
+              </tr>
+              <tr class="border-t border-black/10">
+                <td class="px-4 py-3 font-medium text-brand-dark dark:text-white">Behavior realism</td>
+                <td class="px-4 py-3 text-text-secondary">Built-in latency injection, fault scenarios, data drift, partial-response and chunked-encoding simulation</td>
+                <td class="px-4 py-3 text-text-secondary">Returns the matching saved example; latency simulation is limited</td>
+              </tr>
+              <tr class="border-t border-black/10">
+                <td class="px-4 py-3 font-medium text-brand-dark dark:text-white">Synthetic data</td>
+                <td class="px-4 py-3 text-text-secondary">Faker-driven generation, schema-aware inference, optional RAG/AI for context-aware responses</td>
+                <td class="px-4 py-3 text-text-secondary">Whatever example bodies you saved in the collection</td>
+              </tr>
+              <tr class="border-t border-black/10">
+                <td class="px-4 py-3 font-medium text-brand-dark dark:text-white">Deployment</td>
+                <td class="px-4 py-3 text-text-secondary">OSS self-host, Docker, Kubernetes, or managed cloud — your choice</td>
+                <td class="px-4 py-3 text-text-secondary">Hosted by Postman; cloud-only</td>
+              </tr>
+              <tr class="border-t border-black/10">
+                <td class="px-4 py-3 font-medium text-brand-dark dark:text-white">Licensing</td>
+                <td class="px-4 py-3 text-text-secondary">MIT or Apache-2.0 OSS core, paid managed tier</td>
+                <td class="px-4 py-3 text-text-secondary">Proprietary, included with Postman plans</td>
+              </tr>
+              <tr class="border-t border-black/10">
+                <td class="px-4 py-3 font-medium text-brand-dark dark:text-white">Pricing model</td>
+                <td class="px-4 py-3 text-text-secondary">Free OSS, plan-tiered cloud ($29 Pro / $99 Team for hosted mocks)</td>
+                <td class="px-4 py-3 text-text-secondary">Per-user Postman seat plus per-plan mock-call quotas</td>
+              </tr>
+              <tr class="border-t border-black/10">
+                <td class="px-4 py-3 font-medium text-brand-dark dark:text-white">Integration story</td>
+                <td class="px-4 py-3 text-text-secondary">Standalone — runs alongside any tooling, CI, or workflow</td>
+                <td class="px-4 py-3 text-text-secondary">Tightly integrated with the Postman ecosystem (collections, environments, monitors)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-12 grid gap-6 md:grid-cols-3">
+          <div class="rounded-2xl bg-white dark:bg-brand-dark p-6 shadow-soft ring-1 ring-black/5">
+            <div class="text-sm font-semibold text-brand-dark dark:text-white">Multi-protocol coverage</div>
+            <p class="mt-2 text-sm leading-6 text-text-secondary">
+              If your services span gRPC, WebSockets, Kafka, or message brokers, Postman Mock won't help. MockForge
+              simulates all of them from the same interface.
+            </p>
+          </div>
+          <div class="rounded-2xl bg-white dark:bg-brand-dark p-6 shadow-soft ring-1 ring-black/5">
+            <div class="text-sm font-semibold text-brand-dark dark:text-white">Realistic, not static</div>
+            <p class="mt-2 text-sm leading-6 text-text-secondary">
+              Postman returns the example you saved. MockForge can inject latency, fault patterns, and data drift —
+              the conditions your service actually faces in production.
+            </p>
+          </div>
+          <div class="rounded-2xl bg-white dark:bg-brand-dark p-6 shadow-soft ring-1 ring-black/5">
+            <div class="text-sm font-semibold text-brand-dark dark:text-white">No platform lock-in</div>
+            <p class="mt-2 text-sm leading-6 text-text-secondary">
+              MockForge runs anywhere — laptop, CI runner, Kubernetes, or our managed cloud — and stays useful even if
+              your team's tooling changes around it.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-20">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="rounded-3xl bg-white dark:bg-brand-dark shadow-soft ring-1 ring-black/5 p-8 sm:p-10 text-center">
+          <h2 class="text-3xl font-semibold text-brand-dark dark:text-white">Outgrowing collection-based mocks?</h2>
+          <p class="mt-3 text-text-secondary max-w-3xl mx-auto">
+            Postman Mock works when your test surface is small and HTTP-only. Teams shipping across multiple protocols,
+            testing failure paths, or wanting OSS portability tend to land on MockForge.
+          </p>
+          <div class="mt-8 flex flex-wrap justify-center gap-3">
+            <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-white hover:opacity-90 shadow-soft whitespace-nowrap" style="background-color: #D35400;">
+              <span class="font-medium">Get Started Free</span>
+            </a>
+            <a href="https://docs.mockforge.dev" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-black/10 dark:border-white/20 text-text-primary dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10">
+              <span class="font-medium">Read the Docs</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>
