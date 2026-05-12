@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Block training-data crawlers per the GPC/AI-train preference (kept from the
+# original site policy). Search-engine indexing remains open.
+User-agent: GPTBot
+Disallow: /
+User-agent: ClaudeBot
+Disallow: /
+User-agent: anthropic-ai
+Disallow: /
+User-agent: CCBot
+Disallow: /
+User-agent: PerplexityBot
+Disallow: /
+User-agent: Google-Extended
+Disallow: /
+
+Sitemap: https://mockforge.dev/sitemap.xml
