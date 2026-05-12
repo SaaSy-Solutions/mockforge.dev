@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How to Mock a gRPC Service in CI</title>
+    <meta name="description" content="A practical guide to mocking gRPC services in CI: from generating stubs to running a fake server your tests can dial, using MockForge or hand-rolled alternatives." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">May 13, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">How to Mock a gRPC Service in CI</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Mocking HTTP in CI is a solved problem. Mocking gRPC isn't, because the tooling assumed everyone would just bring up the real service. This is a walkthrough of the actual options — and why we ended up building one of them.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">The problem</h2>
+        <p class="mt-4 leading-8 text-slate-700">Your service depends on a gRPC API — an internal one, a vendor's, or a Google/AWS managed service. Your CI needs to run tests that call it. You have three options, and only one of them is good:</p>
+        <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
+          <li><strong>Run the real service in CI.</strong> Doable for internal services, painful for vendor ones, impossible for SaaS. Adds build time and turns flaky-upstream incidents into your CI's problem.</li>
+          <li><strong>Hand-roll a fake.</strong> Generate Go/Rust/Python stubs from the proto, implement the methods you care about, run it in a sidecar. Works, but you maintain it forever.</li>
+          <li><strong>Use a generic gRPC mock server.</strong> What this post is about.</li>
+        </ul>
+
+        <h2 class="mt-8 text-xl font-semibold">Step 1: Have the proto file</h2>
+        <p class="mt-4 leading-8 text-slate-700">A gRPC mock needs the same proto your real service uses. If you're calling an internal service, grab the <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">.proto</code> from its repo. For vendor APIs, the proto is usually published — Google's are in <a href="https://github.com/googleapis/googleapis" class="text-orange-700 hover:text-orange-800">googleapis/googleapis</a>, AWS in their respective SDK repos.</p>
+        <p class="mt-4 leading-8 text-slate-700">Save it somewhere your CI can read it. For this post, assume <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">proto/orders.proto</code> with a service like:</p>
+        <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>service OrderService {
+  rpc GetOrder(GetOrderRequest) returns (Order);
+  rpc ListOrders(ListOrdersRequest) returns (stream Order);
+}</code></pre>
+
+        <h2 class="mt-8 text-xl font-semibold">Step 2: Start the mock server</h2>
+        <p class="mt-4 leading-8 text-slate-700">With MockForge's CLI installed (<code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">cargo install mockforge-cli</code>), one command brings up a gRPC server that implements every method in the proto. Each method returns realistic dummy data inferred from the message schema:</p>
+        <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>$ mockforge serve --proto proto/orders.proto --grpc-port 50051
+Listening on 0.0.0.0:50051 (gRPC reflection enabled)</code></pre>
+        <p class="mt-4 leading-8 text-slate-700">Reflection is on by default, so you can probe with <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">grpcurl localhost:50051 list</code> before you wire it into your client.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Step 3: Point your tests at it</h2>
+        <p class="mt-4 leading-8 text-slate-700">In your test setup, override the gRPC channel to dial <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">localhost:50051</code> instead of the real upstream. In Go:</p>
+        <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>conn, err := grpc.Dial(
+    os.Getenv("ORDER_SERVICE_URL"), // "localhost:50051" in CI
+    grpc.WithTransportCredentials(insecure.NewCredentials()),
+)</code></pre>
+        <p class="mt-4 leading-8 text-slate-700">Use a fixed <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">ORDER_SERVICE_URL</code> env var in your CI workflow, and the tests run against the mock without code changes.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Step 4: Customize specific responses</h2>
+        <p class="mt-4 leading-8 text-slate-700">Default behavior is "return any valid response for the proto." For tests that need specific data, drop a YAML overlay next to the proto:</p>
+        <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code># mockforge.yaml
+grpc:
+  overrides:
+    - service: OrderService
+      method: GetOrder
+      match:
+        order_id: "missing-001"
+      response:
+        status: NOT_FOUND
+        message: "order not found"
+    - service: OrderService
+      method: GetOrder
+      response:
+        body:
+          id: "{{request.order_id}}"
+          total_cents: 4299
+          currency: USD</code></pre>
+        <p class="mt-4 leading-8 text-slate-700">Now <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">GetOrder(order_id="missing-001")</code> returns NOT_FOUND, everything else returns a synthetic order echoing the requested ID. The Handlebars <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">{{request.field}}</code> templating works for both responses and partial matches.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Step 5: Wire it into your CI workflow</h2>
+        <p class="mt-4 leading-8 text-slate-700">For GitHub Actions, that's a single service block:</p>
+        <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: cargo install mockforge-cli
+      - run: |
+          mockforge serve --proto proto/orders.proto --grpc-port 50051 &amp;
+          sleep 2
+      - run: go test ./...
+        env:
+          ORDER_SERVICE_URL: localhost:50051</code></pre>
+        <p class="mt-4 leading-8 text-slate-700">If you'd rather not install in CI, MockForge Cloud will host the same mock at <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">&lt;slug&gt;.mocks.mockforge.dev</code> — point your tests at the URL and skip the install step entirely.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">When to reach for something else</h2>
+        <p class="mt-4 leading-8 text-slate-700">Two cases where a generic gRPC mock isn't the right tool. First, contract tests — if you need to assert that the real service's responses match its spec, you want <a href="https://pact.io" class="text-orange-700 hover:text-orange-800">Pact</a> or similar, not a mock. Second, performance benchmarks — mocks return synthetic data instantly, which gives you misleading p99 numbers. Use the real service or a recorded replay.</p>
+        <p class="mt-4 leading-8 text-slate-700">For everything else — feature work that depends on an unfinished service, CI tests that shouldn't hit production, isolated reproducer environments — a proto-driven mock is the cheapest path.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev/grpc" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">gRPC Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

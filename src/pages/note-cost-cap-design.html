@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How We Built the Hosted-Mock Cost Cap</title>
+    <meta name="description" content="A retrospective on the day we caught the runaway-customer cost risk in MockForge Cloud — and how we shipped a body-size cap and per-deployment RPS limit before the first paid customer." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">May 17, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">How We Built the Hosted-Mock Cost Cap</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">A week before we opened MockForge Cloud to paid customers, a launch-readiness review surfaced a problem we should have caught earlier: a buggy or hostile customer on the $29 Pro plan could DOS their own mock indefinitely and hand us a $333/month Fly compute bill. Ten times the customer's plan price, on a single mistake. This is how we fixed it.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">The math</h2>
+        <p class="mt-4 leading-8 text-slate-700">Each hosted mock runs on a Fly <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">shared-cpu-1x</code> machine — small, but at about $0.152 per running hour. Fly auto-stops idle machines, so the typical mock costs us almost nothing when nobody's using it. The problem is "nobody's using it" gets decided by request traffic. If a customer's misbehaving client keeps the machine warm 24/7, that's 730 hours × $0.152 = $111 per machine per month. Pro allows three concurrent mocks. Three machines, kept hot by a single broken client, becomes $333.</p>
+        <p class="mt-4 leading-8 text-slate-700">The customer doesn't need to be hostile for this to happen. A test in their CI that retries forever on a 500. A frontend dev loop that polls every 100ms. A bot that decided our subdomain looked interesting. Any of those keep the machine alive.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">What the proxy looked like</h2>
+        <p class="mt-4 leading-8 text-slate-700">The registry server has a wildcard proxy at <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">&lt;slug&gt;.mocks.mockforge.dev</code> that routes each request to the right Fly machine. Two issues with the existing code:</p>
+        <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>// Read body, no cap.
+let body_bytes = axum::body::to_bytes(body, usize::MAX).await?;</code></pre>
+        <p class="mt-4 leading-8 text-slate-700"><code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">usize::MAX</code>. A single uploaded blob could be hundreds of megabytes through us before Fly received any of it. And there was no per-deployment rate limit — every request was forwarded.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">The fix</h2>
+        <p class="mt-4 leading-8 text-slate-700">Three changes:</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>1. Body-size cap, configurable.</strong> Default 10 MiB. Override via <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">MOCKFORGE_HOSTED_MOCK_MAX_BODY_BYTES</code>. Returns 413 Payload Too Large when exceeded. Five lines of change in the proxy.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>2. Per-deployment RPS rate limit.</strong> An in-memory token bucket keyed on deployment UUID. 1-second rolling window, 100 RPS default, overridable via env. Returns 429 with a <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">Retry-After</code> header. The implementation is ~100 lines including tests:</p>
+        <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>pub fn check(&amp;self, deployment_id: Uuid) -&gt; Result&lt;(), u64&gt; {
+    let mut state = self.state.lock()...;
+    let now = Instant::now();
+    let entry = state.entry(deployment_id).or_insert(WindowState {
+        window_start: now,
+        count: 0,
+    });
+    if now.duration_since(entry.window_start).as_secs() &gt;= 1 {
+        entry.window_start = now;
+        entry.count = 0;
+    }
+    if entry.count &gt;= self.rps_limit {
+        return Err(retry_after_secs);
+    }
+    entry.count += 1;
+    Ok(())
+}</code></pre>
+        <p class="mt-4 leading-8 text-slate-700"><strong>3. Block deploys for past-due subscriptions.</strong> If Stripe flips a subscription to <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">past_due</code> (payment retry in progress), we still serve existing mocks but reject new deploys until the bill clears. This is the harder edge case — the customer's still legitimate, just temporarily unpaid — but accruing more compute on their behalf while we can't bill them is the wrong default.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">What we explicitly didn't ship</h2>
+        <p class="mt-4 leading-8 text-slate-700">Three things were in the original spec and got deferred:</p>
+        <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
+          <li><strong>Per-plan tuning of the RPS limit.</strong> Free 0, Pro 100, Team 1000 was the goal. The single 100-RPS default works for now; tiering needs a <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">limits_json.max_rps</code> migration that didn't fit the timeline.</li>
+          <li><strong>Multi-instance correctness.</strong> The limiter is in-memory and per-process. When the registry server scales beyond one Fly machine, we'll move state to the existing Redis pool. Single instance is fine for the first months of paid traffic.</li>
+          <li><strong>Fly spend alert.</strong> Pure ops work. Configure budget alerts in Fly's dashboard and wire the billing webhook to fire a notification at 2× plan-price spend. Not code we needed to write — just an operational checklist.</li>
+        </ul>
+
+        <h2 class="mt-8 text-xl font-semibold">What we'd do differently</h2>
+        <p class="mt-4 leading-8 text-slate-700">The whole class of "customer can cost us money through a feature we didn't gate" should have been an explicit checklist during the cloud-mode design, not something a launch-readiness review caught. The retroactive analysis was about an hour; the fix was a few hundred lines of code. The cost of not catching it would have been a real bill.</p>
+        <p class="mt-4 leading-8 text-slate-700">Lesson, mostly for ourselves: any cloud feature where a customer drives compute or bandwidth needs a default-on cap before launch, not after. Adding limits to a live system is a renegotiation with customers; shipping them in the default config is free.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://github.com/SaaSy-Solutions/mockforge/pull/481" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">The PR</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

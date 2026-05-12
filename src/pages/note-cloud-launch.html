@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge Cloud is Here: Hosted Multi-Protocol Mocks in 30 Seconds</title>
+    <meta name="description" content="MockForge Cloud is live. Deploy a hosted mock from an OpenAPI spec, gRPC proto, or GraphQL schema in 30 seconds — and keep the OSS option you already had." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">May 12, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">MockForge Cloud is Here</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">After two years building MockForge as an OSS multi-protocol mock server, we've launched the managed version. You can now deploy a hosted mock from a spec in 30 seconds — and keep every line of the open-source workflow you already had.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">What you get</h2>
+        <p class="mt-4 leading-8 text-slate-700">Sign up at <a href="https://app.mockforge.dev/register" class="text-orange-700 hover:text-orange-800">app.mockforge.dev</a>, drop in an OpenAPI spec, gRPC proto, or GraphQL schema, and we'll deploy it to a public URL at <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">&lt;slug&gt;.mocks.mockforge.dev</code>. You don't run a Fly machine, you don't manage a Docker image, you don't think about TLS certificates. The mock is up.</p>
+        <p class="mt-4 leading-8 text-slate-700">On Pro ($29/mo), you get three concurrent hosted mocks with HTTP and gRPC. On Team ($99/mo), unlimited mocks across all ten supported protocols — HTTP, gRPC, WebSocket, GraphQL, Kafka, MQTT, AMQP, SMTP, FTP, and TCP. Free stays as it always was: a 10,000-request OSS plan, no hosted infrastructure, but the full CLI for local work.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Why a managed product</h2>
+        <p class="mt-4 leading-8 text-slate-700">The OSS server has always been the right tool when you can run it yourself. Lots of teams can't, or don't want to spend two engineering days a quarter keeping it that way. Hosted mocks remove that operational tax: someone needs a mock endpoint for a demo, a customer prototype, or a CI smoke test, and the answer is now a URL, not a deployment.</p>
+        <p class="mt-4 leading-8 text-slate-700">We kept the OSS path intentional. The cloud version uses the same engine, the same data-drift behaviors, the same chaos primitives. If you outgrow our managed pricing or want to self-host, your existing config still runs against the OSS binary. No re-write, no migration project.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">What's actually different from a typical "mock service" SaaS</h2>
+        <p class="mt-4 leading-8 text-slate-700">Three things, mostly:</p>
+        <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
+          <li><strong>Protocols beyond HTTP.</strong> Most managed mock products are HTTP-only. If your service talks gRPC, consumes Kafka, or exposes a WebSocket, we have you. The same deployment can speak several protocols at once.</li>
+          <li><strong>Realistic behavior, not static replays.</strong> Hosted mocks inherit latency injection, fault scenarios, partial-response simulation, and data drift from the OSS engine. Your CI tests against a service that misbehaves the way real services misbehave.</li>
+          <li><strong>Cost cap built in.</strong> Per-deployment rate limits and body-size caps are enabled by default, so a runaway client can't accidentally hand you a $500 Fly bill on a $29 plan. That part shipped last week — there's a <a href="/note-cost-cap-design.html" class="text-orange-700 hover:text-orange-800">retrospective</a> if you want the design notes.</li>
+        </ul>
+
+        <h2 class="mt-8 text-xl font-semibold">Try it</h2>
+        <p class="mt-4 leading-8 text-slate-700">The fastest path is <a href="https://app.mockforge.dev/register" class="text-orange-700 hover:text-orange-800">app.mockforge.dev/register</a>, then paste a spec. If you'd rather drive it from the terminal, the OSS CLI gained a <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">cloud deploy</code> subcommand:</p>
+        <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>$ mockforge login --service-url https://api.mockforge.dev
+$ mockforge cloud deploy --spec openapi.yaml --name my-mock --wait
+✔ Deployed: https://my-mock.mocks.mockforge.dev</code></pre>
+        <p class="mt-4 leading-8 text-slate-700">That's it. The OSS docs at <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">docs.mockforge.dev</a> still cover everything you'd run locally — none of it has changed.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">What's next</h2>
+        <p class="mt-4 leading-8 text-slate-700">The launch-window roadmap is short and specific: a GitHub Action wrapper so <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">mockforge/setup@v1</code> drops mocks into anyone's CI in two lines; AI-generated mocks from a natural-language description (currently in private beta); and real-time collaborative mock editing for the Team tier. We'll write each up here as it lands.</p>
+        <p class="mt-4 leading-8 text-slate-700">Thanks to everyone who beta-tested the cloud over the last few months. The bug reports were honest and the feature requests were sharper than ours.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://app.mockforge.dev/register" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Sign Up Free</a>
+          <a href="/pricing.html" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">View Pricing</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>
