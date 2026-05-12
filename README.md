@@ -12,6 +12,24 @@ This site builds plain HTML files for GitHub Pages. To make changes:
 4. For a production-like artifact, run `npm run build:site` to create `dist/`
 5. Commit the source templates and any intentionally regenerated root HTML, then push
 
+### Source-of-truth: edit `src/pages/`, not root
+
+The build script (`scripts/build-pages.js`) treats `src/pages/*.html` as the
+source of truth and renders root `*.html` from it. **Do not edit root files
+directly** — your edits will be lost the next time someone runs the build.
+
+To make this safer, the build script refuses to overwrite root files that have
+content not present in src. If you've already drifted, run:
+
+```bash
+node scripts/build-pages.js --check    # report which root files differ from src
+node scripts/build-pages.js            # build, but SKIP files where root has drifted
+node scripts/build-pages.js --force    # build and overwrite all root files (loses local edits)
+```
+
+If `--check` reports drift, port the root edits back into `src/pages/` before
+running the build, so future builds stay idempotent.
+
 ## Deployment
 
 This site is deployed using GitHub Pages:

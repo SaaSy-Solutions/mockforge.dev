@@ -1,34 +1,17 @@
-#!/usr/bin/env node
-
-// Build src/pages/*.html → root *.html by substituting shared placeholder
-// blocks. By default this script REFUSES to overwrite a root file when its
-// content has diverged from what src would produce — protects against
-// silently losing direct edits to root (which happened on March 14 for
-// index.html and is the reason this safety mode exists).
-//
-// Modes:
-//   node scripts/build-pages.js                # build to root, refuse to clobber divergent files
-//   node scripts/build-pages.js --force        # build to root, overwrite divergent files
-//   node scripts/build-pages.js --check        # diff only, do not write
-//   node scripts/build-pages.js <out-dir>      # build to a fresh out-dir (always overwrites,
-//                                              # used by deploy artifact in CI)
-
-const fs = require('fs');
-const path = require('path');
-
-const projectRoot = path.resolve(__dirname, '..');
-const sourceRoot = path.join(projectRoot, 'src', 'pages');
-
-const args = process.argv.slice(2);
-const flagCheck = args.includes('--check');
-const flagForce = args.includes('--force');
-const positional = args.filter((a) => !a.startsWith('--'));
-const outputRoot = positional[0]
-  ? path.resolve(projectRoot, positional[0])
-  : projectRoot;
-
-function renderSharedHeadBlock(includeGaMeta) {
-  return `
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge — v0.1.3: Protocol Expansion &amp; Testing Tools</title>
+    <meta name="description" content="MockForge v0.1.3 introduces native GraphQL handlers, programmable WebSockets, HTTP scenario switching, capture scrubbing, and enterprise-ready testing tools." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/public/styles.css" />
     <script>
       (function () {
@@ -66,32 +49,29 @@ function renderSharedHeadBlock(includeGaMeta) {
       html.dark header { background-color: #0f172a !important; border-bottom-color: rgba(255, 255, 255, 0.1) !important; }
       html.dark header nav a { color: #e2e8f0 !important; }
       html.dark header nav a:hover { color: #ffffff !important; }
-      html.dark .border-black\\/5,
-      html.dark .border-black\\/10,
+      html.dark .border-black\/5,
+      html.dark .border-black\/10,
       html.dark .border-slate-200,
       html.dark .border-slate-300 { border-color: rgba(255, 255, 255, 0.1) !important; }
-      html.dark .ring-black\\/5 { --tw-ring-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark .ring-black\/5 { --tw-ring-color: rgba(255, 255, 255, 0.1) !important; }
       html.dark .shadow-soft { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); }
       html.dark .shadow-note { box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35); }
       html.dark code { background-color: #1e293b; color: #e2e8f0; }
     </style>
-    ${includeGaMeta ? '<meta name="ga-measurement-id" content="" />' : ''}
-  `.trim();
-}
-
-function renderHeader({ logoHref, featuresHref }) {
-  return `
+    <meta name="ga-measurement-id" content="" />
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
     <header class="sticky top-0 z-40 backdrop-blur bg-white/90 dark:bg-slate-900 border-b border-black/5 dark:border-white/10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
-          <a href="${logoHref}" class="flex items-center gap-3">
+          <a href="/" class="flex items-center gap-3">
             <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-8 w-8" />
             <span class="font-semibold tracking-tight text-brand-dark dark:text-white">MockForge</span>
           </a>
           <nav class="hidden md:flex items-center gap-3 lg:gap-4">
             <a href="https://docs.mockforge.dev" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Docs</a>
             <a href="/engineering-notes.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Notes</a>
-            <a href="${featuresHref}" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Features</a>
+            <a href="/#features" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Features</a>
             <a href="/pricing.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Pricing</a>
             <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">GitHub</a>
             <a href="https://app.mockforge.dev/login" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Log In</a>
@@ -112,7 +92,7 @@ function renderHeader({ logoHref, featuresHref }) {
         <div class="px-4 py-3 space-y-2">
           <a href="https://docs.mockforge.dev" class="block text-text-primary dark:text-white">Docs</a>
           <a href="/engineering-notes.html" class="block text-text-primary dark:text-white">Notes</a>
-          <a href="${featuresHref}" class="block text-text-primary dark:text-white">Features</a>
+          <a href="/#features" class="block text-text-primary dark:text-white">Features</a>
           <a href="/pricing.html" class="block text-text-primary dark:text-white">Pricing</a>
           <a href="https://github.com/SaaSy-Solutions/mockforge" class="block text-text-primary dark:text-white">GitHub</a>
           <a href="https://app.mockforge.dev/login" class="block text-text-primary dark:text-white">Log In</a>
@@ -120,11 +100,39 @@ function renderHeader({ logoHref, featuresHref }) {
         </div>
       </div>
     </header>
-  `.trim();
-}
 
-function renderFooter() {
-  return `
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">October 22, 2025</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">v0.1.3: Protocol Expansion &amp; Testing Tools</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">A significant milestone expanding protocol support and introducing powerful testing capabilities including native GraphQL handlers, programmable WebSockets, HTTP scenario switching, and capture scrubbing.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Native GraphQL Operation Handlers</h2>
+        <p class="mt-4 leading-8 text-slate-700">First-class GraphQL support with schema-aware query and mutation handling, operation validation, field-level response customization, subscription support, fragment handling, and variable substitution.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Programmable WebSocket Handlers</h2>
+        <p class="mt-4 leading-8 text-slate-700">Real-time testing via custom WebSocket handlers with message pattern matching, stateful connections, custom handler logic, and replay support for simulating chat applications and live data feeds.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">HTTP Scenario Switching</h2>
+        <p class="mt-4 leading-8 text-slate-700">Dynamically switch between multiple OpenAPI response examples at runtime via admin UI or API, making it straightforward to test different API states (active, suspended, deleted) without changing configuration.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Capture Scrubbing &amp; Deterministic Replay</h2>
+        <p class="mt-4 leading-8 text-slate-700">Automatic PII removal from recorded traffic (emails, phone numbers, SSNs), custom scrubbing rules, and deterministic replay with seed management for consistent, CI/CD-ready tests.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Unified Config &amp; Profiles</h2>
+        <p class="mt-4 leading-8 text-slate-700">Multi-format config support (YAML, JSON, TOML), profile-based configuration for dev/staging/prod, environment variable overrides, and schema validation.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Testing Tools</h2>
+        <p class="mt-4 leading-8 text-slate-700">New <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">mockforge-test</code> crate for integration testing, plus Kubernetes-style health endpoints (<code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">/healthz</code>, <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">/ready</code>, <code class="text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">/live</code>).</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
     <footer class="py-10 border-t border-black/5 dark:border-white/10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-3">
@@ -142,11 +150,7 @@ function renderFooter() {
         </div>
       </div>
     </footer>
-  `.trim();
-}
 
-function renderShellScript() {
-  return `
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         var toggle = document.getElementById('themeToggle');
@@ -178,152 +182,5 @@ function renderShellScript() {
         }
       });
     </script>
-  `.trim();
-}
-
-function getPageConfig(file) {
-  if (file === 'index.html') {
-    return { logoHref: '#top', featuresHref: '#features', includeGaMeta: true };
-  }
-
-  if (file === 'compare-wiremock.html' || file === 'compare-mockserver.html') {
-    return { logoHref: '/', featuresHref: '/#features', includeGaMeta: false };
-  }
-
-  return { logoHref: '/', featuresHref: '/#features', includeGaMeta: true };
-}
-
-function ensurePlaceholder(text, placeholder, file) {
-  if (!text.includes(placeholder)) {
-    throw new Error(`Missing placeholder ${placeholder} in ${file}`);
-  }
-}
-
-function removeDir(targetPath) {
-  if (fs.existsSync(targetPath)) {
-    fs.rmSync(targetPath, { recursive: true, force: true });
-  }
-}
-
-function ensureDir(targetPath) {
-  fs.mkdirSync(targetPath, { recursive: true });
-}
-
-function copyRecursive(sourcePath, targetPath) {
-  const stats = fs.statSync(sourcePath);
-
-  if (stats.isDirectory()) {
-    ensureDir(targetPath);
-    for (const entry of fs.readdirSync(sourcePath)) {
-      copyRecursive(path.join(sourcePath, entry), path.join(targetPath, entry));
-    }
-    return;
-  }
-
-  ensureDir(path.dirname(targetPath));
-  fs.copyFileSync(sourcePath, targetPath);
-}
-
-if (!fs.existsSync(sourceRoot)) {
-  throw new Error(`Missing source directory: ${sourceRoot}`);
-}
-
-if (outputRoot !== projectRoot) {
-  removeDir(outputRoot);
-  ensureDir(outputRoot);
-}
-
-const pageFiles = fs.readdirSync(sourceRoot).filter((name) => name.endsWith('.html')).sort();
-
-// Whether divergence-protection is active. Only relevant when writing back
-// over the project root — a fresh out-dir is always safe to overwrite.
-const buildingInPlace = outputRoot === projectRoot;
-const protect = buildingInPlace && !flagForce;
-
-let drifted = []; // root files where existing content != generated
-let wrote = 0;
-let skipped = 0;
-let created = 0;
-
-for (const file of pageFiles) {
-  const config = getPageConfig(file);
-  const sourcePath = path.join(sourceRoot, file);
-  const outputPath = path.join(outputRoot, file);
-  let text = fs.readFileSync(sourcePath, 'utf8');
-
-  ensurePlaceholder(text, '{{SHARED_HEAD_BLOCK}}', file);
-  ensurePlaceholder(text, '{{HEADER}}', file);
-  ensurePlaceholder(text, '{{FOOTER}}', file);
-  ensurePlaceholder(text, '{{SHELL_SCRIPT}}', file);
-
-  text = text.replace('{{SHARED_HEAD_BLOCK}}', renderSharedHeadBlock(config.includeGaMeta));
-  text = text.replace('{{HEADER}}', renderHeader(config));
-  text = text.replace('{{FOOTER}}', renderFooter());
-  text = text.replace('{{SHELL_SCRIPT}}', renderShellScript());
-
-  // Drift detection: if the root file already exists and its content differs
-  // from what we would write, that's a sign someone edited root directly
-  // without porting the change back to src. In --check mode just report;
-  // in default mode skip the write unless --force.
-  const existsOnDisk = fs.existsSync(outputPath);
-  const onDisk = existsOnDisk ? fs.readFileSync(outputPath, 'utf8') : null;
-  const isDifferent = existsOnDisk && onDisk !== text;
-
-  if (flagCheck) {
-    if (!existsOnDisk) {
-      console.log(`MISSING ${file} (would be created)`);
-    } else if (isDifferent) {
-      drifted.push(file);
-      console.log(`DRIFT   ${file} (root differs from generated)`);
-    }
-    continue;
-  }
-
-  if (protect && isDifferent) {
-    drifted.push(file);
-    console.warn(
-      `SKIP    ${file} — root has local edits not in src; re-run with --force to overwrite`
-    );
-    skipped += 1;
-    continue;
-  }
-
-  fs.writeFileSync(outputPath, text);
-  if (existsOnDisk) {
-    wrote += 1;
-  } else {
-    created += 1;
-  }
-}
-
-if (outputRoot !== projectRoot && !flagCheck) {
-  copyRecursive(path.join(projectRoot, 'public'), path.join(outputRoot, 'public'));
-
-  const cnamePath = path.join(projectRoot, 'CNAME');
-  if (fs.existsSync(cnamePath)) {
-    fs.copyFileSync(cnamePath, path.join(outputRoot, 'CNAME'));
-  }
-}
-
-if (flagCheck) {
-  if (drifted.length === 0) {
-    console.log(`OK — src and root are in sync across ${pageFiles.length} pages.`);
-    process.exit(0);
-  }
-  console.log(
-    `\n${drifted.length} file(s) have drifted from src. Either port the root edits back to src/pages/, or re-run with --force to overwrite root.`
-  );
-  process.exit(1);
-}
-
-const target = path.relative(projectRoot, outputRoot) || '.';
-console.log(
-  `Built ${pageFiles.length} pages from src/pages into ${target}.` +
-    ` created=${created}, updated=${wrote}, skipped=${skipped}.`
-);
-if (skipped > 0) {
-  console.log(
-    `\nSkipped files have local edits in root that don't exist in src/pages/. ` +
-      `Port them back to src/pages/ before re-running, or use --force to overwrite.`
-  );
-}
+  </body>
+</html>
