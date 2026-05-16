@@ -299,6 +299,16 @@ for (const file of pageFiles) {
 if (outputRoot !== projectRoot && !flagCheck) {
   copyRecursive(path.join(projectRoot, 'public'), path.join(outputRoot, 'public'));
 
+  // GitHub Pages serves robots.txt and sitemap.xml from the deploy root,
+  // not nested under /public/. Duplicate them at the root so /robots.txt
+  // and /sitemap.xml resolve (200 instead of 404).
+  for (const seoFile of ['robots.txt', 'sitemap.xml']) {
+    const src = path.join(projectRoot, 'public', seoFile);
+    if (fs.existsSync(src)) {
+      fs.copyFileSync(src, path.join(outputRoot, seoFile));
+    }
+  }
+
   const cnamePath = path.join(projectRoot, 'CNAME');
   if (fs.existsSync(cnamePath)) {
     fs.copyFileSync(cnamePath, path.join(outputRoot, 'CNAME'));
