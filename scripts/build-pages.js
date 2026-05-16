@@ -75,7 +75,7 @@ function renderSharedHeadBlock(includeGaMeta) {
       html.dark .shadow-note { box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35); }
       html.dark code { background-color: #1e293b; color: #e2e8f0; }
     </style>
-    ${includeGaMeta ? '<meta name="ga-measurement-id" content="" />' : ''}
+    ${includeGaMeta ? `<meta name="ga-measurement-id" content="${process.env.GA_MEASUREMENT_ID || ''}" />` : ''}
   `.trim();
 }
 
