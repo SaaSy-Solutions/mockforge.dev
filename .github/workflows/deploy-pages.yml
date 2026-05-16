@@ -32,6 +32,8 @@ jobs:
       - run: npm ci
       - run: npm run build:css
       - run: npm run build:site
+        env:
+          GA_MEASUREMENT_ID: ${{ secrets.GA_MEASUREMENT_ID }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
