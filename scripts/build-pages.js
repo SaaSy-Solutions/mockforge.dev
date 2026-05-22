@@ -30,6 +30,7 @@ const outputRoot = positional[0]
 function renderSharedHeadBlock(includeGaMeta) {
   return `
     <link rel="stylesheet" href="/public/styles.css" />
+    <link rel="alternate" type="application/rss+xml" title="MockForge Engineering Notes" href="/rss.xml" />
     <script>
       (function () {
         try {
@@ -181,6 +182,128 @@ function renderShellScript() {
   `.trim();
 }
 
+// Parse the engineering-notes index for per-post metadata (slug, date, title,
+// summary). The index is the single source of truth — each <article> block
+// names the post date, title, summary, and a /note-*.html link. We reuse this
+// for RSS feed generation and per-post JSON-LD structured data.
+function parseNotesFromIndex(indexHtml) {
+  const articleRegex = /<article\b[^>]*>([\s\S]*?)<\/article>/g;
+  const notes = [];
+  for (const match of indexHtml.matchAll(articleRegex)) {
+    const block = match[1];
+    const linkMatch = block.match(/href="\/(note-[^"]+\.html)"/);
+    if (!linkMatch) continue;
+    const dateMatch = block.match(
+      /<p class="text-xs uppercase[^"]*"[^>]*>([^<]+)<\/p>/
+    );
+    const titleMatch = block.match(/<h2[^>]*>([\s\S]*?)<\/h2>/);
+    const summaryMatch = block.match(/<p class="mt-3[^"]*"[^>]*>([\s\S]*?)<\/p>/);
+    if (!dateMatch || !titleMatch || !summaryMatch) continue;
+    const dateLabel = dateMatch[1].trim();
+    // Parse as UTC midnight (Date.parse on a date-only label would otherwise
+    // resolve in the local time zone, giving non-deterministic builds across
+    // CI machines and developer laptops). Reformat to ISO with a Z suffix.
+    const localMs = Date.parse(dateLabel);
+    if (Number.isNaN(localMs)) continue;
+    const d = new Date(localMs);
+    const dateMs = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+    notes.push({
+      slug: linkMatch[1],
+      url: `https://mockforge.dev/${linkMatch[1]}`,
+      title: stripTags(titleMatch[1]).trim(),
+      summary: stripTags(summaryMatch[1]).replace(/\s+/g, ' ').trim(),
+      dateLabel,
+      dateIso: new Date(dateMs).toISOString(),
+      dateRfc822: new Date(dateMs).toUTCString(),
+    });
+  }
+  // Sort newest first (defensive — index is usually already newest-first).
+  notes.sort((a, b) => Date.parse(b.dateIso) - Date.parse(a.dateIso));
+  return notes;
+}
+
+function stripTags(html) {
+  return html.replace(/<[^>]+>/g, '');
+}
+
+function escapeXml(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+// JSON-LD BlogPosting block — inserted into each note page's <head>. Schema:
+// https://schema.org/BlogPosting. Fields pulled from the index entry; the
+// publisher/author block hardcodes MockForge.
+function renderJsonLd(meta) {
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: meta.title,
+    description: meta.summary,
+    datePublished: meta.dateIso,
+    url: meta.url,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': meta.url },
+    author: {
+      '@type': 'Organization',
+      name: 'MockForge',
+      url: 'https://mockforge.dev/',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'MockForge',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://mockforge.dev/public/logo-transparent.png',
+      },
+    },
+  };
+  return `<script type="application/ld+json">\n${JSON.stringify(data, null, 2)}\n    </script>`;
+}
+
+// Inject JSON-LD into a note's <head>. Idempotent: if a block already exists
+// (from a prior build), replace it; otherwise insert before </head>.
+function injectJsonLd(html, ldScript) {
+  const existingRegex = /<script type="application\/ld\+json">[\s\S]*?<\/script>/;
+  if (existingRegex.test(html)) {
+    return html.replace(existingRegex, ldScript);
+  }
+  return html.replace(/<\/head>/, `    ${ldScript}\n  </head>`);
+}
+
+function renderRssFeed(notes) {
+  const lastBuildDate = notes.length
+    ? notes[0].dateRfc822
+    : new Date().toUTCString();
+  const items = notes
+    .map(
+      (note) => `    <item>
+      <title>${escapeXml(note.title)}</title>
+      <link>${note.url}</link>
+      <guid isPermaLink="true">${note.url}</guid>
+      <pubDate>${note.dateRfc822}</pubDate>
+      <description>${escapeXml(note.summary)}</description>
+    </item>`
+    )
+    .join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>MockForge — Engineering Notes</title>
+    <link>https://mockforge.dev/engineering-notes.html</link>
+    <atom:link href="https://mockforge.dev/rss.xml" rel="self" type="application/rss+xml" />
+    <description>Engineering notes and release deep dives from MockForge.</description>
+    <language>en-us</language>
+    <lastBuildDate>${lastBuildDate}</lastBuildDate>
+${items}
+  </channel>
+</rss>
+`;
+}
+
 function getPageConfig(file) {
   if (file === 'index.html') {
     return { logoHref: '#top', featuresHref: '#features', includeGaMeta: true };
@@ -235,6 +358,15 @@ if (outputRoot !== projectRoot) {
 
 const pageFiles = fs.readdirSync(sourceRoot).filter((name) => name.endsWith('.html')).sort();
 
+// Parse engineering-notes index once for per-post metadata (slug → meta).
+// Used to inject BlogPosting JSON-LD into each note page and to generate the
+// site's RSS feed. The index is the single source of truth for post metadata.
+const indexPath = path.join(sourceRoot, 'engineering-notes.html');
+const noteMeta = fs.existsSync(indexPath)
+  ? parseNotesFromIndex(fs.readFileSync(indexPath, 'utf8'))
+  : [];
+const noteMetaBySlug = new Map(noteMeta.map((n) => [n.slug, n]));
+
 // Whether divergence-protection is active. Only relevant when writing back
 // over the project root — a fresh out-dir is always safe to overwrite.
 const buildingInPlace = outputRoot === projectRoot;
@@ -260,6 +392,16 @@ for (const file of pageFiles) {
   text = text.replace('{{HEADER}}', renderHeader(config));
   text = text.replace('{{FOOTER}}', renderFooter());
   text = text.replace('{{SHELL_SCRIPT}}', renderShellScript());
+
+  // Inject BlogPosting JSON-LD into note pages so search engines and feed
+  // aggregators see structured metadata (title, date, author, publisher).
+  // Metadata comes from the engineering-notes index — see parseNotesFromIndex.
+  if (file.startsWith('note-')) {
+    const meta = noteMetaBySlug.get(file);
+    if (meta) {
+      text = injectJsonLd(text, renderJsonLd(meta));
+    }
+  }
 
   // Drift detection: if the root file already exists and its content differs
   // from what we would write, that's a sign someone edited root directly
@@ -293,6 +435,38 @@ for (const file of pageFiles) {
     wrote += 1;
   } else {
     created += 1;
+  }
+}
+
+// Generate /rss.xml from the parsed note metadata. Subject to the same
+// drift-protection rules as HTML pages: skip if the on-disk file has local
+// edits, unless --force or building to a fresh out-dir.
+if (noteMeta.length > 0) {
+  const rssPath = path.join(outputRoot, 'rss.xml');
+  const rssText = renderRssFeed(noteMeta);
+  const rssExists = fs.existsSync(rssPath);
+  const rssOnDisk = rssExists ? fs.readFileSync(rssPath, 'utf8') : null;
+  const rssDifferent = rssExists && rssOnDisk !== rssText;
+
+  if (flagCheck) {
+    if (!rssExists) {
+      console.log(`MISSING rss.xml (would be created)`);
+    } else if (rssDifferent) {
+      drifted.push('rss.xml');
+      console.log(`DRIFT   rss.xml (root differs from generated)`);
+    }
+  } else if (protect && rssDifferent) {
+    console.warn(
+      `SKIP    rss.xml — root has local edits not in src; re-run with --force to overwrite`
+    );
+    skipped += 1;
+  } else {
+    fs.writeFileSync(rssPath, rssText);
+    if (rssExists) {
+      wrote += 1;
+    } else {
+      created += 1;
+    }
   }
 }
 
