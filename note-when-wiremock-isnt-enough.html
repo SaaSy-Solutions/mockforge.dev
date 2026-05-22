@@ -134,7 +134,7 @@
         <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
         <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">May 16, 2026</p>
         <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">When WireMock Isn't Enough</h1>
-        <p class="mt-6 text-lg leading-8 text-slate-700">WireMock has been the default HTTP mock server for fifteen years, and that's not an accident — it's mature, stable, well-documented, and has a JVM-native API that works inside JUnit. If your team is on the JVM and your test surface is HTTP-only, you should probably keep using it. This post is about the cases where it stops being the right tool.</p>
+        <p class="mt-6 text-lg leading-8 text-slate-700">WireMock has been the default HTTP mock server for fifteen years, and that's not an accident — it's mature, stable, well-documented, and has a JVM-native API that works inside JUnit. If your team is on the JVM and your test surface is HTTP-only, you should probably keep using it. The honest version of "why we built MockForge" isn't that WireMock is bad — it's that we kept running into specific cases where it stopped being the right tool. This is that list.</p>
 
         <h2 class="mt-8 text-xl font-semibold">The honest comparison</h2>
         <p class="mt-4 leading-8 text-slate-700">We have a <a href="/compare-wiremock.html" class="text-orange-700 hover:text-orange-800">side-by-side feature comparison</a> with WireMock if you want the rapid version. This post is the longer one — the situations where the limits actually matter, not the marketing-page bullets.</p>
@@ -166,7 +166,7 @@
 
         <h2 class="mt-8 text-xl font-semibold">How to know which side you're on</h2>
         <p class="mt-4 leading-8 text-slate-700">A useful exercise: list the failure modes your tests are supposed to catch. If they're all variations on "did the endpoint return the right thing," WireMock is fine. If they include "what happens when this Kafka topic is slow," "what does the WebSocket client do when the server closes mid-message," or "did the SMTP send actually fire after the order succeeded" — that's MockForge's surface, and the multi-protocol design exists exactly for those tests.</p>
-        <p class="mt-4 leading-8 text-slate-700">The right mock tool is the one that turns a 30-line custom fake into a five-line config. For HTTP-only teams, that's frequently still WireMock. For everyone else, it's worth a closer look at what you're really testing.</p>
+        <p class="mt-4 leading-8 text-slate-700">The right mock tool is the one that turns a 30-line custom fake into a five-line config. For HTTP-only teams, that's frequently still WireMock — and that's fine. We just kept watching teams accumulate four or five custom fakes around it as their stack grew, and that was the gap we set out to close.</p>
 
         <div class="mt-8 flex flex-wrap gap-3 text-sm">
           <a href="/compare-wiremock.html" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Full Comparison</a>
