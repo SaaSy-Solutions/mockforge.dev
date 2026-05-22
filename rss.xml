@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>MockForge — Engineering Notes</title>
+    <link>https://mockforge.dev/engineering-notes.html</link>
+    <atom:link href="https://mockforge.dev/rss.xml" rel="self" type="application/rss+xml" />
+    <description>Engineering notes and release deep dives from MockForge.</description>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 18 May 2026 00:00:00 GMT</lastBuildDate>
+    <item>
+      <title>Our $10/mo SaaS Infrastructure</title>
+      <link>https://mockforge.dev/note-our-saas-infrastructure.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-our-saas-infrastructure.html</guid>
+      <pubDate>Mon, 18 May 2026 00:00:00 GMT</pubDate>
+      <description>A walkthrough of MockForge Cloud&apos;s hosting stack — Cloudflare Pages for the admin UI, Fly.io for compute, Neon for Postgres — and why it costs under $10/month at launch traffic.</description>
+    </item>
+    <item>
+      <title>How We Built the Hosted-Mock Cost Cap</title>
+      <link>https://mockforge.dev/note-cost-cap-design.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-cost-cap-design.html</guid>
+      <pubDate>Sun, 17 May 2026 00:00:00 GMT</pubDate>
+      <description>A pre-launch readiness review surfaced a 10x cost-leak risk on the $29 Pro plan. The retrospective on how we shipped body-size caps and per-deployment RPS limits in the week before going live.</description>
+    </item>
+    <item>
+      <title>When WireMock Isn&apos;t Enough</title>
+      <link>https://mockforge.dev/note-when-wiremock-isnt-enough.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-when-wiremock-isnt-enough.html</guid>
+      <pubDate>Sat, 16 May 2026 00:00:00 GMT</pubDate>
+      <description>WireMock has been the default HTTP mock server for fifteen years. The specific cases where it stops being the right tool — and the ones where switching would be a step backward.</description>
+    </item>
+    <item>
+      <title>Mocking Kafka Producers Without a Real Broker</title>
+      <link>https://mockforge.dev/note-mocking-kafka-without-broker.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-mocking-kafka-without-broker.html</guid>
+      <pubDate>Fri, 15 May 2026 00:00:00 GMT</pubDate>
+      <description>Three levels of fake, when each is the right choice, and how a wire-compatible Kafka mock fits between client-library stubs and full testcontainers — including deterministic failure-injection patterns you can&apos;t reproduce on a real broker.</description>
+    </item>
+    <item>
+      <title>Why MockForge Stayed Multi-Protocol</title>
+      <link>https://mockforge.dev/note-why-multi-protocol.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-why-multi-protocol.html</guid>
+      <pubDate>Thu, 14 May 2026 00:00:00 GMT</pubDate>
+      <description>The market is full of HTTP-only mock services. Why we took the harder path: protocols beyond HTTP, spec-driven mocking that generalizes, and what the trade actually costs.</description>
+    </item>
+    <item>
+      <title>How to Mock a gRPC Service in CI</title>
+      <link>https://mockforge.dev/note-grpc-mocking-in-ci.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-grpc-mocking-in-ci.html</guid>
+      <pubDate>Wed, 13 May 2026 00:00:00 GMT</pubDate>
+      <description>A practical guide: from the proto file to a gRPC mock in CI, with reflection probing and a GitHub Actions snippet. No JVM, no testcontainers, no hand-rolled fake to maintain.</description>
+    </item>
+    <item>
+      <title>MockForge Cloud is Here</title>
+      <link>https://mockforge.dev/note-cloud-launch.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-cloud-launch.html</guid>
+      <pubDate>Tue, 12 May 2026 00:00:00 GMT</pubDate>
+      <description>After two years building the OSS multi-protocol mock server, the managed version is live. Deploy a hosted mock from a spec in 30 seconds — and keep the OSS path you already had.</description>
+    </item>
+    <item>
+      <title>Multi-Target Testing, Real-World Spec Support, and Conformance Maturity</title>
+      <link>https://mockforge.dev/note-multi-target-conformance-and-real-world-specs.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-multi-target-conformance-and-real-world-specs.html</guid>
+      <pubDate>Sat, 28 Mar 2026 00:00:00 GMT</pubDate>
+      <description>Two weeks of field testing against 66+ proxy targets and real-world specs from GitHub, Amazon S3, and Xero drove multi-target conformance, HAR-to-YAML generation, field-level schema errors, and Swagger 2.0 formData support.</description>
+    </item>
+    <item>
+      <title>API Drift Detection and Contract Alerting</title>
+      <link>https://mockforge.dev/note-api-drift-detection-and-contract-alerting.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-api-drift-detection-and-contract-alerting.html</guid>
+      <pubDate>Sun, 08 Mar 2026 00:00:00 GMT</pubDate>
+      <description>Why we treat contract drift as an alerting event and how endpoint-level mismatch metadata shortens triage loops.</description>
+    </item>
+    <item>
+      <title>v0.3 Migration Playbook: Reduce Upgrade Risk in Three Passes</title>
+      <link>https://mockforge.dev/note-v0-3-migration-playbook.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-v0-3-migration-playbook.html</guid>
+      <pubDate>Sun, 08 Mar 2026 00:00:00 GMT</pubDate>
+      <description>A practical migration sequence for moving into v0.3 safely: baseline drift, stage strictness, then move critical routes with rollback toggles.</description>
+    </item>
+    <item>
+      <title>Spec-Driven OpenAPI Conformance Testing in MockForge</title>
+      <link>https://mockforge.dev/note-spec-driven-openapi-conformance.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-spec-driven-openapi-conformance.html</guid>
+      <pubDate>Sat, 07 Mar 2026 00:00:00 GMT</pubDate>
+      <description>How the 0.3.55 to 0.3.57 releases moved MockForge from generic API checks into spec-driven conformance with response schema validation and SARIF output.</description>
+    </item>
+    <item>
+      <title>Spec-Driven Conformance: Why Contract Verification Beats Generic Checks</title>
+      <link>https://mockforge.dev/note-conformance-testing.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-conformance-testing.html</guid>
+      <pubDate>Sat, 07 Mar 2026 00:00:00 GMT</pubDate>
+      <description>Spec-driven OpenAPI conformance turns API testing from generic request checks into real contract verification against the features your spec actually uses.</description>
+    </item>
+    <item>
+      <title>How We Took WAFBench SQLi Detection from 37/46 to 46/46</title>
+      <link>https://mockforge.dev/note-wafbench-sqli-detection.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-wafbench-sqli-detection.html</guid>
+      <pubDate>Sat, 07 Mar 2026 00:00:00 GMT</pubDate>
+      <description>A technical deep dive into the 0.3.46 to 0.3.54 security-testing hardening arc across payload delivery, cookie handling, grouped CRS requests, and measured SQLi detection gains.</description>
+    </item>
+    <item>
+      <title>WAFBench Security Hardening: Transport Semantics and Benchmark Credibility</title>
+      <link>https://mockforge.dev/note-wafbench-security-hardening.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-wafbench-security-hardening.html</guid>
+      <pubDate>Sat, 07 Mar 2026 00:00:00 GMT</pubDate>
+      <description>Security benchmarks are only trustworthy when payload delivery is right. What it takes to move from partial coverage to meaningful WAFBench results.</description>
+    </item>
+    <item>
+      <title>Recent MockForge Reliability Updates: Admin Startup, Better Failure Reporting, and Correct Response-Code Checks</title>
+      <link>https://mockforge.dev/note-reliability-updates-conformance-and-admin.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-reliability-updates-conformance-and-admin.html</guid>
+      <pubDate>Sat, 07 Mar 2026 00:00:00 GMT</pubDate>
+      <description>A short product update on the 0.3.72 and 0.3.73 releases covering admin startup reliability, clearer failed-check reporting, and more accurate conformance behavior.</description>
+    </item>
+    <item>
+      <title>Reliability Update: Admin Startup, Failure Reporting, and Conformance Accuracy</title>
+      <link>https://mockforge.dev/note-reliability-update-march-2026.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-reliability-update-march-2026.html</guid>
+      <pubDate>Sat, 07 Mar 2026 00:00:00 GMT</pubDate>
+      <description>Small reliability releases matter when they remove first-run friction and make failed checks easier to trust. What the 0.3.72 and 0.3.73 releases improved.</description>
+    </item>
+    <item>
+      <title>Release Engineering Note: Security Guardrails from v0.2.x</title>
+      <link>https://mockforge.dev/note-security-guardrails-v0-2x.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-security-guardrails-v0-2x.html</guid>
+      <pubDate>Thu, 05 Mar 2026 00:00:00 GMT</pubDate>
+      <description>A focused review of v0.2.x hardening work: validation defaults, auth-related flow safety, and migration priorities for teams upgrading from earlier versions.</description>
+    </item>
+    <item>
+      <title>How We Use Scenario Switching to Keep Mocks Honest</title>
+      <link>https://mockforge.dev/note-scenario-switching.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-scenario-switching.html</guid>
+      <pubDate>Tue, 03 Mar 2026 00:00:00 GMT</pubDate>
+      <description>Scenario switching helps teams test stateful behavior instead of static happy-path fixtures. This note outlines a practical scenario model and why it improves integration confidence.</description>
+    </item>
+    <item>
+      <title>Release Cadence and Risk: How We Keep Fast Iteration Safe</title>
+      <link>https://mockforge.dev/note-release-cadence-and-risk.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-release-cadence-and-risk.html</guid>
+      <pubDate>Wed, 21 Jan 2026 00:00:00 GMT</pubDate>
+      <description>How we sequence fixes, hardening, and communication so release speed does not become release risk.</description>
+    </item>
+    <item>
+      <title>Client Generation Tradeoffs: Safety, Speed, and Developer Experience</title>
+      <link>https://mockforge.dev/note-client-generation-tradeoffs.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-client-generation-tradeoffs.html</guid>
+      <pubDate>Wed, 10 Dec 2025 00:00:00 GMT</pubDate>
+      <description>A practical note on balancing strict schema fidelity with developer velocity in generated clients.</description>
+    </item>
+    <item>
+      <title>v0.2.7: API Sync, TCP Support &amp;amp; Advanced Mocking</title>
+      <link>https://mockforge.dev/note-v0-2-7-api-sync-tcp.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-v0-2-7-api-sync-tcp.html</guid>
+      <pubDate>Wed, 05 Nov 2025 00:00:00 GMT</pubDate>
+      <description>Intelligent API synchronization with change detection, TCP protocol mocking, flexible response selection modes, and real webhook execution.</description>
+    </item>
+    <item>
+      <title>Why Failure-Path Testing Should Be a First-Class Mocking Requirement</title>
+      <link>https://mockforge.dev/note-testing-failure-paths.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-testing-failure-paths.html</guid>
+      <pubDate>Wed, 05 Nov 2025 00:00:00 GMT</pubDate>
+      <description>Controlled failure profiles expose retry and fallback weaknesses before integration surprises hit teams.</description>
+    </item>
+    <item>
+      <title>v0.2.6: Production Security &amp;amp; Infrastructure</title>
+      <link>https://mockforge.dev/note-v0-2-6-security-infrastructure.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-v0-2-6-security-infrastructure.html</guid>
+      <pubDate>Tue, 04 Nov 2025 00:00:00 GMT</pubDate>
+      <description>Enterprise-grade TLS/HTTPS and mTLS support, built-in tunneling for local development, and completed SDK implementation phases 1 and 2.</description>
+    </item>
+    <item>
+      <title>v0.2.5: Enterprise Security &amp;amp; OAuth2</title>
+      <link>https://mockforge.dev/note-v0-2-5-enterprise-security.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-v0-2-5-enterprise-security.html</guid>
+      <pubDate>Sun, 02 Nov 2025 00:00:00 GMT</pubDate>
+      <description>Complete OAuth2 with PKCE, structured error handling, request/response validation, interceptors, and multiple authentication methods for production-ready API clients.</description>
+    </item>
+    <item>
+      <title>v0.2.4: Client Generator Fixes &amp;amp; Test Coverage</title>
+      <link>https://mockforge.dev/note-v0-2-4-client-fixes.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-v0-2-4-client-fixes.html</guid>
+      <pubDate>Sat, 01 Nov 2025 00:00:00 GMT</pubDate>
+      <description>Request body generation fixed across React, Vue, and Svelte. TypeScript required vs optional fields corrected. Comprehensive multi-framework test coverage added.</description>
+    </item>
+    <item>
+      <title>v0.2.3: Bug Fixes &amp;amp; Stability Improvements</title>
+      <link>https://mockforge.dev/note-v0-2-3-bug-fixes.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-v0-2-3-bug-fixes.html</guid>
+      <pubDate>Fri, 31 Oct 2025 00:00:00 GMT</pubDate>
+      <description>Critical fixes for OpenAPI example extraction, request body parameter generation, and React client generator Handlebars template logic.</description>
+    </item>
+    <item>
+      <title>v0.2.0: Multi-Framework Client Generation</title>
+      <link>https://mockforge.dev/note-v0-2-0-client-generation.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-v0-2-0-client-generation.html</guid>
+      <pubDate>Wed, 29 Oct 2025 00:00:00 GMT</pubDate>
+      <description>Generate type-safe API clients for React, Vue, Angular, and Svelte from OpenAPI specs. Unified spec parser, enhanced mock data generation, and browser mobile proxy mode.</description>
+    </item>
+    <item>
+      <title>Introducing MockForge: First Public Release (v0.1.2)</title>
+      <link>https://mockforge.dev/note-announcing-v1.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-announcing-v1.html</guid>
+      <pubDate>Thu, 23 Oct 2025 00:00:00 GMT</pubDate>
+      <description>The first public release of MockForge: AI-powered API mocking for REST, gRPC, GraphQL, WebSockets, and SMTP in a unified Rust framework.</description>
+    </item>
+    <item>
+      <title>v0.1.3: Protocol Expansion &amp;amp; Testing Tools</title>
+      <link>https://mockforge.dev/note-v0-1-3-protocol-expansion.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-v0-1-3-protocol-expansion.html</guid>
+      <pubDate>Wed, 22 Oct 2025 00:00:00 GMT</pubDate>
+      <description>Native GraphQL handlers, programmable WebSockets, HTTP scenario switching, capture scrubbing, unified config profiles, and the mockforge-test integration crate.</description>
+    </item>
+    <item>
+      <title>Migration Guide: Moving from Static Fixtures to Stateful Mocks</title>
+      <link>https://mockforge.dev/note-migration-from-static-fixtures.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-migration-from-static-fixtures.html</guid>
+      <pubDate>Wed, 08 Oct 2025 00:00:00 GMT</pubDate>
+      <description>A staged migration path from static fixtures to state-aware scenario switching for better integration confidence.</description>
+    </item>
+  </channel>
+</rss>
