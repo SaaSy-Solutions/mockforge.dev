@@ -132,7 +132,7 @@ function renderFooter() {
           <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-6 w-6" />
           <span class="text-sm text-text-secondary">© <span id="year"></span> MockForge. MIT or Apache-2.0.</span>
         </div>
-        <div class="flex flex-wrap items-center justify-center gap-4 text-sm">
+        <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm">
           <a href="https://docs.mockforge.dev" class="text-text-secondary hover:text-text-primary">Docs</a>
           <a href="/engineering-notes.html" class="text-text-secondary hover:text-text-primary">Notes</a>
           <a href="/pricing.html" class="text-text-secondary hover:text-text-primary">Pricing</a>
@@ -140,6 +140,10 @@ function renderFooter() {
           <a href="/compare-mockserver.html" class="text-text-secondary hover:text-text-primary">Compare: MockServer</a>
           <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary hover:text-text-primary">GitHub</a>
           <a href="https://www.linkedin.com/company/mockforge" class="text-text-secondary hover:text-text-primary" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://app.mockforge.dev/legal/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
+          <a href="https://app.mockforge.dev/legal/terms" class="text-text-secondary hover:text-text-primary">Terms</a>
+          <a href="https://app.mockforge.dev/legal/dpa" class="text-text-secondary hover:text-text-primary">DPA</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge/security/policy" class="text-text-secondary hover:text-text-primary">Security</a>
         </div>
       </div>
     </footer>
@@ -274,6 +278,52 @@ function injectJsonLd(html, ldScript) {
   return html.replace(/<\/head>/, `    ${ldScript}\n  </head>`);
 }
 
+// Open Graph + Twitter Card meta for a note. JSON-LD (above) drives Google,
+// these drive the share previews on Twitter / LinkedIn / Slack — previously
+// blank because the note pages had no OG meta at all. Image is the global
+// site OG image; per-note hero images can come later.
+function renderNoteSocialMeta(meta) {
+  const title = escapeHtmlAttr(meta.title);
+  const desc = escapeHtmlAttr(meta.summary);
+  return [
+    `<link rel="canonical" href="${meta.url}" />`,
+    `<meta property="og:title" content="${title}" />`,
+    `<meta property="og:description" content="${desc}" />`,
+    `<meta property="og:type" content="article" />`,
+    `<meta property="og:url" content="${meta.url}" />`,
+    `<meta property="og:image" content="https://mockforge.dev/public/og-image.png" />`,
+    `<meta property="og:site_name" content="MockForge" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${title}" />`,
+    `<meta name="twitter:description" content="${desc}" />`,
+    `<meta name="twitter:image" content="https://mockforge.dev/public/og-image.png" />`,
+  ].join('\n    ');
+}
+
+function escapeHtmlAttr(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+// Inject the OG / Twitter / canonical block into a note's <head>. Idempotent:
+// the block is delimited by HTML comments so we can find and replace it
+// without disturbing other meta the page may add later.
+const SOCIAL_BEGIN = '<!-- social:begin -->';
+const SOCIAL_END = '<!-- social:end -->';
+function injectSocialMeta(html, socialBlock) {
+  const wrapped = `${SOCIAL_BEGIN}\n    ${socialBlock}\n    ${SOCIAL_END}`;
+  const existingRegex = new RegExp(
+    `${SOCIAL_BEGIN}[\\s\\S]*?${SOCIAL_END}`
+  );
+  if (existingRegex.test(html)) {
+    return html.replace(existingRegex, wrapped);
+  }
+  return html.replace(/<\/head>/, `    ${wrapped}\n  </head>`);
+}
+
 function renderRssFeed(notes) {
   const lastBuildDate = notes.length
     ? notes[0].dateRfc822
@@ -396,10 +446,14 @@ for (const file of pageFiles) {
   // Inject BlogPosting JSON-LD into note pages so search engines and feed
   // aggregators see structured metadata (title, date, author, publisher).
   // Metadata comes from the engineering-notes index — see parseNotesFromIndex.
+  // Also inject Open Graph + Twitter Card meta so the same notes render
+  // proper previews when shared on Twitter / LinkedIn / Slack (previously
+  // blank because note pages carried no OG meta at all).
   if (file.startsWith('note-')) {
     const meta = noteMetaBySlug.get(file);
     if (meta) {
       text = injectJsonLd(text, renderJsonLd(meta));
+      text = injectSocialMeta(text, renderNoteSocialMeta(meta));
     }
   }
 
