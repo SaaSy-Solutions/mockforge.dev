@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge vs Postman Mock Server: When Each Makes Sense</title>
+    <meta name="description" content="An honest comparison of Postman Mock Server and MockForge — where each tool works, the gaps you'll hit as your architecture grows, and how to know which one you need now." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/public/styles.css" />
+    <link rel="alternate" type="application/rss+xml" title="MockForge Engineering Notes" href="/rss.xml" />
+    <script>
+      (function () {
+        try {
+          var storedTheme = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (error) {
+          console.warn('Theme initialization failed:', error);
+        }
+      })();
+    </script>
+    <style>
+      html, body { height: 100%; }
+      * { transition: background-color 0.2s ease, border-color 0.2s ease; }
+      html.dark { color-scheme: dark; }
+      html.dark body { background-color: #0f172a; color: #e2e8f0; }
+      html.dark .bg-white { background-color: #1e293b !important; }
+      html.dark .bg-surface-subtle,
+      html.dark .bg-stone-50,
+      html.dark section:not(.bg-white):not([style*="background"]) { background-color: #0f172a; }
+      html.dark .text-text-primary,
+      html.dark .text-slate-900,
+      html.dark .text-brand-ink,
+      html.dark .text-brand-dark { color: #f1f5f9 !important; }
+      html.dark .text-text-secondary,
+      html.dark .text-slate-700,
+      html.dark .text-slate-600,
+      html.dark .text-slate-500,
+      html.dark .text-slate-300 { color: #cbd5e1 !important; }
+      html.dark .text-orange-700,
+      html.dark .text-orange-200 { color: #fdba74 !important; }
+      html.dark header { background-color: #0f172a !important; border-bottom-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark header nav a { color: #e2e8f0 !important; }
+      html.dark header nav a:hover { color: #ffffff !important; }
+      html.dark .border-black\/5,
+      html.dark .border-black\/10,
+      html.dark .border-slate-200,
+      html.dark .border-slate-300 { border-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark .ring-black\/5 { --tw-ring-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark .shadow-soft { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); }
+      html.dark .shadow-note { box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35); }
+      html.dark code { background-color: #1e293b; color: #e2e8f0; }
+    </style>
+    <meta name="ga-measurement-id" content="" />
+      <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "MockForge vs Postman Mock Server",
+  "description": "An honest comparison of Postman Mock Server and MockForge — when each tool is the right choice, the gaps you'll hit as your architecture grows, and the pricing tradeoffs at scale.",
+  "datePublished": "2026-05-25T00:00:00.000Z",
+  "url": "https://mockforge.dev/note-vs-postman-mock.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://mockforge.dev/note-vs-postman-mock.html"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "MockForge",
+    "url": "https://mockforge.dev/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MockForge",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://mockforge.dev/public/logo-transparent.png"
+    }
+  }
+}
+    </script>
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    <header class="sticky top-0 z-40 backdrop-blur bg-white/90 dark:bg-slate-900 border-b border-black/5 dark:border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="/" class="flex items-center gap-3">
+            <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-8 w-8" />
+            <span class="font-semibold tracking-tight text-brand-dark dark:text-white">MockForge</span>
+          </a>
+          <nav class="hidden md:flex items-center gap-3 lg:gap-4">
+            <a href="https://docs.mockforge.dev" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Docs</a>
+            <a href="/engineering-notes.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Notes</a>
+            <a href="/#features" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Features</a>
+            <a href="/pricing.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Pricing</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">GitHub</a>
+            <a href="https://app.mockforge.dev/login" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Log In</a>
+            <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 lg:px-3 lg:py-2 rounded-lg text-white hover:opacity-90 shadow-soft whitespace-nowrap text-sm" style="background-color: #D35400;">
+              <span>Sign Up Free</span>
+            </a>
+            <button id="themeToggle" class="p-2 rounded-lg border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10" aria-label="Toggle dark mode">
+              <svg id="sun" class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M7.05 7.05 5.636 5.636m12.728 0-1.414 1.414M7.05 16.95l-1.414 1.414"/><circle cx="12" cy="12" r="4"/></svg>
+              <svg id="moon" class="h-5 w-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+            </button>
+          </nav>
+          <button id="menuBtn" class="md:hidden p-2 rounded-lg border border-black/10 dark:border-white/20" aria-label="Open menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="mobileMenu" class="md:hidden hidden border-t border-black/5 dark:border-white/10 bg-white dark:bg-brand-dark">
+        <div class="px-4 py-3 space-y-2">
+          <a href="https://docs.mockforge.dev" class="block text-text-primary dark:text-white">Docs</a>
+          <a href="/engineering-notes.html" class="block text-text-primary dark:text-white">Notes</a>
+          <a href="/#features" class="block text-text-primary dark:text-white">Features</a>
+          <a href="/pricing.html" class="block text-text-primary dark:text-white">Pricing</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="block text-text-primary dark:text-white">GitHub</a>
+          <a href="https://app.mockforge.dev/login" class="block text-text-primary dark:text-white">Log In</a>
+          <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-white hover:opacity-90 shadow-soft" style="background-color: #D35400;">Sign Up Free</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">May 25, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">MockForge vs Postman Mock Server</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Postman's mock server is one of the most widely used API mocking tools — easy to set up, lives in a tool most API developers already have open. MockForge takes a different approach. Here's an honest comparison of where each tool makes sense.</p>
+
+        <p class="mt-4 leading-8 text-slate-700"><a href="/compare-postman-mock.html" class="text-orange-700 hover:text-orange-800">Full feature comparison page →</a></p>
+
+        <h2 class="mt-8 text-xl font-semibold">Where Postman Mock Server wins</h2>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Set up in under a minute.</strong> Create a collection, add an example response, click "Mock Collection." The mock server URL is live. For a frontend dev who needs a fake endpoint to render a component, this is faster than reading documentation.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Shared via Postman workspaces.</strong> The mock endpoint is available to anyone in your workspace. No deployment, no config files, no CI step. For small teams doing client-side development against a single API, this is the path of least resistance.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Built into the Postman ecosystem.</strong> If your team already uses Postman for API design and testing, the mock server is a natural extension. The transition from "I saved an example response" to "that example is now a mock endpoint" is frictionless.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Where Postman Mock Server breaks down</h2>
+        <p class="mt-4 leading-8 text-slate-700"><strong>HTTP-only.</strong> Postman mocks only REST APIs. If your architecture includes gRPC, WebSocket, GraphQL, Kafka, MQTT, AMQP, or any protocol beyond HTTP, Postman's mock server can't help. Teams that need to mock a gRPC service in CI, or simulate a Kafka producer for integration tests, need a different tool.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Examples drift from specs.</strong> A Postman mock serves whatever response body you saved as an example. If the API spec changes and nobody updates the example, the mock returns incorrect data. There's no automatic regeneration from the spec. This drift accumulates silently — the mock passes, the real API doesn't match, and integration tests fail at merge time rather than at design time.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>No failure injection.</strong> Postman mocks return the same response for every matching request. You cannot configure latency, status code changes, data corruption, or connection drops. This means your error-handling code (retries, backoff, fallbacks) is never tested against the mock — it only gets exercised in production or against a real staging environment.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>CI integration is manual.</strong> There's no CLI for running Postman mocks in CI. Teams either leave a mock server running continuously (billing active all the time) or build their own abstraction layer to start/stop mocks per pipeline run.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Cost at scale.</strong> Postman's free tier includes 1,000 mock server calls/month. The Professional plan ($29/user/month) introduces per-seat pricing that makes CI-only mock access expensive — you pay for a full seat even when only a CI runner is consuming the mock.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Where MockForge fits</h2>
+        <p class="mt-4 leading-8 text-slate-700">MockForge is a better fit when any of these are true:</p>
+        <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
+          <li>Your architecture spans multiple protocols (most production systems do)</li>
+          <li>Your team wants spec-derived mocks that don't drift from the contract</li>
+          <li>You need deterministic failure injection to test error handling</li>
+          <li>Your CI pipeline requires fast, hermetic mock startup per test run</li>
+          <li>You prefer self-hosted or CLI-based mocking without per-seat pricing</li>
+        </ul>
+        <p class="mt-4 leading-8 text-slate-700">It's a worse fit when your needs are a simple REST mock for frontend development with no protocol complexity — in that case, Postman's mock server is faster to set up and your team already has it.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">The honest trade</h2>
+        <p class="mt-4 leading-8 text-slate-700">We lose deals to Postman. Not because Postman's mock server is technically superior, but because for a team building a single REST API with no event-driven components, Postman's mock server is <em>enough</em> and the setup friction is essentially zero.</p>
+        <p class="mt-4 leading-8 text-slate-700">The teams that switch to MockForge are the ones who started with Postman mocks and hit one of the gaps above — usually the protocol limit or the spec drift problem. They weren't unhappy with Postman; they were unhappy that their mock server couldn't grow with their architecture.</p>
+        <p class="mt-4 leading-8 text-slate-700">MockForge Cloud's <a href="/pricing.html" class="text-orange-700 hover:text-orange-800">pricing</a> is $0/month for the free tier (no per-seat minimum) with usage-based pricing starting at $29/month for the Pro plan. Postman's Pro plan at the same price covers one user — MockForge's covers unlimited team members and CI runners within the usage tier.</p>
+        <p class="mt-4 leading-8 text-slate-700"><a href="/compare-postman-mock.html" class="text-orange-700 hover:text-orange-800">See the full feature comparison →</a></p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="/pricing.html" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">View Pricing</a>
+          <a href="/compare-postman-mock.html" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">Full Comparison</a>
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">Docs</a>
+        </div>
+      </article>
+    </main>
+
+    <footer class="py-10 border-t border-black/5 dark:border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-6 w-6" />
+          <span class="text-sm text-text-secondary">© <span id="year"></span> MockForge. MIT or Apache-2.0.</span>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-4 text-sm">
+          <a href="https://docs.mockforge.dev" class="text-text-secondary hover:text-text-primary">Docs</a>
+          <a href="/engineering-notes.html" class="text-text-secondary hover:text-text-primary">Notes</a>
+          <a href="/pricing.html" class="text-text-secondary hover:text-text-primary">Pricing</a>
+          <a href="/compare-wiremock.html" class="text-text-secondary hover:text-text-primary">Compare: WireMock</a>
+          <a href="/compare-mockserver.html" class="text-text-secondary hover:text-text-primary">Compare: MockServer</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary hover:text-text-primary">GitHub</a>
+          <a href="https://www.linkedin.com/company/mockforge" class="text-text-secondary hover:text-text-primary" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var toggle = document.getElementById('themeToggle');
+        var html = document.documentElement;
+        var menuBtn = document.getElementById('menuBtn');
+        var mobileMenu = document.getElementById('mobileMenu');
+        var year = document.getElementById('year');
+
+        if (year) year.textContent = new Date().getFullYear();
+
+        if (toggle) {
+          toggle.addEventListener('click', function () {
+            html.classList.toggle('dark');
+            var isDark = html.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          });
+        }
+
+        if (menuBtn && mobileMenu) {
+          menuBtn.addEventListener('click', function () {
+            mobileMenu.classList.toggle('hidden');
+          });
+
+          mobileMenu.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+              mobileMenu.classList.add('hidden');
+            });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

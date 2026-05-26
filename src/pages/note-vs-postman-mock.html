@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockForge vs Postman Mock Server: When Each Makes Sense</title>
+    <meta name="description" content="An honest comparison of Postman Mock Server and MockForge — where each tool works, the gaps you'll hit as your architecture grows, and how to know which one you need now." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">May 25, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">MockForge vs Postman Mock Server</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Postman's mock server is one of the most widely used API mocking tools — easy to set up, lives in a tool most API developers already have open. MockForge takes a different approach. Here's an honest comparison of where each tool makes sense.</p>
+
+        <p class="mt-4 leading-8 text-slate-700"><a href="/compare-postman-mock.html" class="text-orange-700 hover:text-orange-800">Full feature comparison page →</a></p>
+
+        <h2 class="mt-8 text-xl font-semibold">Where Postman Mock Server wins</h2>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Set up in under a minute.</strong> Create a collection, add an example response, click "Mock Collection." The mock server URL is live. For a frontend dev who needs a fake endpoint to render a component, this is faster than reading documentation.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Shared via Postman workspaces.</strong> The mock endpoint is available to anyone in your workspace. No deployment, no config files, no CI step. For small teams doing client-side development against a single API, this is the path of least resistance.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Built into the Postman ecosystem.</strong> If your team already uses Postman for API design and testing, the mock server is a natural extension. The transition from "I saved an example response" to "that example is now a mock endpoint" is frictionless.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Where Postman Mock Server breaks down</h2>
+        <p class="mt-4 leading-8 text-slate-700"><strong>HTTP-only.</strong> Postman mocks only REST APIs. If your architecture includes gRPC, WebSocket, GraphQL, Kafka, MQTT, AMQP, or any protocol beyond HTTP, Postman's mock server can't help. Teams that need to mock a gRPC service in CI, or simulate a Kafka producer for integration tests, need a different tool.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Examples drift from specs.</strong> A Postman mock serves whatever response body you saved as an example. If the API spec changes and nobody updates the example, the mock returns incorrect data. There's no automatic regeneration from the spec. This drift accumulates silently — the mock passes, the real API doesn't match, and integration tests fail at merge time rather than at design time.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>No failure injection.</strong> Postman mocks return the same response for every matching request. You cannot configure latency, status code changes, data corruption, or connection drops. This means your error-handling code (retries, backoff, fallbacks) is never tested against the mock — it only gets exercised in production or against a real staging environment.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>CI integration is manual.</strong> There's no CLI for running Postman mocks in CI. Teams either leave a mock server running continuously (billing active all the time) or build their own abstraction layer to start/stop mocks per pipeline run.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Cost at scale.</strong> Postman's free tier includes 1,000 mock server calls/month. The Professional plan ($29/user/month) introduces per-seat pricing that makes CI-only mock access expensive — you pay for a full seat even when only a CI runner is consuming the mock.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Where MockForge fits</h2>
+        <p class="mt-4 leading-8 text-slate-700">MockForge is a better fit when any of these are true:</p>
+        <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
+          <li>Your architecture spans multiple protocols (most production systems do)</li>
+          <li>Your team wants spec-derived mocks that don't drift from the contract</li>
+          <li>You need deterministic failure injection to test error handling</li>
+          <li>Your CI pipeline requires fast, hermetic mock startup per test run</li>
+          <li>You prefer self-hosted or CLI-based mocking without per-seat pricing</li>
+        </ul>
+        <p class="mt-4 leading-8 text-slate-700">It's a worse fit when your needs are a simple REST mock for frontend development with no protocol complexity — in that case, Postman's mock server is faster to set up and your team already has it.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">The honest trade</h2>
+        <p class="mt-4 leading-8 text-slate-700">We lose deals to Postman. Not because Postman's mock server is technically superior, but because for a team building a single REST API with no event-driven components, Postman's mock server is <em>enough</em> and the setup friction is essentially zero.</p>
+        <p class="mt-4 leading-8 text-slate-700">The teams that switch to MockForge are the ones who started with Postman mocks and hit one of the gaps above — usually the protocol limit or the spec drift problem. They weren't unhappy with Postman; they were unhappy that their mock server couldn't grow with their architecture.</p>
+        <p class="mt-4 leading-8 text-slate-700">MockForge Cloud's <a href="/pricing.html" class="text-orange-700 hover:text-orange-800">pricing</a> is $0/month for the free tier (no per-seat minimum) with usage-based pricing starting at $29/month for the Pro plan. Postman's Pro plan at the same price covers one user — MockForge's covers unlimited team members and CI runners within the usage tier.</p>
+        <p class="mt-4 leading-8 text-slate-700"><a href="/compare-postman-mock.html" class="text-orange-700 hover:text-orange-800">See the full feature comparison →</a></p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="/pricing.html" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">View Pricing</a>
+          <a href="/compare-postman-mock.html" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">Full Comparison</a>
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">Docs</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

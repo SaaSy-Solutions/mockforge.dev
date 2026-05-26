@@ -6,7 +6,42 @@
     <atom:link href="https://mockforge.dev/rss.xml" rel="self" type="application/rss+xml" />
     <description>Engineering notes and release deep dives from MockForge.</description>
     <language>en-us</language>
-    <lastBuildDate>Mon, 18 May 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 25 May 2026 00:00:00 GMT</lastBuildDate>
+    <item>
+      <title>MockForge vs Postman Mock Server</title>
+      <link>https://mockforge.dev/note-vs-postman-mock.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-vs-postman-mock.html</guid>
+      <pubDate>Mon, 25 May 2026 00:00:00 GMT</pubDate>
+      <description>An honest comparison of Postman Mock Server and MockForge — when each tool is the right choice, the gaps you&apos;ll hit as your architecture grows, and the pricing tradeoffs at scale.</description>
+    </item>
+    <item>
+      <title>Conformance Testing Maturity: Multi-Protocol Spec Validation and SARIF Reports</title>
+      <link>https://mockforge.dev/note-conformance-maturity.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-conformance-maturity.html</guid>
+      <pubDate>Sat, 23 May 2026 00:00:00 GMT</pubDate>
+      <description>How MockForge&apos;s conformance testing framework grew from basic spec validation into a structured 47-check framework with SARIF output, per-category targeting, and multi-protocol contract checking.</description>
+    </item>
+    <item>
+      <title>Release Notes: gRPC Dynamic Routing, $ref Resolution, and Protocol Handler Refactor</title>
+      <link>https://mockforge.dev/note-grpc-dynamic-routing-release.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-grpc-dynamic-routing-release.html</guid>
+      <pubDate>Fri, 22 May 2026 00:00:00 GMT</pubDate>
+      <description>How the v0.3.70–v0.3.75 cycle consolidated gRPC dynamic routing, $ref resolution for OpenAPI specs, and interior-mutable protocol handlers that enable live config updates.</description>
+    </item>
+    <item>
+      <title>Extending MockForge with WASM Plugins</title>
+      <link>https://mockforge.dev/note-wasm-plugins.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-wasm-plugins.html</guid>
+      <pubDate>Thu, 21 May 2026 00:00:00 GMT</pubDate>
+      <description>Custom mocks without forking the codebase — write response generators, data transformers, and protocol handlers in any WASM-compilable language, sandboxed and simple to wire up.</description>
+    </item>
+    <item>
+      <title>Fault Injection and Chaos Patterns Across Protocols</title>
+      <link>https://mockforge.dev/note-fault-injection-patterns.html</link>
+      <guid isPermaLink="true">https://mockforge.dev/note-fault-injection-patterns.html</guid>
+      <pubDate>Wed, 20 May 2026 00:00:00 GMT</pubDate>
+      <description>Static mocks give false confidence — inject controlled failures across HTTP, gRPC, Kafka, and WebSocket to surface the error-handling gaps your integration tests miss.</description>
+    </item>
     <item>
       <title>Our $10/mo SaaS Infrastructure</title>
       <link>https://mockforge.dev/note-our-saas-infrastructure.html</link>

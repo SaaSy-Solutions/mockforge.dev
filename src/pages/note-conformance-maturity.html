@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Conformance Testing Maturity: Multi-Protocol Spec Validation and SARIF Reports</title>
+    <meta name="description" content="How MockForge's conformance testing framework grew from basic spec validation into a structured 47-check framework with SARIF output, per-category targeting, and multi-protocol contract checking." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">May 23, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Conformance Testing Maturity: Multi-Protocol Spec Validation and SARIF Reports</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Conformance testing was a secondary feature for most of MockForge's early life — check request syntax, validate a few constraints, pass or fail. The v0.3.x cycle turned it into a structured framework covering 47 checks across 11 categories, with SARIF output and multi-protocol contract validation.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">The three problems conformance testing needed to solve</h2>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Spec validation is not the same as mock configuration.</strong> You can have a perfectly valid OpenAPI spec that generates unusable mocks — missing examples, overly broad schemas, recursive definitions that produce infinite response bodies. Conformance testing needed to validate that the mock behavior matched the spec, not that the spec was technically valid.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Coverage across protocols is uneven.</strong> An HTTP conformance check looks at method, path, status code, and body. A gRPC check needs to validate the proto contract, the streaming direction, and the type-level correctness of responses. A Kafka check validates message schemas against the registered Avro/Protobuf/JSON schema. The framework had to support all three without three separate implementations.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Output formats matter for CI.</strong> A JSON list of "passed: true/false" is enough for a dev machine. A CI pipeline needs SARIF output for GitHub code scanning alerts, structured failure metadata for team dashboards, and human-readable summaries for PR descriptions.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">What the current framework does</h2>
+        <p class="mt-4 leading-8 text-slate-700">The conformance framework now supports 47 individual checks across 11 categories:</p>
+        <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
+          <li><strong>Spec validity</strong> — schema parsing, $ref resolution, type checking</li>
+          <li><strong>Content negotiation</strong> — Accept headers, content-type, response encodings</li>
+          <li><strong>Parameter handling</strong> — query, path, header, cookie params against spec constraints</li>
+          <li><strong>Request body validation</strong> — required fields, type constraints, enum values</li>
+          <li><strong>Response schema validation</strong> — response body matches the spec's response schema</li>
+          <li><strong>Status code coverage</strong> — every defined response code is reachable</li>
+          <li><strong>Security scheme validation</strong> — auth headers, API key placement, OAuth2 scopes</li>
+          <li><strong>Example extraction</strong> — spec examples render as valid mock responses</li>
+          <li><strong>Multi-target conformance</strong> — same spec tested against multiple proxy targets</li>
+          <li><strong>SARIF report generation</strong> — structured output for CI integration</li>
+          <li><strong>gRPC/Kafka conformance</strong> — contract-level checks for non-HTTP protocols</li>
+        </ul>
+
+        <h2 class="mt-8 text-xl font-semibold">Running checks</h2>
+        <p class="mt-4 leading-8 text-slate-700">The CLI exposes per-category flags for targeted runs:</p>
+        <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code># All conformance checks against a spec
+mockforge bench --conformance --spec api.yaml
+
+# Only response schema validation
+mockforge bench --conformance response-schema --spec api.yaml
+
+# Full report with SARIF output
+mockforge bench --conformance --spec api.yaml \
+  --conformance-report conformance-report.json \
+  --conformance-sarif report.sarif</code></pre>
+        <p class="mt-4 leading-8 text-slate-700">The SARIF output includes endpoint-level metadata: which operation failed, what the spec expected, what the mock returned, and a human-readable explanation of the mismatch.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Lessons from building it</h2>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Spec examples drift from spec schemas.</strong> We found that many OpenAPI specs have examples that violate the schema they document — extra fields, wrong types, missing required properties. The conformance framework now flags these as warnings rather than failures, because teams generally want to fix the spec, not break CI on existing examples.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Cross-protocol coverage is mostly about the contract layer.</strong> Once we separated "the spec says X" from "the mock responds with Y," the same validation patterns applied to gRPC and Kafka. The protocol-specific code is limited to the wire format — the contract checking logic is shared.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>SARIF adoption is uneven across platforms.</strong> GitHub Actions natively surfaces SARIF annotations. GitLab CI can ingest it with configuration. Other CI systems need the JSON report instead. We publish both formats from the same run.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev/CONFORMANCE_TESTING.html" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Conformance Guide</a>
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Extending MockForge with WASM Plugins</title>
+    <meta name="description" content="How MockForge's WASM plugin system lets you write custom response generators, data transformations, and protocol handlers in any language that compiles to WebAssembly — sandboxed and language-agnostic." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-3xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-orange-700 hover:text-orange-800">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">May 21, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Extending MockForge with WASM Plugins</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">Custom mocks without forking the codebase. Write a response generator in Rust, Go, or C, compile to WebAssembly, and MockForge calls it at request time — sandboxed, language-agnostic, and simple to wire up.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Why WASM, not a scripting language</h2>
+        <p class="mt-4 leading-8 text-slate-700">Three reasons the plugin system chose WebAssembly over embedding a scripting runtime:</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Sandboxed by default.</strong> A WASM module cannot syscall, open files, or reach the network. It receives only the data the host explicitly passes it — request context, mock state, and plugin inputs. For a tool that teams deploy in CI and internal environments, this matters: a malicious or buggy plugin can't escape its sandbox.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Language-agnostic.</strong> Compile to WASM from Rust, Go, C, C++, Zig, AssemblyScript, or any language with a WASM target. Teams already writing their services in Rust can write plugins in the same language.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Predictable performance.</strong> WASM runtimes (wasmtime in MockForge's case) compile to native code with predictable overhead — typically microseconds to call a plugin function, no GC pauses.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">How plugins work</h2>
+        <p class="mt-4 leading-8 text-slate-700">A plugin is a WASM module that exports a set of lifecycle functions. MockForge discovers plugins from a configured path, loads them at startup, and calls into them at defined extension points:</p>
+        <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>plugins:
+  paths:
+    - ./plugins/custom-generator.wasm
+    - ./plugins/db-lookup.wasm</code></pre>
+        <p class="mt-4 leading-8 text-slate-700">Each plugin exports a <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">plugin_metadata</code> function that declares which extension points it hooks — response generation, request validation, data transformation, or custom protocol handling.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Writing a custom response generator</h2>
+        <p class="mt-4 leading-8 text-slate-700">A plugin that generates responses based on the request body doesn't need to parse JSON inside the WASM — MockForge passes the parsed request data as typed values. Here's a Rust plugin skeleton:</p>
+        <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>use mockforge_plugin_sdk::*;
+
+#[no_mangle]
+pub extern "C" fn plugin_metadata() -> Metadata {
+    Metadata {
+        name: "discount-calculator",
+        version: semver!("0.1.0"),
+        hooks: &[Hook::ResponseGeneration],
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn generate_response(ctx: &RequestContext) -> Response {
+    let tier = ctx.request_body.field("customer_tier").as_str();
+    let base_price = ctx.request_body.field("base_price").as_f64();
+
+    let discount = match tier {
+        "premium" => 0.20,
+        "business" => 0.10,
+        _ => 0.0,
+    };
+
+    Response::json(serde_json::json!({
+        "final_price": base_price * (1.0 - discount),
+        "discount_applied": discount > 0.0,
+    }))
+}</code></pre>
+        <p class="mt-4 leading-8 text-slate-700">Compile with <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">cargo build --target wasm32-wasip1 --release</code>, place the <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">.wasm</code> in the plugins directory, and the generator is available on every request.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">Practical use cases</h2>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Database-derived responses.</strong> A plugin that connects to a real database (via the host's allowed-socket list, not from inside WASM) to return live reference data within an otherwise mocked environment. This lets you mock the service boundary while keeping the data layer real — useful for integration tests that need to validate against actual reference tables.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Protocol-specific transforms.</strong> MockForge's HTTP bridge converts gRPC calls to REST automatically. A plugin can add custom header mapping or content negotiation logic for endpoints where the default conversion doesn't match the real API.</p>
+        <p class="mt-4 leading-8 text-slate-700"><strong>Dynamic scenario selection.</strong> Instead of hardcoding test scenarios in the mock config, a plugin can select a scenario based on the authenticated user, the time of day, or a test-run parameter passed as a custom header. The same mock deployment serves different teams with different scenarios.</p>
+
+        <h2 class="mt-8 text-xl font-semibold">When to use a plugin vs config</h2>
+        <p class="mt-4 leading-8 text-slate-700">If your custom behavior is expressible as a template expansion or a conditional in the YAML config, do that. The config path is simpler, easier to debug, and doesn't require a separate build step. Use a plugin when:</p>
+        <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
+          <li>The response depends on an external data source</li>
+          <li>The behavior requires conditional logic across multiple requests (session state)</li>
+          <li>You need to implement a protocol or wire format the built-in listeners don't cover</li>
+        </ul>
+
+        <h2 class="mt-8 text-xl font-semibold">Growing the system</h2>
+        <p class="mt-4 leading-8 text-slate-700">The plugin SDK is at v0.3 and the hook surface grows with each release. Current extension points cover response generation, request validation, and data transformation. Upcoming releases add plugin access to the mock's stored state and multi-request session tracking, which enables plugin-authored scenario flows.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://docs.mockforge.dev/plugins" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 font-medium text-white hover:bg-orange-700">Plugin SDK Docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge/tree/main/examples/plugins" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">Plugin Examples</a>
+          <a href="/pricing.html" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-50">Pricing</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>
