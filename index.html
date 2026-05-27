@@ -62,7 +62,10 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Icons: Phosphor web font (real library glyphs, not hand-rolled SVG) -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 
     <link rel="stylesheet" href="/public/styles.css" />
     <link rel="alternate" type="application/rss+xml" title="MockForge Engineering Notes" href="/rss.xml" />
@@ -110,10 +113,13 @@
       html.dark .shadow-soft { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); }
       html.dark .shadow-note { box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35); }
       html.dark code { background-color: #1e293b; color: #e2e8f0; }
+      .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
+      .reveal.in { opacity: 1; transform: none; }
+      @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
     </style>
     <meta name="ga-measurement-id" content="" />
 </head>
-  <body class="bg-surface-subtle dark:bg-gray-900 text-text-primary dark:text-gray-100 antialiased">
+  <body class="bg-surface-subtle text-text-primary antialiased selection:bg-brand-orange/20">
     <!-- Header / Nav -->
     <header class="sticky top-0 z-40 backdrop-blur bg-white/90 dark:bg-slate-900 border-b border-black/5 dark:border-white/10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -130,7 +136,7 @@
             <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">GitHub</a>
             <a href="https://app.mockforge.dev/login" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Log In</a>
             <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 lg:px-3 lg:py-2 rounded-lg text-white hover:opacity-90 shadow-soft whitespace-nowrap text-sm" style="background-color: #D35400;">
-              <span>Sign Up Free</span>
+              <span>Get started free</span>
             </a>
             <button id="themeToggle" class="p-2 rounded-lg border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10" aria-label="Toggle dark mode">
               <svg id="sun" class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M7.05 7.05 5.636 5.636m12.728 0-1.414 1.414M7.05 16.95l-1.414 1.414"/><circle cx="12" cy="12" r="4"/></svg>
@@ -150,314 +156,287 @@
           <a href="/pricing.html" class="block text-text-primary dark:text-white">Pricing</a>
           <a href="https://github.com/SaaSy-Solutions/mockforge" class="block text-text-primary dark:text-white">GitHub</a>
           <a href="https://app.mockforge.dev/login" class="block text-text-primary dark:text-white">Log In</a>
-          <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-white hover:opacity-90 shadow-soft" style="background-color: #D35400;">Sign Up Free</a>
+          <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-white hover:opacity-90 shadow-soft" style="background-color: #D35400;">Get started free</a>
         </div>
       </div>
     </header>
 
-    <!-- Hero -->
+    <!-- Hero: asymmetric split -->
     <section id="top" class="relative overflow-hidden">
+      <!-- soft brand wash, not an AI mesh blob -->
+      <div class="pointer-events-none absolute -top-32 -right-24 h-[28rem] w-[28rem] rounded-full bg-brand-orange/10 blur-3xl"></div>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="py-20 sm:py-28 grid lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-slate-800 shadow-soft text-text-secondary dark:text-gray-300 text-xs">
-              <span class="w-2 h-2 rounded-full bg-green-500"></span>
-              Open source • MIT or Apache-2.0
-            </div>
-            <h1 class="mt-5 text-4xl sm:text-5xl font-semibold tracking-tight text-brand-dark dark:text-white">
-              Simulate real backend behavior across REST, gRPC, GraphQL, WebSockets & SMTP
+        <div class="py-20 lg:py-24 grid lg:grid-cols-[1.05fr_0.95fr] gap-12 lg:gap-16 items-center">
+          <div class="reveal">
+            <h1 class="text-4xl md:text-5xl lg:text-[3.25rem] font-semibold leading-[1.05] tracking-tight text-brand-dark">
+              Simulate real backends across every protocol.
             </h1>
-            <p class="mt-5 text-lg text-text-secondary max-w-2xl">
-              Start with open source in minutes, then scale to team and enterprise workflows with realistic services, intelligent synthetic data, and admin-grade controls.
-            </p>
-            <p class="mt-4 text-sm text-text-secondary max-w-2xl">
-              Compare MockForge with
-              <a href="/compare-wiremock.html" class="text-brand-dark dark:text-white hover:text-text-primary">WireMock</a>,
-              <a href="/compare-mockserver.html" class="text-brand-dark dark:text-white hover:text-text-primary">MockServer</a>,
-              and
-              <a href="/compare-postman-mock.html" class="text-brand-dark dark:text-white hover:text-text-primary">Postman Mock</a>
-              to see where multi-protocol simulation and realism-first workflows differ.
+            <p class="mt-5 text-lg text-text-secondary max-w-xl leading-relaxed">
+              Start with open source in minutes. Scale to realistic data, latency, and admin-grade controls when your team needs them.
             </p>
             <div class="mt-8 flex flex-wrap items-center gap-3">
-              <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-white hover:opacity-90 shadow-soft whitespace-nowrap" style="background-color: #D35400;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5 flex-shrink-0"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                <span class="font-medium">Get Started Free</span>
+              <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-brand-orange text-white font-medium shadow-soft hover:opacity-90 active:scale-[.98] transition whitespace-nowrap">
+                <i class="ph-bold ph-lightning text-lg"></i>
+                Get started free
               </a>
-              <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-black/10 dark:border-white/20 text-text-primary dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10">
-                <svg aria-hidden="true" viewBox="0 0 16 16" class="h-5 w-5 flex-shrink-0" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-                <span class="font-medium">Start with OSS (GitHub)</span>
-                <img src="https://img.shields.io/github/stars/SaaSy-Solutions/mockforge?style=flat-square&label=&color=lightgrey" alt="GitHub stars" class="h-5" loading="lazy" />
-              </a>
-              <a href="https://docs.mockforge.dev" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-black/10 dark:border-white/20 text-text-primary dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10">
-                <span class="font-medium">Read the Docs</span>
-              </a>
-              <a href="https://mockforge.dev/pricing.html" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-black/10 text-text-primary hover:bg-black/5">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M9 18h6"/></svg>
-                <span class="font-medium">View Pricing</span>
+              <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-black/10 hover:bg-black/5 dark:hover:bg-white/10 active:scale-[.98] transition whitespace-nowrap">
+                <i class="ph-fill ph-github-logo text-lg"></i>
+                Star on GitHub
               </a>
             </div>
-            <div class="mt-8 text-sm text-text-secondary">
-              <code class="font-mono bg-black/5 dark:bg-white/10 rounded-lg px-3 py-2 block w-full"># Install (example)
-$ cargo install mockforge-cli</code>
-            </div>
-          </div>
-          <div class="relative">
-            <div class="rounded-2xl shadow-soft ring-1 ring-black/5 overflow-hidden bg-white dark:bg-brand-dark">
-              <img src="/public/admin-screenshot.png" alt="MockForge Admin UI screenshot" class="w-full h-auto" />
-            </div>
-            <div class="absolute -bottom-6 -left-6 hidden sm:block">
-              <div class="px-4 py-3 rounded-xl bg-white shadow-soft border border-black/5 text-sm text-text-secondary">
-                Realistic data • Latency profiles • Record & replay
+            <!-- install one-liner: the hero's single supporting element -->
+            <div class="mt-7 max-w-md">
+              <div class="flex items-center gap-3 rounded-xl bg-brand-dark px-4 py-3 font-mono text-sm text-slate-100">
+                <span class="text-brand-orange select-none">$</span>
+                <span id="installCmd" class="flex-1 truncate">cargo install mockforge-cli</span>
+                <button id="copyInstall" class="text-slate-400 hover:text-white transition" aria-label="Copy install command">
+                  <i id="copyIcon" class="ph ph-copy text-lg"></i>
+                  <i id="copiedIcon" class="ph-bold ph-check text-lg text-emerald-400 hidden"></i>
+                </button>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Features -->
-    <section id="features" class="py-20">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto">
-          <h2 class="text-3xl font-semibold text-brand-dark dark:text-white">Features developers care about</h2>
-          <p class="mt-3 text-text-secondary">Everything you need to simulate complex services and ship faster, without waiting on real backends.</p>
-        </div>
-        <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Feature card -->
-          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-            <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <div class="reveal relative">
+            <div class="rounded-2xl shadow-note ring-1 ring-black/5 overflow-hidden bg-white">
+              <img src="/public/admin-screenshot.png" alt="MockForge admin UI showing mock servers, request log and metrics" class="w-full h-auto" />
             </div>
-            <h3 class="mt-4 font-semibold">Multi‑Protocol</h3>
-            <p class="mt-2 text-sm text-text-secondary">Mock HTTP REST, gRPC, GraphQL, WebSocket, and SMTP endpoints with a unified interface. Includes HTTP Bridge for automatic gRPC-to-REST conversion.</p>
-          </div>
-          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-            <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/><circle cx="12" cy="12" r="3"/></svg>
+            <div class="absolute -bottom-5 left-5 hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white shadow-note ring-1 ring-black/5 text-sm">
+              <i class="ph-fill ph-gauge text-brand-orange text-lg"></i>
+              <span class="text-text-secondary">Realistic data, latency &amp; record-replay</span>
             </div>
-             <h3 class="mt-4 font-semibold">Advanced Data Synthesis</h3>
-             <p class="mt-2 text-sm text-text-secondary">AI-powered intelligent data generation with RAG, smart field inference, deterministic seeding, relationship awareness, data drift simulation, and template tokens like <code class="font-mono">{{uuid}}</code> and <code class="font-mono">{{faker.email}}</code>.</p>
-          </div>
-          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-            <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </div>
-            <h3 class="mt-4 font-semibold">Latency & Fault Injection</h3>
-            <p class="mt-2 text-sm text-text-secondary">Operation‑aware latency/failure profiles to test real‑world conditions.</p>
-          </div>
-          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-            <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-            </div>
-            <h3 class="mt-4 font-semibold">Record & Replay</h3>
-            <p class="mt-2 text-sm text-text-secondary">Capture live traffic and replay scenarios to debug and benchmark.</p>
-          </div>
-          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-            <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M16 15l5-5-5-5"/></svg>
-            </div>
-            <h3 class="mt-4 font-semibold">Extensible Plugins</h3>
-            <p class="mt-2 text-sm text-text-secondary">Add custom generators, data sources, and overrides with a clean plugin system.</p>
-          </div>
-           <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-             <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
-               <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-             </div>
-             <h3 class="mt-4 font-semibold">Modern Admin UI</h3>
-             <p class="mt-2 text-sm text-text-secondary">Web‑based interface for managing servers, overrides, and metrics.</p>
-           </div>
-           <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-             <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
-               <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-             </div>
-             <h3 class="mt-4 font-semibold">Request Validation</h3>
-             <p class="mt-2 text-sm text-text-secondary">Validate incoming requests against OpenAPI specs with deep schema resolution, supporting path, query, header, cookie, and body parameters.</p>
-           </div>
-           <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-             <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
-               <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-             </div>
-             <h3 class="mt-4 font-semibold">AI Event Streams</h3>
-             <p class="mt-2 text-sm text-text-secondary">Generate narrative-driven WebSocket events for real-time testing scenarios.</p>
-           </div>
-           <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-             <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center">
-               <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><circle cx="12" cy="16" r="1"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-             </div>
-             <h3 class="mt-4 font-semibold">End-to-End Encryption</h3>
-             <p class="mt-2 text-sm text-text-secondary">Enterprise-grade security with AES-256/ChaCha20 encryption for sensitive configurations.</p>
-           </div>
-         </div>
-      </div>
-    </section>
-
-
-    <!-- Benchmark / Proof -->
-    <section id="proof" class="py-16 bg-surface-subtle dark:bg-slate-900">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto">
-          <h2 class="text-3xl font-semibold text-brand-dark dark:text-white">Why teams adopt MockForge</h2>
-          <p class="mt-3 text-text-secondary">Built for faster frontend/backend parallelization and safer integration testing under real-world conditions.</p>
-        </div>
-        <div class="mt-10 grid md:grid-cols-3 gap-6">
-          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-            <p class="text-xs uppercase tracking-wide text-text-secondary">Developer workflow</p>
-            <p class="mt-2 text-2xl font-semibold">Faster parallel delivery</p>
-            <p class="mt-2 text-sm text-text-secondary">Frontend and backend teams unblock each other with realistic mocks instead of waiting on live services.</p>
-          </div>
-          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-            <p class="text-xs uppercase tracking-wide text-text-secondary">Risk reduction</p>
-            <p class="mt-2 text-2xl font-semibold">State-aware test confidence</p>
-            <p class="mt-2 text-sm text-text-secondary">Scenario switching and failure profiles expose retry/fallback behavior before integration surprises hit production.</p>
-          </div>
-          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-            <p class="text-xs uppercase tracking-wide text-text-secondary">Adoption path</p>
-            <p class="mt-2 text-2xl font-semibold">Open-source first</p>
-            <p class="mt-2 text-sm text-text-secondary">Start with OSS workflows, then layer team and enterprise support as complexity grows.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- How it works -->
-    <section id="how" class="py-20 bg-white dark:bg-brand-dark/50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid lg:grid-cols-2 gap-10 items-start">
-          <div>
-            <h2 class="text-3xl font-semibold text-brand-dark dark:text-white">How it works</h2>
-            <ol class="mt-6 space-y-5 text-text-secondary">
-              <li class="flex gap-3">
-                <span class="flex-none w-8 h-8 rounded-full bg-brand-orange text-white flex items-center justify-center font-semibold">1</span>
-                <div>
-                  <p class="font-medium text-text-primary">Define your API & rules</p>
-                  <p class="text-sm">Describe endpoints and schemas. Configure latency/failure profiles and overrides per operation.</p>
-                </div>
-              </li>
-              <li class="flex gap-3">
-                <span class="flex-none w-8 h-8 rounded-full bg-brand-orange text-white flex items-center justify-center font-semibold">2</span>
-                <div>
-                  <p class="font-medium text-text-primary">Generate realistic data</p>
-                  <p class="text-sm">Use built‑in tokens (<code class="font-mono">{{uuid}}</code>, <code class="font-mono">{{now}}</code>, etc.) or plug in custom generators.</p>
-                </div>
-              </li>
-              <li class="flex gap-3">
-                <span class="flex-none w-8 h-8 rounded-full bg-brand-orange text-white flex items-center justify-center font-semibold">3</span>
-                <div>
-                  <p class="font-medium text-text-primary">Run & iterate</p>
-                  <p class="text-sm">Start the mock server, inspect requests in the Admin UI, and fine‑tune behaviors as you build.</p>
-                </div>
-              </li>
-            </ol>
-          </div>
-          <div>
-            <div class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 overflow-hidden shadow-soft">
-              <pre class="bg-black text-white p-5 text-sm leading-6 font-mono"><code># Quick start (example)
-$ mockforge init
-✔ Created mockforge.yaml
+    <!-- Protocol capability strip (honest "what it speaks", not a fake customer logo wall) -->
+    <section class="border-y border-black/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <p class="text-center text-xs font-medium uppercase tracking-[0.18em] text-text-secondary">One framework, every transport your services use</p>
+        <ul class="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-5 text-sm">
+          <li class="flex items-center justify-center gap-2 text-text-secondary"><i class="ph ph-globe-hemisphere-west text-brand-orange text-lg"></i> REST</li>
+          <li class="flex items-center justify-center gap-2 text-text-secondary"><i class="ph ph-tree-structure text-brand-orange text-lg"></i> gRPC</li>
+          <li class="flex items-center justify-center gap-2 text-text-secondary"><i class="ph ph-graph text-brand-orange text-lg"></i> GraphQL</li>
+          <li class="flex items-center justify-center gap-2 text-text-secondary"><i class="ph ph-plugs-connected text-brand-orange text-lg"></i> WebSocket</li>
+          <li class="flex items-center justify-center gap-2 text-text-secondary"><i class="ph ph-queue text-brand-orange text-lg"></i> Kafka</li>
+          <li class="flex items-center justify-center gap-2 text-text-secondary"><i class="ph ph-broadcast text-brand-orange text-lg"></i> MQTT</li>
+        </ul>
+      </div>
+    </section>
 
-# Add an endpoint override
+    <!-- Features: bento with rhythm and visual variation -->
+    <section id="features" class="py-20 lg:py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl reveal">
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-brand-dark">Everything you need to fake a backend convincingly</h2>
+          <p class="mt-3 text-text-secondary text-lg leading-relaxed">Mock the protocol, synthesize the data, inject the failures, and inspect every request from one place.</p>
+        </div>
+
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-5 auto-rows-fr reveal">
+          <!-- Large feature tile: multi-protocol (dark, spans 2 cols) -->
+          <article class="md:col-span-2 rounded-2xl p-7 bg-gradient-to-br from-brand-dark to-slate-800 text-white ring-1 ring-black/10 overflow-hidden relative">
+            <i class="ph-duotone ph-stack text-3xl text-brand-orange"></i>
+            <h3 class="mt-4 text-xl font-semibold">Multi-protocol from one config</h3>
+            <p class="mt-2 text-slate-300 max-w-md leading-relaxed">Mock HTTP REST, gRPC, GraphQL, WebSocket, Kafka and MQTT side by side. The HTTP bridge even turns gRPC services into REST automatically.</p>
+            <div class="mt-5 flex flex-wrap gap-2 text-xs font-mono">
+              <span class="px-2.5 py-1 rounded-lg bg-white/10">REST</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/10">gRPC</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/10">GraphQL</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/10">WebSocket</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/10">Kafka</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/10">MQTT</span>
+            </div>
+          </article>
+
+          <!-- Data synthesis tile with a real code snippet (visual variation) -->
+          <article class="rounded-2xl p-7 bg-white ring-1 ring-black/5 shadow-soft">
+            <i class="ph-duotone ph-sparkle text-3xl text-brand-orange"></i>
+            <h3 class="mt-4 text-lg font-semibold text-brand-dark">Realistic data synthesis</h3>
+            <p class="mt-2 text-sm text-text-secondary leading-relaxed">Template tokens, faker fields, deterministic seeding and relationship awareness.</p>
+            <pre class="mt-4 rounded-lg bg-slate-950 text-slate-200 text-xs font-mono p-3 overflow-x-auto leading-5">{ "id": "<span class="text-brand-orange">{{uuid}}</span>",
+  "email": "<span class="text-brand-orange">{{faker.email}}</span>" }</pre>
+          </article>
+
+          <!-- Latency / fault -->
+          <article class="rounded-2xl p-7 bg-white ring-1 ring-black/5 shadow-soft">
+            <i class="ph-duotone ph-pulse text-3xl text-brand-orange"></i>
+            <h3 class="mt-4 text-lg font-semibold text-brand-dark">Latency &amp; fault injection</h3>
+            <p class="mt-2 text-sm text-text-secondary leading-relaxed">Operation-aware latency and failure profiles so you test retries and fallbacks before production does.</p>
+          </article>
+
+          <!-- Conformance / validation -->
+          <article class="rounded-2xl p-7 bg-white ring-1 ring-black/5 shadow-soft">
+            <i class="ph-duotone ph-seal-check text-3xl text-brand-orange"></i>
+            <h3 class="mt-4 text-lg font-semibold text-brand-dark">OpenAPI conformance</h3>
+            <p class="mt-2 text-sm text-text-secondary leading-relaxed">Validate requests against your spec with deep schema resolution across path, query, header, cookie and body.</p>
+          </article>
+
+          <!-- Record & replay -->
+          <article class="rounded-2xl p-7 bg-white ring-1 ring-black/5 shadow-soft">
+            <i class="ph-duotone ph-record text-3xl text-brand-orange"></i>
+            <h3 class="mt-4 text-lg font-semibold text-brand-dark">Record &amp; replay</h3>
+            <p class="mt-2 text-sm text-text-secondary leading-relaxed">Capture live traffic and replay it deterministically to debug and benchmark.</p>
+          </article>
+
+          <!-- Admin UI tile with the screenshot (visual variation, full-width closer) -->
+          <article class="md:col-span-3 rounded-2xl p-0 bg-white ring-1 ring-black/5 shadow-soft overflow-hidden grid sm:grid-cols-2">
+            <div class="p-7 flex flex-col justify-center">
+              <i class="ph-duotone ph-squares-four text-3xl text-brand-orange"></i>
+              <h3 class="mt-4 text-lg font-semibold text-brand-dark">A modern admin UI</h3>
+              <p class="mt-2 text-sm text-text-secondary leading-relaxed">Manage servers, overrides and metrics from the browser. Plugins, AI event streams and AES-256 config encryption included.</p>
+            </div>
+            <div class="relative min-h-[200px] bg-slate-100 dark:bg-slate-800">
+              <img src="/public/admin-screenshot.png" alt="MockForge admin dashboard" class="absolute inset-0 w-full h-full object-cover object-left-top" />
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works: horizontal 3-step + full-width terminal (distinct family from hero split) -->
+    <section id="how" class="py-20 lg:py-24 bg-white border-y border-black/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl reveal">
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-brand-dark">Three steps to a running mock</h2>
+        </div>
+        <ol class="mt-12 grid md:grid-cols-3 gap-8 reveal">
+          <li>
+            <span class="inline-flex w-9 h-9 rounded-full bg-brand-orange/10 text-brand-orange items-center justify-center font-semibold font-mono">1</span>
+            <h3 class="mt-4 font-semibold text-brand-dark">Define your API and rules</h3>
+            <p class="mt-2 text-sm text-text-secondary leading-relaxed">Point at an OpenAPI spec, then set latency and failure profiles per operation.</p>
+          </li>
+          <li>
+            <span class="inline-flex w-9 h-9 rounded-full bg-brand-orange/10 text-brand-orange items-center justify-center font-semibold font-mono">2</span>
+            <h3 class="mt-4 font-semibold text-brand-dark">Generate realistic data</h3>
+            <p class="mt-2 text-sm text-text-secondary leading-relaxed">Use built-in tokens like <code class="font-mono">{{uuid}}</code> and <code class="font-mono">{{now}}</code>, or plug in your own generators.</p>
+          </li>
+          <li>
+            <span class="inline-flex w-9 h-9 rounded-full bg-brand-orange/10 text-brand-orange items-center justify-center font-semibold font-mono">3</span>
+            <h3 class="mt-4 font-semibold text-brand-dark">Run and iterate</h3>
+            <p class="mt-2 text-sm text-text-secondary leading-relaxed">Start the server, watch requests in the admin UI, and tune behavior as you build.</p>
+          </li>
+        </ol>
+        <div class="mt-10 rounded-2xl ring-1 ring-black/5 overflow-hidden shadow-soft reveal">
+          <div class="flex items-center gap-1.5 px-4 py-3 bg-slate-800">
+            <span class="w-3 h-3 rounded-full bg-red-400/80"></span>
+            <span class="w-3 h-3 rounded-full bg-amber-400/80"></span>
+            <span class="w-3 h-3 rounded-full bg-emerald-400/80"></span>
+          </div>
+          <pre class="bg-black text-slate-100 p-5 text-sm leading-7 font-mono overflow-x-auto">$ mockforge init
+<span class="text-emerald-400">&#10004;</span> Created mockforge.yaml
+
 $ mockforge add /users/{id} --status 200 \
-  --body '{ "id": "{{uuid}}", "name": "{{name}}" }'
+  --body '{ "id": "<span class="text-brand-orange">{{uuid}}</span>", "name": "<span class="text-brand-orange">{{name}}</span>" }'
 
-# Run server
 $ mockforge serve --port 8080
-Listening on http://localhost:8080</code></pre>
+Listening on <span class="text-emerald-400">http://localhost:8080</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why teams adopt: narrative + honest fact tiles (distinct family) -->
+    <section id="proof" class="py-20 lg:py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[0.8fr_1.2fr] gap-12 items-center">
+        <div class="reveal">
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-brand-dark">Why teams adopt MockForge</h2>
+          <p class="mt-4 text-text-secondary text-lg leading-relaxed">Frontend and backend unblock each other with realistic mocks instead of waiting on live services, and scenario switching surfaces retry and fallback bugs before integration day.</p>
+          <a href="/engineering-notes.html" class="mt-6 inline-flex items-center gap-2 text-brand-orange font-medium hover:gap-3 transition-all">Read the engineering notes <i class="ph-bold ph-arrow-right"></i></a>
+        </div>
+        <div class="grid grid-cols-2 gap-4 reveal">
+          <div class="rounded-2xl p-6 bg-white ring-1 ring-black/5 shadow-soft">
+            <p class="font-mono text-3xl font-semibold text-brand-orange">10+</p>
+            <p class="mt-1 text-sm text-text-secondary">protocols mocked from one tool</p>
+          </div>
+          <div class="rounded-2xl p-6 bg-white ring-1 ring-black/5 shadow-soft">
+            <p class="font-mono text-3xl font-semibold text-brand-orange">100%</p>
+            <p class="mt-1 text-sm text-text-secondary">open source, MIT or Apache-2.0</p>
+          </div>
+          <div class="rounded-2xl p-6 bg-white ring-1 ring-black/5 shadow-soft">
+            <p class="font-mono text-3xl font-semibold text-brand-orange">1</p>
+            <p class="mt-1 text-sm text-text-secondary">command to a hosted mock</p>
+          </div>
+          <div class="rounded-2xl p-6 bg-white ring-1 ring-black/5 shadow-soft">
+            <p class="font-mono text-3xl font-semibold text-brand-orange">0</p>
+            <p class="mt-1 text-sm text-text-secondary">real backends required in CI</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Compare: compact rows (distinct family from the bento cards) -->
+    <section class="py-20 lg:py-24 bg-white border-y border-black/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl reveal">
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-brand-dark">Evaluating against another tool?</h2>
+          <p class="mt-3 text-text-secondary text-lg leading-relaxed">Side-by-side guides for where multi-protocol, realism-first workflows differ.</p>
+        </div>
+        <div class="mt-10 divide-y divide-black/5 reveal">
+          <a href="/compare-wiremock.html" class="group flex items-center justify-between gap-4 py-5 hover:px-2 transition-all">
+            <div>
+              <h3 class="font-semibold text-brand-dark">MockForge vs WireMock</h3>
+              <p class="mt-1 text-sm text-text-secondary">HTTP-centric stubbing versus broader protocol coverage and realism-first simulation.</p>
             </div>
-          </div>
+            <i class="ph-bold ph-arrow-right text-text-secondary group-hover:text-brand-orange transition shrink-0"></i>
+          </a>
+          <a href="/compare-mockserver.html" class="group flex items-center justify-between gap-4 py-5 hover:px-2 transition-all">
+            <div>
+              <h3 class="font-semibold text-brand-dark">MockForge vs MockServer</h3>
+              <p class="mt-1 text-sm text-text-secondary">Expectation-based API testing versus service virtualization and realism-driven scenarios.</p>
+            </div>
+            <i class="ph-bold ph-arrow-right text-text-secondary group-hover:text-brand-orange transition shrink-0"></i>
+          </a>
+          <a href="/compare-postman-mock.html" class="group flex items-center justify-between gap-4 py-5 hover:px-2 transition-all">
+            <div>
+              <h3 class="font-semibold text-brand-dark">MockForge vs Postman Mock</h3>
+              <p class="mt-1 text-sm text-text-secondary">Collection-based mocks inside Postman versus multi-protocol, spec-driven simulation anywhere.</p>
+            </div>
+            <i class="ph-bold ph-arrow-right text-text-secondary group-hover:text-brand-orange transition shrink-0"></i>
+          </a>
         </div>
       </div>
     </section>
 
-    <!-- Conversion Paths -->
-    <section id="paths" class="py-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto">
-          <h2 class="text-3xl font-semibold text-brand-dark dark:text-white">Choose your path</h2>
-          <p class="mt-3 text-text-secondary">Whether you're evaluating open source, scaling team workflows, or planning enterprise rollout, start from the path that matches your goals.</p>
-        </div>
-        <div class="mt-10 grid md:grid-cols-3 gap-6">
-          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-            <h3 class="font-semibold text-lg">Open Source Builder</h3>
-            <p class="mt-2 text-sm text-text-secondary">Install the CLI, run local mocks, and integrate into CI quickly.</p>
-            <a href="https://github.com/SaaSy-Solutions/mockforge" class="mt-4 inline-flex items-center gap-2 text-sm font-medium" style="color:#D35400;">Get the repo →</a>
+    <!-- FAQ: 2-col -->
+    <section id="faq" class="py-20 lg:py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[0.6fr_1.4fr] gap-10">
+        <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-brand-dark reveal">Questions, answered</h2>
+        <dl class="grid sm:grid-cols-2 gap-x-8 gap-y-7 reveal">
+          <div>
+            <dt class="font-semibold text-brand-dark">Is MockForge open source?</dt>
+            <dd class="mt-1.5 text-sm text-text-secondary leading-relaxed">Yes, permissively licensed under MIT or Apache-2.0. Contributions welcome.</dd>
           </div>
-          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-            <h3 class="font-semibold text-lg">Product Team</h3>
-            <p class="mt-2 text-sm text-text-secondary">Use docs + workflows to standardize realistic mocks across frontend, backend, and QA.</p>
-            <a href="https://docs.mockforge.dev" class="mt-4 inline-flex items-center gap-2 text-sm font-medium" style="color:#D35400;">Read implementation docs →</a>
+          <div>
+            <dt class="font-semibold text-brand-dark">Which protocols are supported?</dt>
+            <dd class="mt-1.5 text-sm text-text-secondary leading-relaxed">REST, gRPC, GraphQL, WebSocket, Kafka and MQTT out of the box, with more via plugins.</dd>
           </div>
-          <div class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10">
-            <h3 class="font-semibold text-lg">Enterprise Program</h3>
-            <p class="mt-2 text-sm text-text-secondary">Need support, roadmap alignment, or deployment guidance? Start a conversation.</p>
-            <a href="https://mockforge.dev/pricing.html" class="mt-4 inline-flex items-center gap-2 text-sm font-medium" style="color:#D35400;">See plans and pricing →</a>
+          <div>
+            <dt class="font-semibold text-brand-dark">Can I run it in CI?</dt>
+            <dd class="mt-1.5 text-sm text-text-secondary leading-relaxed">Yes. Spin up MockForge alongside your tests for stable, realistic endpoints with no live backend.</dd>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="py-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto">
-          <h2 class="text-3xl font-semibold text-brand-dark dark:text-white">Compare popular alternatives</h2>
-          <p class="mt-3 text-text-secondary">Start with the side-by-side guides if you are evaluating MockForge against established mocking tools.</p>
-        </div>
-        <div class="mt-10 grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          <a href="/compare-wiremock.html" class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10 hover:bg-slate-50 dark:hover:bg-white/10 transition">
-            <h3 class="font-semibold text-lg text-brand-dark dark:text-white">MockForge vs WireMock</h3>
-            <p class="mt-2 text-sm text-text-secondary">Compare HTTP-centric stubbing with broader protocol coverage and realism-first simulation workflows.</p>
-          </a>
-          <a href="/compare-mockserver.html" class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10 hover:bg-slate-50 dark:hover:bg-white/10 transition">
-            <h3 class="font-semibold text-lg text-brand-dark dark:text-white">MockForge vs MockServer</h3>
-            <p class="mt-2 text-sm text-text-secondary">Compare expectation-based API testing with broader service virtualization and realism-driven scenarios.</p>
-          </a>
-          <a href="/compare-postman-mock.html" class="p-6 bg-white dark:bg-brand-dark rounded-xl shadow-soft ring-1 ring-black/5 dark:ring-white/10 hover:bg-slate-50 dark:hover:bg-white/10 transition">
-            <h3 class="font-semibold text-lg text-brand-dark dark:text-white">MockForge vs Postman Mock</h3>
-            <p class="mt-2 text-sm text-text-secondary">Compare collection-based HTTP mocks inside Postman with multi-protocol, spec-driven simulation outside any platform.</p>
-          </a>
-        </div>
+          <div>
+            <dt class="font-semibold text-brand-dark">Does it support record and replay?</dt>
+            <dd class="mt-1.5 text-sm text-text-secondary leading-relaxed">Yes. Capture live traffic, store fixtures, and replay them deterministically.</dd>
+          </div>
+        </dl>
       </div>
     </section>
 
     <!-- Final CTA -->
-    <section class="py-20 bg-gradient-to-b from-white to-surface-subtle dark:from-brand-dark dark:to-brand-dark">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl font-semibold text-brand-dark dark:text-white">Ready to mock any API?</h2>
-        <p class="mt-3 text-text-secondary max-w-2xl mx-auto">Sign up free, deploy your first mock, and start shipping faster in under 5 minutes.</p>
+    <section class="py-20 lg:py-24 bg-white border-t border-black/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center reveal">
+        <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-brand-dark">Ready to mock any API?</h2>
+        <p class="mt-3 text-text-secondary text-lg max-w-xl mx-auto leading-relaxed">Sign up free, deploy your first mock, and ship faster in under five minutes.</p>
         <div class="mt-8 flex flex-wrap justify-center gap-3">
-          <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white hover:opacity-90 shadow-soft whitespace-nowrap" style="background-color: #D35400;">
-            <span class="font-medium">Get Started Free</span>
+          <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-orange text-white font-medium shadow-soft hover:opacity-90 active:scale-[.98] transition whitespace-nowrap">
+            <i class="ph-bold ph-lightning text-lg"></i>
+            Get started free
           </a>
-          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-black/10 dark:border-white/20 text-text-primary dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10">
-            <svg aria-hidden="true" viewBox="0 0 16 16" class="h-5 w-5 flex-shrink-0" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-            <span class="font-medium">Star on GitHub</span>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-black/10 hover:bg-black/5 dark:hover:bg-white/10 active:scale-[.98] transition whitespace-nowrap">
+            <i class="ph-fill ph-github-logo text-lg"></i>
+            Star on GitHub
           </a>
-          <a href="https://docs.mockforge.dev" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-black/10 dark:border-white/20 text-text-primary dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10">Read the Docs</a>
         </div>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section id="faq" class="py-20">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-semibold text-brand-dark dark:text-white">FAQ</h2>
-        <dl class="mt-8 space-y-6">
-          <div>
-            <dt class="font-medium">Is MockForge open source?</dt>
-            <dd class="text-sm text-text-secondary mt-1">Yes. It’s open‑source and permissively licensed. Contributions are welcome.</dd>
-          </div>
-          <div>
-            <dt class="font-medium">Which protocols are supported?</dt>
-            <dd class="text-sm text-text-secondary mt-1">HTTP/REST, gRPC, and WebSockets out of the box. More via plugins.</dd>
-          </div>
-          <div>
-            <dt class="font-medium">Can I use it in CI?</dt>
-            <dd class="text-sm text-text-secondary mt-1">Absolutely. Spin up MockForge alongside your tests to provide stable, realistic endpoints.</dd>
-          </div>
-          <div>
-            <dt class="font-medium">Does it support record/replay?</dt>
-            <dd class="text-sm text-text-secondary mt-1">Yes. Capture live traffic, store fixtures, and replay them deterministically.</dd>
-          </div>
-        </dl>
       </div>
     </section>
 
@@ -513,8 +492,46 @@ Listening on http://localhost:8080</code></pre>
             });
           });
         }
+
+        // Scroll-reveal for any element with .reveal (IntersectionObserver, no scroll listeners).
+        var reveals = document.querySelectorAll('.reveal');
+        if (reveals.length && 'IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                io.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.12 });
+          reveals.forEach(function (el) { io.observe(el); });
+        } else {
+          reveals.forEach(function (el) { el.classList.add('in'); });
+        }
       });
     </script>
+
+<script>
+// Copy-install button (scroll-reveal is wired globally in the shared shell script).
+document.addEventListener('DOMContentLoaded', function () {
+  var copyBtn = document.getElementById('copyInstall');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', function () {
+      var cmd = document.getElementById('installCmd').textContent;
+      var copyIcon = document.getElementById('copyIcon');
+      var copiedIcon = document.getElementById('copiedIcon');
+      navigator.clipboard.writeText(cmd).then(function () {
+        copyIcon.classList.add('hidden');
+        copiedIcon.classList.remove('hidden');
+        setTimeout(function () {
+          copiedIcon.classList.add('hidden');
+          copyIcon.classList.remove('hidden');
+        }, 1500);
+      });
+    });
+  }
+});
+</script>
 
 <script>
 // CTA click tracking + sign-up conversion tracking

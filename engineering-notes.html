@@ -11,7 +11,9 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons: Phosphor web font -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
     <link rel="stylesheet" href="/public/styles.css" />
     <link rel="alternate" type="application/rss+xml" title="MockForge Engineering Notes" href="/rss.xml" />
     <script>
@@ -58,10 +60,13 @@
       html.dark .shadow-soft { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); }
       html.dark .shadow-note { box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35); }
       html.dark code { background-color: #1e293b; color: #e2e8f0; }
+      .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
+      .reveal.in { opacity: 1; transform: none; }
+      @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
     </style>
     <meta name="ga-measurement-id" content="" />
 </head>
-  <body class="bg-stone-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 antialiased font-sans">
+  <body class="bg-surface-subtle text-text-primary antialiased font-sans selection:bg-brand-orange/20">
     <header class="sticky top-0 z-40 backdrop-blur bg-white/90 dark:bg-slate-900 border-b border-black/5 dark:border-white/10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
@@ -77,7 +82,7 @@
             <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">GitHub</a>
             <a href="https://app.mockforge.dev/login" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Log In</a>
             <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 lg:px-3 lg:py-2 rounded-lg text-white hover:opacity-90 shadow-soft whitespace-nowrap text-sm" style="background-color: #D35400;">
-              <span>Sign Up Free</span>
+              <span>Get started free</span>
             </a>
             <button id="themeToggle" class="p-2 rounded-lg border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10" aria-label="Toggle dark mode">
               <svg id="sun" class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M7.05 7.05 5.636 5.636m12.728 0-1.414 1.414M7.05 16.95l-1.414 1.414"/><circle cx="12" cy="12" r="4"/></svg>
@@ -97,371 +102,371 @@
           <a href="/pricing.html" class="block text-text-primary dark:text-white">Pricing</a>
           <a href="https://github.com/SaaSy-Solutions/mockforge" class="block text-text-primary dark:text-white">GitHub</a>
           <a href="https://app.mockforge.dev/login" class="block text-text-primary dark:text-white">Log In</a>
-          <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-white hover:opacity-90 shadow-soft" style="background-color: #D35400;">Sign Up Free</a>
+          <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-white hover:opacity-90 shadow-soft" style="background-color: #D35400;">Get started free</a>
         </div>
       </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <section class="rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 px-8 py-10 text-white shadow-note">
-        <p class="text-sm uppercase tracking-[0.24em] text-orange-200">Engineering Notes</p>
-        <h1 class="mt-4 text-3xl font-semibold sm:text-4xl">Release context, implementation decisions, and technical tradeoffs.</h1>
-        <p class="mt-4 max-w-3xl text-slate-300">A running log of product decisions behind MockForge, from scenario modeling and test hardening to release safety and client generation tradeoffs.</p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700">Read Docs</a>
-          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-white/15 px-4 py-2 text-sm font-medium text-white hover:bg-white/5">View GitHub</a>
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+      <section class="reveal rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 px-8 py-12 text-white shadow-note">
+        <p class="text-xs font-medium uppercase tracking-[0.18em] text-orange-300">Engineering notes</p>
+        <h1 class="mt-4 text-3xl md:text-4xl font-semibold tracking-tight leading-[1.1]">Release context, implementation decisions, and technical tradeoffs.</h1>
+        <p class="mt-4 max-w-3xl text-slate-300 leading-relaxed">A running log of the product decisions behind MockForge, from scenario modeling and test hardening to release safety and client-generation tradeoffs.</p>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a href="https://docs.mockforge.dev" class="inline-flex items-center gap-2 rounded-xl bg-brand-orange px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 active:scale-[.98] transition"><i class="ph-bold ph-book-open-text"></i> Read the docs</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center gap-2 rounded-xl border border-white/15 px-4 py-2.5 text-sm font-medium text-white hover:bg-white/10 active:scale-[.98] transition"><i class="ph-fill ph-github-logo"></i> View GitHub</a>
         </div>
       </section>
 
       <section class="mt-10 space-y-6">
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">May 25, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">MockForge vs Postman Mock Server</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">MockForge vs Postman Mock Server</h2>
           <p class="mt-3 text-slate-700">An honest comparison of Postman Mock Server and MockForge — when each tool is the right choice, the gaps you'll hit as your architecture grows, and the pricing tradeoffs at scale.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-vs-postman-mock.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="/compare-postman-mock.html" class="text-orange-700 hover:text-orange-800">Full Comparison</a>
+            <a href="/note-vs-postman-mock.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="/compare-postman-mock.html" class="text-brand-orange hover:opacity-80">Full Comparison</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">May 23, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Conformance Testing Maturity: Multi-Protocol Spec Validation and SARIF Reports</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Conformance Testing Maturity: Multi-Protocol Spec Validation and SARIF Reports</h2>
           <p class="mt-3 text-slate-700">How MockForge's conformance testing framework grew from basic spec validation into a structured 47-check framework with SARIF output, per-category targeting, and multi-protocol contract checking.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-conformance-maturity.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev/CONFORMANCE_TESTING.html" class="text-orange-700 hover:text-orange-800">Conformance Guide</a>
+            <a href="/note-conformance-maturity.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev/CONFORMANCE_TESTING.html" class="text-brand-orange hover:opacity-80">Conformance Guide</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">May 22, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Release Notes: gRPC Dynamic Routing, $ref Resolution, and Protocol Handler Refactor</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Release Notes: gRPC Dynamic Routing, $ref Resolution, and Protocol Handler Refactor</h2>
           <p class="mt-3 text-slate-700">How the v0.3.70–v0.3.75 cycle consolidated gRPC dynamic routing, $ref resolution for OpenAPI specs, and interior-mutable protocol handlers that enable live config updates.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-grpc-dynamic-routing-release.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev/user-guide/grpc-mocking.html" class="text-orange-700 hover:text-orange-800">gRPC Docs</a>
+            <a href="/note-grpc-dynamic-routing-release.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev/user-guide/grpc-mocking.html" class="text-brand-orange hover:opacity-80">gRPC Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">May 21, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Extending MockForge with WASM Plugins</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Extending MockForge with WASM Plugins</h2>
           <p class="mt-3 text-slate-700">Custom mocks without forking the codebase — write response generators, data transformers, and protocol handlers in any WASM-compilable language, sandboxed and simple to wire up.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-wasm-plugins.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev/plugins" class="text-orange-700 hover:text-orange-800">Plugin SDK Docs</a>
+            <a href="/note-wasm-plugins.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev/plugins" class="text-brand-orange hover:opacity-80">Plugin SDK Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">May 20, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Fault Injection and Chaos Patterns Across Protocols</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Fault Injection and Chaos Patterns Across Protocols</h2>
           <p class="mt-3 text-slate-700">Static mocks give false confidence — inject controlled failures across HTTP, gRPC, Kafka, and WebSocket to surface the error-handling gaps your integration tests miss.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-fault-injection-patterns.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="/pricing.html" class="text-orange-700 hover:text-orange-800">Pricing</a>
+            <a href="/note-fault-injection-patterns.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="/pricing.html" class="text-brand-orange hover:opacity-80">Pricing</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">May 18, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Our $10/mo SaaS Infrastructure</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Our $10/mo SaaS Infrastructure</h2>
           <p class="mt-3 text-slate-700">A walkthrough of MockForge Cloud's hosting stack — Cloudflare Pages for the admin UI, Fly.io for compute, Neon for Postgres — and why it costs under $10/month at launch traffic.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-our-saas-infrastructure.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-orange-700 hover:text-orange-800">GitHub</a>
+            <a href="/note-our-saas-infrastructure.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-brand-orange hover:opacity-80">GitHub</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">May 17, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">How We Built the Hosted-Mock Cost Cap</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">How We Built the Hosted-Mock Cost Cap</h2>
           <p class="mt-3 text-slate-700">A pre-launch readiness review surfaced a 10x cost-leak risk on the $29 Pro plan. The retrospective on how we shipped body-size caps and per-deployment RPS limits in the week before going live.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-cost-cap-design.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://github.com/SaaSy-Solutions/mockforge/pull/481" class="text-orange-700 hover:text-orange-800">The PR</a>
+            <a href="/note-cost-cap-design.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge/pull/481" class="text-brand-orange hover:opacity-80">The PR</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">May 16, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">When WireMock Isn't Enough</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">When WireMock Isn't Enough</h2>
           <p class="mt-3 text-slate-700">WireMock has been the default HTTP mock server for fifteen years. The specific cases where it stops being the right tool — and the ones where switching would be a step backward.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-when-wiremock-isnt-enough.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="/compare-wiremock.html" class="text-orange-700 hover:text-orange-800">Full Comparison</a>
+            <a href="/note-when-wiremock-isnt-enough.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="/compare-wiremock.html" class="text-brand-orange hover:opacity-80">Full Comparison</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">May 15, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Mocking Kafka Producers Without a Real Broker</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Mocking Kafka Producers Without a Real Broker</h2>
           <p class="mt-3 text-slate-700">Three levels of fake, when each is the right choice, and how a wire-compatible Kafka mock fits between client-library stubs and full testcontainers — including deterministic failure-injection patterns you can't reproduce on a real broker.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-mocking-kafka-without-broker.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev/user-guide/kafka-mocking.html" class="text-orange-700 hover:text-orange-800">Kafka Docs</a>
+            <a href="/note-mocking-kafka-without-broker.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev/user-guide/kafka-mocking.html" class="text-brand-orange hover:opacity-80">Kafka Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">May 14, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Why MockForge Stayed Multi-Protocol</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Why MockForge Stayed Multi-Protocol</h2>
           <p class="mt-3 text-slate-700">The market is full of HTTP-only mock services. Why we took the harder path: protocols beyond HTTP, spec-driven mocking that generalizes, and what the trade actually costs.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-why-multi-protocol.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="/pricing.html" class="text-orange-700 hover:text-orange-800">Pricing</a>
+            <a href="/note-why-multi-protocol.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="/pricing.html" class="text-brand-orange hover:opacity-80">Pricing</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">May 13, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">How to Mock a gRPC Service in CI</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">How to Mock a gRPC Service in CI</h2>
           <p class="mt-3 text-slate-700">A practical guide: from the proto file to a gRPC mock in CI, with reflection probing and a GitHub Actions snippet. No JVM, no testcontainers, no hand-rolled fake to maintain.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-grpc-mocking-in-ci.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev/user-guide/grpc-mocking.html" class="text-orange-700 hover:text-orange-800">gRPC Docs</a>
+            <a href="/note-grpc-mocking-in-ci.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev/user-guide/grpc-mocking.html" class="text-brand-orange hover:opacity-80">gRPC Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">May 12, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">MockForge Cloud is Here</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">MockForge Cloud is Here</h2>
           <p class="mt-3 text-slate-700">After two years building the OSS multi-protocol mock server, the managed version is live. Deploy a hosted mock from a spec in 30 seconds — and keep the OSS path you already had.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-cloud-launch.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://app.mockforge.dev/register" class="text-orange-700 hover:text-orange-800">Sign Up</a>
+            <a href="/note-cloud-launch.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://app.mockforge.dev/register" class="text-brand-orange hover:opacity-80">Sign Up</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">March 28, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Multi-Target Testing, Real-World Spec Support, and Conformance Maturity</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Multi-Target Testing, Real-World Spec Support, and Conformance Maturity</h2>
           <p class="mt-3 text-slate-700">Two weeks of field testing against 66+ proxy targets and real-world specs from GitHub, Amazon S3, and Xero drove multi-target conformance, HAR-to-YAML generation, field-level schema errors, and Swagger 2.0 formData support.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-multi-target-conformance-and-real-world-specs.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-multi-target-conformance-and-real-world-specs.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">March 8, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">API Drift Detection and Contract Alerting</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">API Drift Detection and Contract Alerting</h2>
           <p class="mt-3 text-slate-700">Why we treat contract drift as an alerting event and how endpoint-level mismatch metadata shortens triage loops.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-api-drift-detection-and-contract-alerting.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-api-drift-detection-and-contract-alerting.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">March 8, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">v0.3 Migration Playbook: Reduce Upgrade Risk in Three Passes</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">v0.3 Migration Playbook: Reduce Upgrade Risk in Three Passes</h2>
           <p class="mt-3 text-slate-700">A practical migration sequence for moving into v0.3 safely: baseline drift, stage strictness, then move critical routes with rollback toggles.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-v0-3-migration-playbook.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Migration docs</a>
+            <a href="/note-v0-3-migration-playbook.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Migration docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">March 7, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Spec-Driven OpenAPI Conformance Testing in MockForge</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Spec-Driven OpenAPI Conformance Testing in MockForge</h2>
           <p class="mt-3 text-slate-700">How the 0.3.55 to 0.3.57 releases moved MockForge from generic API checks into spec-driven conformance with response schema validation and SARIF output.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-spec-driven-openapi-conformance.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Conformance docs</a>
+            <a href="/note-spec-driven-openapi-conformance.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Conformance docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">March 7, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Spec-Driven Conformance: Why Contract Verification Beats Generic Checks</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Spec-Driven Conformance: Why Contract Verification Beats Generic Checks</h2>
           <p class="mt-3 text-slate-700">Spec-driven OpenAPI conformance turns API testing from generic request checks into real contract verification against the features your spec actually uses.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-conformance-testing.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-conformance-testing.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">March 7, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">How We Took WAFBench SQLi Detection from 37/46 to 46/46</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">How We Took WAFBench SQLi Detection from 37/46 to 46/46</h2>
           <p class="mt-3 text-slate-700">A technical deep dive into the 0.3.46 to 0.3.54 security-testing hardening arc across payload delivery, cookie handling, grouped CRS requests, and measured SQLi detection gains.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-wafbench-sqli-detection.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-orange-700 hover:text-orange-800">View code</a>
+            <a href="/note-wafbench-sqli-detection.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-brand-orange hover:opacity-80">View code</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">March 7, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">WAFBench Security Hardening: Transport Semantics and Benchmark Credibility</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">WAFBench Security Hardening: Transport Semantics and Benchmark Credibility</h2>
           <p class="mt-3 text-slate-700">Security benchmarks are only trustworthy when payload delivery is right. What it takes to move from partial coverage to meaningful WAFBench results.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-wafbench-security-hardening.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-orange-700 hover:text-orange-800">View code</a>
+            <a href="/note-wafbench-security-hardening.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-brand-orange hover:opacity-80">View code</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">March 7, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Recent MockForge Reliability Updates: Admin Startup, Better Failure Reporting, and Correct Response-Code Checks</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Recent MockForge Reliability Updates: Admin Startup, Better Failure Reporting, and Correct Response-Code Checks</h2>
           <p class="mt-3 text-slate-700">A short product update on the 0.3.72 and 0.3.73 releases covering admin startup reliability, clearer failed-check reporting, and more accurate conformance behavior.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-reliability-updates-conformance-and-admin.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-reliability-updates-conformance-and-admin.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">March 7, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Reliability Update: Admin Startup, Failure Reporting, and Conformance Accuracy</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Reliability Update: Admin Startup, Failure Reporting, and Conformance Accuracy</h2>
           <p class="mt-3 text-slate-700">Small reliability releases matter when they remove first-run friction and make failed checks easier to trust. What the 0.3.72 and 0.3.73 releases improved.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-reliability-update-march-2026.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-reliability-update-march-2026.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">March 5, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Release Engineering Note: Security Guardrails from v0.2.x</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Release Engineering Note: Security Guardrails from v0.2.x</h2>
           <p class="mt-3 text-slate-700">A focused review of v0.2.x hardening work: validation defaults, auth-related flow safety, and migration priorities for teams upgrading from earlier versions.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-security-guardrails-v0-2x.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Changelog &amp; migration docs</a>
+            <a href="/note-security-guardrails-v0-2x.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Changelog &amp; migration docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">March 3, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">How We Use Scenario Switching to Keep Mocks Honest</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">How We Use Scenario Switching to Keep Mocks Honest</h2>
           <p class="mt-3 text-slate-700">Scenario switching helps teams test stateful behavior instead of static happy-path fixtures. This note outlines a practical scenario model and why it improves integration confidence.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-scenario-switching.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Read docs</a>
-            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-orange-700 hover:text-orange-800">View GitHub</a>
+            <a href="/note-scenario-switching.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Read docs</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-brand-orange hover:opacity-80">View GitHub</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">January 21, 2026</p>
-          <h2 class="mt-2 text-xl font-semibold">Release Cadence and Risk: How We Keep Fast Iteration Safe</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Release Cadence and Risk: How We Keep Fast Iteration Safe</h2>
           <p class="mt-3 text-slate-700">How we sequence fixes, hardening, and communication so release speed does not become release risk.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-release-cadence-and-risk.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-release-cadence-and-risk.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">December 10, 2025</p>
-          <h2 class="mt-2 text-xl font-semibold">Client Generation Tradeoffs: Safety, Speed, and Developer Experience</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Client Generation Tradeoffs: Safety, Speed, and Developer Experience</h2>
           <p class="mt-3 text-slate-700">A practical note on balancing strict schema fidelity with developer velocity in generated clients.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-client-generation-tradeoffs.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-client-generation-tradeoffs.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">November 5, 2025</p>
-          <h2 class="mt-2 text-xl font-semibold">v0.2.7: API Sync, TCP Support &amp; Advanced Mocking</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">v0.2.7: API Sync, TCP Support &amp; Advanced Mocking</h2>
           <p class="mt-3 text-slate-700">Intelligent API synchronization with change detection, TCP protocol mocking, flexible response selection modes, and real webhook execution.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-v0-2-7-api-sync-tcp.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-v0-2-7-api-sync-tcp.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">November 5, 2025</p>
-          <h2 class="mt-2 text-xl font-semibold">Why Failure-Path Testing Should Be a First-Class Mocking Requirement</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Why Failure-Path Testing Should Be a First-Class Mocking Requirement</h2>
           <p class="mt-3 text-slate-700">Controlled failure profiles expose retry and fallback weaknesses before integration surprises hit teams.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-testing-failure-paths.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-testing-failure-paths.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">November 4, 2025</p>
-          <h2 class="mt-2 text-xl font-semibold">v0.2.6: Production Security &amp; Infrastructure</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">v0.2.6: Production Security &amp; Infrastructure</h2>
           <p class="mt-3 text-slate-700">Enterprise-grade TLS/HTTPS and mTLS support, built-in tunneling for local development, and completed SDK implementation phases 1 and 2.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-v0-2-6-security-infrastructure.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-v0-2-6-security-infrastructure.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">November 2, 2025</p>
-          <h2 class="mt-2 text-xl font-semibold">v0.2.5: Enterprise Security &amp; OAuth2</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">v0.2.5: Enterprise Security &amp; OAuth2</h2>
           <p class="mt-3 text-slate-700">Complete OAuth2 with PKCE, structured error handling, request/response validation, interceptors, and multiple authentication methods for production-ready API clients.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-v0-2-5-enterprise-security.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-v0-2-5-enterprise-security.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">November 1, 2025</p>
-          <h2 class="mt-2 text-xl font-semibold">v0.2.4: Client Generator Fixes &amp; Test Coverage</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">v0.2.4: Client Generator Fixes &amp; Test Coverage</h2>
           <p class="mt-3 text-slate-700">Request body generation fixed across React, Vue, and Svelte. TypeScript required vs optional fields corrected. Comprehensive multi-framework test coverage added.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-v0-2-4-client-fixes.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-v0-2-4-client-fixes.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">October 31, 2025</p>
-          <h2 class="mt-2 text-xl font-semibold">v0.2.3: Bug Fixes &amp; Stability Improvements</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">v0.2.3: Bug Fixes &amp; Stability Improvements</h2>
           <p class="mt-3 text-slate-700">Critical fixes for OpenAPI example extraction, request body parameter generation, and React client generator Handlebars template logic.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-v0-2-3-bug-fixes.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-v0-2-3-bug-fixes.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">October 29, 2025</p>
-          <h2 class="mt-2 text-xl font-semibold">v0.2.0: Multi-Framework Client Generation</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">v0.2.0: Multi-Framework Client Generation</h2>
           <p class="mt-3 text-slate-700">Generate type-safe API clients for React, Vue, Angular, and Svelte from OpenAPI specs. Unified spec parser, enhanced mock data generation, and browser mobile proxy mode.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-v0-2-0-client-generation.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-v0-2-0-client-generation.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">October 23, 2025</p>
-          <h2 class="mt-2 text-xl font-semibold">Introducing MockForge: First Public Release (v0.1.2)</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Introducing MockForge: First Public Release (v0.1.2)</h2>
           <p class="mt-3 text-slate-700">The first public release of MockForge: AI-powered API mocking for REST, gRPC, GraphQL, WebSockets, and SMTP in a unified Rust framework.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-announcing-v1.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-announcing-v1.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">October 22, 2025</p>
-          <h2 class="mt-2 text-xl font-semibold">v0.1.3: Protocol Expansion &amp; Testing Tools</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">v0.1.3: Protocol Expansion &amp; Testing Tools</h2>
           <p class="mt-3 text-slate-700">Native GraphQL handlers, programmable WebSockets, HTTP scenario switching, capture scrubbing, unified config profiles, and the mockforge-test integration crate.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-v0-1-3-protocol-expansion.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-v0-1-3-protocol-expansion.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
 
-        <article class="bg-white rounded-2xl p-6 shadow-note ring-1 ring-black/5">
+        <article class="bg-white rounded-2xl p-6 shadow-soft ring-1 ring-black/5 transition hover:shadow-note hover:-translate-y-0.5">
           <p class="text-xs uppercase tracking-wide text-slate-500">October 8, 2025</p>
-          <h2 class="mt-2 text-xl font-semibold">Migration Guide: Moving from Static Fixtures to Stateful Mocks</h2>
+          <h2 class="mt-2 text-xl font-semibold text-brand-dark">Migration Guide: Moving from Static Fixtures to Stateful Mocks</h2>
           <p class="mt-3 text-slate-700">A staged migration path from static fixtures to state-aware scenario switching for better integration confidence.</p>
           <div class="mt-4 flex gap-4 text-sm">
-            <a href="/note-migration-from-static-fixtures.html" class="text-orange-700 hover:text-orange-800">Read full note</a>
-            <a href="https://docs.mockforge.dev" class="text-orange-700 hover:text-orange-800">Docs</a>
+            <a href="/note-migration-from-static-fixtures.html" class="text-brand-orange hover:opacity-80">Read full note</a>
+            <a href="https://docs.mockforge.dev" class="text-brand-orange hover:opacity-80">Docs</a>
           </div>
         </article>
       </section>
@@ -520,6 +525,22 @@
               mobileMenu.classList.add('hidden');
             });
           });
+        }
+
+        // Scroll-reveal for any element with .reveal (IntersectionObserver, no scroll listeners).
+        var reveals = document.querySelectorAll('.reveal');
+        if (reveals.length && 'IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                io.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.12 });
+          reveals.forEach(function (el) { io.observe(el); });
+        } else {
+          reveals.forEach(function (el) { el.classList.add('in'); });
         }
       });
     </script>
