@@ -24,24 +24,24 @@
         <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Why MockForge Stayed Multi-Protocol</h1>
         <p class="mt-6 text-lg leading-8 text-slate-700">There's a reason almost every commercial mock service is HTTP-only. We picked the harder path anyway. This is the calculation behind it.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">The shape of the market</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">The shape of the market</h2>
         <p class="mt-4 leading-8 text-slate-700">When you look at the mock-services market — WireMock Cloud, Postman Mock Server, Beeceptor, Mocky.io — the pattern is identical. HTTP-only. Request matching by URL/method/header. Saved-example responses. The pricing is per-seat or per-request, and the value proposition is "save your team the time of running a stub server."</p>
         <p class="mt-4 leading-8 text-slate-700">It's not a coincidence. HTTP is universal, easy to mock, and the demand is mostly from frontend or API-consumer teams who need a fake backend for development. Building one is a contained problem. Building a Kafka mock or a gRPC streaming mock is a different category of work — you're implementing a protocol, not parsing a request line.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">Why we did it anyway</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Why we did it anyway</h2>
         <p class="mt-4 leading-8 text-slate-700">Two reasons.</p>
         <p class="mt-4 leading-8 text-slate-700"><strong>Most production systems aren't HTTP-only.</strong> A typical service-oriented architecture today has REST APIs at the edge, gRPC between services, Kafka or NATS for async events, maybe a WebSocket layer for live data, SMTP for transactional email, and a sprinkle of legacy TCP somewhere. Mocking only the HTTP layer means your tests stop at the doorway. The interesting failure modes — partial Kafka delivery, gRPC deadline propagation, WebSocket reconnection storms — happen at the protocols nobody else mocks.</p>
         <p class="mt-4 leading-8 text-slate-700"><strong>Spec-driven mocking generalizes better than collection-driven mocking.</strong> If your source of truth is "examples saved in a Postman collection," you're locked into one tool's editor and your mocks drift the moment the spec changes. If your source of truth is the proto file, the OpenAPI spec, or the GraphQL schema, the mock is regenerated from the contract automatically — and it covers every method, not just the ones someone remembered to add an example for.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">The cost of the choice</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">The cost of the choice</h2>
         <p class="mt-4 leading-8 text-slate-700">It was real. Each new protocol meant a domain learning curve, a separate listener implementation, and a fresh set of edge cases — gRPC's deadline semantics, Kafka's consumer rebalancing, AMQP's prefetch, MQTT's QoS-2 four-step handshake. The Kafka work alone surprised us; we'd budgeted "a couple weeks for the wire protocol" and ended up shipping it across multiple releases as request types kept showing up that the JVM clients all assumed were trivial. Two years in, the codebase has a separate crate per protocol — <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">mockforge-grpc</code>, <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">mockforge-kafka</code>, <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">mockforge-mqtt</code>, and a few more — and a shared core that handles cross-cutting concerns like chaos injection, data drift, and the admin UI.</p>
         <p class="mt-4 leading-8 text-slate-700">The win is that those concerns generalize across protocols. Add latency injection once, it works for HTTP, gRPC, and WebSocket simultaneously. The fault-injection primitives we wrote for the HTTP listener got reused verbatim when we added Kafka. The data-drift simulation that came with the OpenAPI work made gRPC responses feel realistic without separate effort.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">When HTTP-only is actually enough</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">When HTTP-only is actually enough</h2>
         <p class="mt-4 leading-8 text-slate-700">For frontend teams mocking a single REST API, an HTTP-only tool is fine — sometimes better, because the editor experience is more polished and the team already lives in Postman. We've watched users churn back to those tools for that exact reason and we don't think it's a mistake.</p>
         <p class="mt-4 leading-8 text-slate-700">The question is whether your test surface stays HTTP-only as the company grows. Most don't. The first time someone needs to mock a Kafka topic for a CI test, the team starts shopping for something new — and the cost of switching mock tools mid-project is high. MockForge is a bet on teams that want to make the decision once.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">What this implies for the product</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">What this implies for the product</h2>
         <p class="mt-4 leading-8 text-slate-700">A few things, in case it's useful for anyone making a similar bet:</p>
         <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
           <li><strong>The core has to be protocol-neutral.</strong> Chaos, latency, data drift, the admin UI — these can't live inside individual protocol crates or you'll re-implement them N times.</li>

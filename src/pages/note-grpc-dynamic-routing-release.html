@@ -24,7 +24,7 @@
         <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Release Notes: gRPC Dynamic Routing, $ref Resolution, and Protocol Handler Refactor</h1>
         <p class="mt-6 text-lg leading-8 text-slate-700">The v0.3.70 through v0.3.75 range was a consolidation release focused on the gRPC layer, spec resolution correctness, and conformance testing infrastructure. Here's what changed and why.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">gRPC Dynamic Routing</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">gRPC Dynamic Routing</h2>
         <p class="mt-4 leading-8 text-slate-700">The gRPC listener was routing by service/method name via a fixed mapping table. That approach worked for simple protos but broke on any service definition that used package nesting, imported types from other protos, or had methods with complex input types.</p>
         <p class="mt-4 leading-8 text-slate-700">The new <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">dynamic/routing.rs</code> module — 476 lines — replaced the static mapping approach with a routing layer that inspects the incoming gRPC request's service name and method against the registered services at request time. Key behaviors:</p>
         <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
@@ -34,14 +34,14 @@
         </ul>
         <p class="mt-4 leading-8 text-slate-700">The change was driven by the HTTP bridge feature. When the bridge converts a REST-style request into a gRPC call, the target service and method are determined at runtime, not at startup — the routing layer had to support late-binding dispatch.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">$ref Resolution for Specs</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">$ref Resolution for Specs</h2>
         <p class="mt-4 leading-8 text-slate-700">OpenAPI specs that use <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">$ref</code> extensively — especially cross-file and nested references — were causing parsing failures that surfaced as missing routes. We resolved one-level <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">$ref</code> for security schemes, parameters, request bodies, and responses across the core spec parser.</p>
         <p class="mt-4 leading-8 text-slate-700">The conformance spec-driven ref resolver now also supports recursive resolution for nested <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">$ref</code> chains. The practical effect: specs exported from Stoplight, Postman, and SwaggerHub — which use <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">$ref</code> heavily — now load without manual patching.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">Protocol Handler Interior Mutability</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Protocol Handler Interior Mutability</h2>
         <p class="mt-4 leading-8 text-slate-700">A subtle but consequential refactor: <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">ProtocolHandler</code> trait methods <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">set_enabled</code> and <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">update_configuration</code> changed from <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">&mut self</code> to <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">&self</code>. This means protocol handlers can now be reconfigured without holding exclusive references, which unblocks concurrent protocol state changes — enabling live config updates through the admin UI without restarting the mock server. The change rippled through the core protocol registry and all seven protocol handler implementations.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">Schema-Aware HTTP Bridge Responses</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Schema-Aware HTTP Bridge Responses</h2>
         <p class="mt-4 leading-8 text-slate-700">The HTTP bridge (automatic gRPC-to-REST conversion) previously returned a generic JSON structure for gRPC responses. The bridge now uses the proto schema to generate response bodies with the correct field types, names, and default values — so a REST client consuming the bridged endpoint gets payloads that match the proto definition.</p>
 
         <div class="mt-8 flex flex-wrap gap-3 text-sm">

@@ -24,7 +24,7 @@
         <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Mocking Kafka Producers Without a Real Broker</h1>
         <p class="mt-6 text-lg leading-8 text-slate-700">Standing up Kafka for tests is overkill. Mocking it badly is worse. Here's how to fake the broker convincingly enough that your producer and consumer code actually exercises the wire protocol — without the operational tax.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">Three levels of fake</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Three levels of fake</h2>
         <p class="mt-4 leading-8 text-slate-700">Before you write code, decide which level you need. Each has a different cost and a different blast radius:</p>
         <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
           <li><strong>Mock the client library.</strong> Replace <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">kafka.Producer</code> with a spy. Cheapest. Doesn't exercise serialization, partitioning, or the broker protocol — so a producer config error slips past your tests entirely.</li>
@@ -33,11 +33,11 @@
         </ul>
         <p class="mt-4 leading-8 text-slate-700">This post is about option three. If you want option one, your client library has a mock package already and you don't need a blog post.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">What "wire-compatible" actually means</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">What "wire-compatible" actually means</h2>
         <p class="mt-4 leading-8 text-slate-700">A wire-compatible Kafka mock implements the parts of the Kafka protocol your client cares about — produce, fetch, metadata, group coordination — well enough that the client's unmodified code dials it and works. It usually doesn't implement replication, log compaction, or anything that requires real durability. That's the trade: complexity gone, realism kept where it matters for tests.</p>
         <p class="mt-4 leading-8 text-slate-700">MockForge's Kafka listener falls in this category. So does <a href="https://github.com/confluentinc/kafka-rest" class="text-brand-orange hover:opacity-80">Confluent's kafka-rest</a> for the REST proxy case, and parts of the <a href="https://github.com/charmbracelet/kafka" class="text-brand-orange hover:opacity-80">Kafka Streams test utilities</a> if you're in the JVM world.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">Setting it up</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Setting it up</h2>
         <p class="mt-4 leading-8 text-slate-700">With MockForge installed (<code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">cargo install mockforge-cli</code>), bring up the Kafka listener with topic auto-creation enabled and (optionally) seed messages your tests will consume:</p>
         <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code># mockforge.yaml
 kafka:
@@ -54,7 +54,7 @@ kafka:
 [kafka] Listening on 0.0.0.0:9092 (auto_create_topics: true)
 [kafka] Seeded 1 message across 1 topic at broker startup</code></pre>
 
-        <h2 class="mt-8 text-xl font-semibold">Pointing your producer at it</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Pointing your producer at it</h2>
         <p class="mt-4 leading-8 text-slate-700">Use whatever Kafka client you already have. The mock advertises <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">localhost:9092</code> through its metadata response so your client doesn't notice it's not a real broker. In Python with confluent-kafka:</p>
         <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>from confluent_kafka import Producer
 
@@ -63,7 +63,7 @@ p.produce("orders.created", key="order-002", value='{"order_id":"order-002"}')
 p.flush()</code></pre>
         <p class="mt-4 leading-8 text-slate-700">The producer's serialization, partitioning, and ack handling all run as they would against a real broker. If your config is wrong (a missing <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">key.serializer</code>, a bad compression setting), the mock surfaces the same error the real broker would.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">Testing the consumer side</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Testing the consumer side</h2>
         <p class="mt-4 leading-8 text-slate-700">Seeded messages from the config show up on the topic at offset 0 immediately — a consumer reading from beginning sees them without any setup. You can also publish from the test itself:</p>
         <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>def test_consumer_handles_order_created():
     # Mock broker already has order-001 seeded from mockforge.yaml
@@ -73,7 +73,7 @@ p.flush()</code></pre>
     assert handler.last_order_id == "order-001"</code></pre>
         <p class="mt-4 leading-8 text-slate-700">Same key always lands on the same partition (Kafka's hash-on-key contract), so seeded records distribute exactly the way real produced records would. Each test starts the broker fresh, so the only messages a consumer sees are the ones in <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">seed_messages</code> plus anything the test publishes inline.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">Failure-injection: where mock brokers earn their keep</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Failure-injection: where mock brokers earn their keep</h2>
         <p class="mt-4 leading-8 text-slate-700">The reason to use a mock instead of a real broker for tests isn't speed — it's that you can introduce specific failures deterministically. With MockForge, fault injection is config:</p>
         <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>kafka:
   port: 9092
@@ -89,7 +89,7 @@ p.flush()</code></pre>
       kind: produce_not_leader</code></pre>
         <p class="mt-4 leading-8 text-slate-700">Your retry-and-backoff code actually gets exercised. The 2-second produce throttle on partition 1 forces your client through its retry path. The 5% out-of-range error on <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">orders.shipped</code> surfaces consumer reset behavior. The <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">produce_not_leader</code> rule makes the client re-fetch metadata and retry. None of these is easy to reproduce on a real broker.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">Wiring into CI</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Wiring into CI</h2>
         <p class="mt-4 leading-8 text-slate-700">GitHub Actions example. Background the mock, wait for the port to open, run the tests:</p>
         <pre class="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100"><code>- run: cargo install mockforge-cli
 - name: Start mock Kafka
@@ -98,7 +98,7 @@ p.flush()</code></pre>
     timeout 30 bash -c 'until nc -z localhost 9092; do sleep 0.5; done'
 - run: pytest tests/integration/</code></pre>
 
-        <h2 class="mt-8 text-xl font-semibold">When this isn't enough</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">When this isn't enough</h2>
         <p class="mt-4 leading-8 text-slate-700">Wire-compatible mocks don't replicate the actual log mechanics — they're not the right tool for testing log compaction behavior, replica leadership transitions, or performance under load. If your test specifically depends on those, you want a real broker via testcontainers and you're going to pay the startup tax.</p>
         <p class="mt-4 leading-8 text-slate-700">For the case where you mostly want to know whether your producer config works and whether your consumer handles the messages it gets, a wire-compatible mock turns a flaky 30-second CI step into a reliable one-second one.</p>
 
