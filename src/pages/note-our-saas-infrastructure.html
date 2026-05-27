@@ -24,7 +24,7 @@
         <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Our $10/mo SaaS Infrastructure</h1>
         <p class="mt-6 text-lg leading-8 text-slate-700">MockForge Cloud runs on three services and bills under ten dollars a month at launch traffic. Here's the entire stack, why we picked each piece, and the parts we'd change in hindsight.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">The stack</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">The stack</h2>
         <p class="mt-4 leading-8 text-slate-700">Three providers do all the work:</p>
         <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
           <li><strong>Cloudflare Pages</strong> serves the admin UI (<code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">app.mockforge.dev</code>) and the marketing site (<code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">mockforge.dev</code>). Free tier.</li>
@@ -33,14 +33,14 @@
         </ul>
         <p class="mt-4 leading-8 text-slate-700">Plus a few supporting bits: Cloudflare R2 for blob storage (uploaded specs, customer plugins), Stripe for billing, Brevo for transactional email. R2 is free under 10 GB. Stripe and Brevo are free until you have revenue and traffic respectively. Total monthly fixed cost: $0–$2.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">Why each piece</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Why each piece</h2>
         <p class="mt-4 leading-8 text-slate-700"><strong>Cloudflare Pages for static hosting.</strong> The admin UI is a Vite-built React SPA. Cloudflare Pages serves it from their edge, gives us free TLS, free DDoS protection, and a deploy CLI (<code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">wrangler pages deploy</code>) that takes 45 seconds end-to-end. Their free tier is generous in a way that's actually meaningful — 500 deploys/month, 100k requests/day on the function layer if we ever need it.</p>
         <p class="mt-4 leading-8 text-slate-700">We deploy from a local Makefile target rather than CI to avoid spending hosted-runner minutes on a 45-second job. <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">make deploy-ui</code>, done.</p>
         <p class="mt-4 leading-8 text-slate-700"><strong>Fly.io for compute.</strong> Two reasons. First, the customer-mock workload is "spin up a tiny machine per customer, route by subdomain, auto-stop when idle" — Fly's primitive for this (<code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">fly machines</code>, the <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">auto_stop_machines</code> config, the Fly internal-DNS routing) is a near-perfect fit, and no other provider offers an equivalent without significantly more code. Second, the per-region latency is low and the pricing is predictable: <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">shared-cpu-1x:256MB</code> is about $0.15/hour running, free when stopped.</p>
         <p class="mt-4 leading-8 text-slate-700">The registry server itself is a single Fly machine in <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">iad</code> (close to Neon's database region) running the Rust binary. The machine spec is <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">shared-cpu-1x:512MB</code>, which is plenty until we have real load.</p>
         <p class="mt-4 leading-8 text-slate-700"><strong>Neon for Postgres.</strong> Two reasons here too. The free tier scales to zero — the database compute shuts off when nothing's hitting it, which is the right shape for a launch-phase product. And the pooled connection endpoint plays nicely with SQLx's <code class="rounded bg-tile bg-stone-100 px-1.5 py-0.5 font-mono text-sm">runtime-tokio-rustls</code> setup with no special config. The cold-start latency on the first query after idle is ~500ms; for an API server with steady-ish traffic, this is invisible.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">What this stack avoids</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">What this stack avoids</h2>
         <p class="mt-4 leading-8 text-slate-700">A few choices we explicitly didn't make:</p>
         <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
           <li><strong>AWS.</strong> The bill at our launch scale would be similar or higher, the setup time would be 10× longer, and the operational surface area is much wider. EC2 + RDS + CloudFront + Route 53 would work, but the ergonomics for "ship a small SaaS" aren't there.</li>
@@ -48,12 +48,12 @@
           <li><strong>Vercel.</strong> Earlier in the project we did host the marketing site on Vercel, then moved to Cloudflare Pages because the cost trajectory was concerning at scale — generous free tier, then $20/seat/month with a much steeper egress bill than Cloudflare. The migration was an afternoon.</li>
         </ul>
 
-        <h2 class="mt-8 text-xl font-semibold">What scales and what doesn't</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">What scales and what doesn't</h2>
         <p class="mt-4 leading-8 text-slate-700">The bill grows mostly with customer-mock traffic, not registry-server load. At 50 paying customers with mostly-idle mocks, we project ~$40-75/month. The registry server cost stays near-flat until we need multiple instances, which is a Redis-state migration we've scoped but not built yet.</p>
         <p class="mt-4 leading-8 text-slate-700">Neon's free tier ends at 0.5 GB storage; their Launch plan starts around $10-15/month, and we can stay there until tens of GB. The pooled-connection endpoint means we can rotate up the connection limit without a code change.</p>
         <p class="mt-4 leading-8 text-slate-700">The harder ceiling is operational, not financial. Single-instance registry server is fine until it isn't. Custom-domain TLS provisioning per customer is on the roadmap and will need Cloudflare or Fly TLS automation. These are the kinds of problems that show up at 200-500 paid customers, not 5-50.</p>
 
-        <h2 class="mt-8 text-xl font-semibold">Would we change anything</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Would we change anything</h2>
         <p class="mt-4 leading-8 text-slate-700">Two things, both small.</p>
         <p class="mt-4 leading-8 text-slate-700">We'd put Neon in the same region as the Fly registry app from day one — we had a short stretch where the database was in a different region than the API server and every query took 80ms longer than necessary. Easy fix, embarrassing to miss.</p>
         <p class="mt-4 leading-8 text-slate-700">We'd also put more thought into the customer-mock auto-stop tuning earlier. Fly's default idle timeout is generous, which is great for warm performance and bad for the cost-leak we covered <a href="/note-cost-cap-design.html" class="text-brand-orange hover:opacity-80">in the cost-cap retrospective</a>. Tighter defaults + the per-deployment rate limit get us closer to "pays for itself per customer" math.</p>

@@ -24,15 +24,15 @@
         <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">How We Use Scenario Switching to Keep Mocks Honest</h1>
         <p class="mt-6 text-lg leading-8 text-slate-700">Real APIs do not stay in one state. Your mocks should not either.</p>
         <p class="mt-5 leading-8 text-slate-700">Scenario switching exists for one reason: your test environment should reflect changing application conditions, not static happy-path responses. That means response bodies, latency, and even failure semantics can change as a workflow progresses.</p>
-        <h2 class="mt-8 text-xl font-semibold text-brand-ink">Why this matters</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Why this matters</h2>
         <ul class="mt-4 list-disc space-y-2 pl-6 leading-8 text-slate-700">
           <li>Frontend state handling gets exercised under real transitions.</li>
           <li>Retry and failure paths stop being skipped during local development.</li>
           <li>Integration confidence improves because mocks behave like systems, not screenshots.</li>
         </ul>
-        <h2 class="mt-8 text-xl font-semibold text-brand-ink">Practical pattern</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Practical pattern</h2>
         <p class="mt-4 leading-8 text-slate-700">Define states such as <code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-sm">initial</code>, <code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-sm">in_progress</code>, <code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-sm">degraded</code>, and <code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-sm">recovered</code>, then map responses by scenario instead of relying on one static fixture.</p>
-        <h2 class="mt-8 text-xl font-semibold text-brand-ink">Result</h2>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Result</h2>
         <p class="mt-4 leading-8 text-slate-700">You get test flows that look closer to production behavior, with less drift between local development and integration environments.</p>
         <div class="mt-8 flex flex-wrap gap-3 text-sm">
           <a href="https://docs.mockforge.dev?utm_source=mockforge_notes&utm_medium=referral&utm_campaign=week1_distribution" class="inline-flex items-center rounded-xl bg-brand-orange px-4 py-2 font-medium text-white hover:opacity-90 transition">Docs</a>
