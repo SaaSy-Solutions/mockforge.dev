@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trust &amp; Security — MockForge</title>
+    <meta name="description" content="How MockForge protects your data: tenant isolation, SSO and MFA, tamper-evident audit logs, encryption in transit and at rest, GDPR tooling, and our SOC 2 Type II roadmap." />
+
+    <link rel="canonical" href="https://mockforge.dev/trust.html" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Trust &amp; Security — MockForge" />
+    <meta property="og:description" content="Tenant isolation, SSO and MFA, tamper-evident audit logs, encryption, GDPR tooling, and our SOC 2 Type II roadmap." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mockforge.dev/trust.html" />
+    <meta property="og:image" content="https://mockforge.dev/public/og-image.png" />
+    <meta property="og:site_name" content="MockForge" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Trust &amp; Security — MockForge" />
+    <meta name="twitter:description" content="How MockForge protects your data, and our path to SOC 2 Type II." />
+    <meta name="twitter:image" content="https://mockforge.dev/public/og-image.png" />
+
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+
+    {{SHARED_HEAD_BLOCK}}
+</head>
+  <body class="bg-surface-subtle text-text-primary antialiased selection:bg-brand-orange/20">
+
+    {{HEADER}}
+
+    <!-- Hero: asymmetric split -->
+    <section class="py-16 sm:py-20 lg:py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+        <div class="lg:col-span-7">
+          <span class="inline-flex items-center gap-2 rounded-full bg-brand-orange/10 text-brand-orange px-3 py-1 text-sm font-medium">
+            <i class="ph-bold ph-shield-check"></i> Trust &amp; Security
+          </span>
+          <h1 class="mt-5 text-4xl md:text-5xl font-semibold tracking-tight text-brand-dark">
+            Security built into the product, not bolted on after.
+          </h1>
+          <p class="mt-5 text-text-secondary text-lg leading-relaxed max-w-2xl">
+            MockForge runs your mocks, your specs, and your team's data on shared infrastructure, so isolation, encryption, and an honest audit trail are core engineering, not a checkbox. This page is a plain account of the controls we run today and where we are headed.
+          </p>
+          <div class="mt-8 flex flex-wrap items-center gap-3">
+            <a href="#controls" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-brand-orange text-white font-medium shadow-soft hover:opacity-90 active:scale-[.98] transition whitespace-nowrap">
+              <i class="ph-bold ph-list-checks"></i> See our controls
+            </a>
+            <a href="#disclosure" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-black/10 hover:bg-black/5 dark:hover:bg-white/10 active:scale-[.98] transition whitespace-nowrap">
+              Report a vulnerability
+            </a>
+          </div>
+        </div>
+        <div class="lg:col-span-5">
+          <div class="rounded-2xl p-7 bg-gradient-to-br from-brand-dark to-slate-800 text-white shadow-note">
+            <p class="text-sm font-medium text-slate-300">At a glance</p>
+            <ul class="mt-4 space-y-3 text-slate-300">
+              <li class="flex items-start gap-3"><i class="ph-bold ph-lock-key text-brand-orange mt-0.5"></i><span>Encrypted in transit (TLS 1.2+) and at rest.</span></li>
+              <li class="flex items-start gap-3"><i class="ph-bold ph-buildings text-brand-orange mt-0.5"></i><span>Per-organization tenant isolation on every request.</span></li>
+              <li class="flex items-start gap-3"><i class="ph-bold ph-fingerprint text-brand-orange mt-0.5"></i><span>SSO (SAML &amp; OIDC) with DNS-verified domains, plus MFA.</span></li>
+              <li class="flex items-start gap-3"><i class="ph-bold ph-seal-check text-brand-orange mt-0.5"></i><span>Tamper-evident, append-only audit log.</span></li>
+              <li class="flex items-start gap-3"><i class="ph-bold ph-git-branch text-brand-orange mt-0.5"></i><span>Open-source core you can read and self-host.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls: bento, varied tiles -->
+    <section id="controls" class="py-20 lg:py-24 bg-white border-y border-black/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-brand-dark reveal">The controls we run today</h2>
+        <p class="mt-4 text-text-secondary text-lg leading-relaxed max-w-2xl reveal">Every item below is implemented and shipping in the hosted product. We do not list controls we are merely planning.</p>
+
+        <div class="mt-10 grid md:grid-cols-3 gap-6">
+          <div class="rounded-2xl p-7 bg-surface-subtle ring-1 ring-black/5 shadow-soft reveal md:col-span-2">
+            <i class="ph-bold ph-buildings text-2xl text-brand-orange"></i>
+            <h3 class="mt-3 text-lg font-semibold text-brand-dark">Tenant isolation</h3>
+            <p class="mt-2 text-text-secondary leading-relaxed">Every API request is scoped to your organization and authorized against your membership before any data is read or written. We are adding database row-level security as a defense-in-depth backstop so a single application bug cannot cross a tenant boundary. Cross-organization access is denied by default.</p>
+          </div>
+          <div class="rounded-2xl p-7 bg-gradient-to-br from-brand-dark to-slate-800 text-white shadow-note reveal">
+            <i class="ph-bold ph-seal-check text-2xl text-brand-orange"></i>
+            <h3 class="mt-3 text-lg font-semibold">Tamper-evident audit log</h3>
+            <p class="mt-2 text-slate-300 leading-relaxed">Sensitive actions are recorded to an append-only audit log protected by a per-organization cryptographic hash chain. Any edit, deletion, or reordering of a record is detectable. Records survive even if the organization is deleted.</p>
+          </div>
+
+          <div class="rounded-2xl p-7 bg-surface-subtle ring-1 ring-black/5 shadow-soft reveal">
+            <i class="ph-bold ph-fingerprint text-2xl text-brand-orange"></i>
+            <h3 class="mt-3 text-lg font-semibold text-brand-dark">Authentication &amp; SSO</h3>
+            <p class="mt-2 text-text-secondary leading-relaxed">SAML 2.0 and OIDC single sign-on, gated on DNS-verified domain ownership so no one can attach an SSO identity to a domain they do not control. TOTP multi-factor authentication, short-lived session tokens, and bcrypt-hashed passwords.</p>
+          </div>
+          <div class="rounded-2xl p-7 bg-surface-subtle ring-1 ring-black/5 shadow-soft reveal">
+            <i class="ph-bold ph-lock-key text-2xl text-brand-orange"></i>
+            <h3 class="mt-3 text-lg font-semibold text-brand-dark">Encryption</h3>
+            <p class="mt-2 text-text-secondary leading-relaxed">All traffic is served over TLS 1.2+ with HTTPS enforced. Databases and persistent volumes are encrypted at rest by our infrastructure providers.</p>
+          </div>
+          <div class="rounded-2xl p-7 bg-surface-subtle ring-1 ring-black/5 shadow-soft reveal">
+            <i class="ph-bold ph-shield-warning text-2xl text-brand-orange"></i>
+            <h3 class="mt-3 text-lg font-semibold text-brand-dark">Attack-surface hardening</h3>
+            <p class="mt-2 text-text-secondary leading-relaxed">Outbound integrations (such as SSO discovery) run behind an SSRF guard that blocks internal, loopback, and cloud-metadata addresses. CSRF protection on state-changing requests and per-organization rate limiting are enforced at the edge of the API.</p>
+          </div>
+
+          <div class="rounded-2xl p-7 bg-surface-subtle ring-1 ring-black/5 shadow-soft reveal">
+            <i class="ph-bold ph-key text-2xl text-brand-orange"></i>
+            <h3 class="mt-3 text-lg font-semibold text-brand-dark">Secrets &amp; AI keys</h3>
+            <p class="mt-2 text-text-secondary leading-relaxed">Bring your own AI provider key; tenant credentials are kept separate from platform workloads. Payment details are handled entirely by Stripe, a PCI-DSS Level 1 provider. MockForge never stores card numbers.</p>
+          </div>
+          <div class="rounded-2xl p-7 bg-surface-subtle ring-1 ring-black/5 shadow-soft reveal md:col-span-2">
+            <i class="ph-bold ph-git-branch text-2xl text-brand-orange"></i>
+            <h3 class="mt-3 text-lg font-semibold text-brand-dark">Open and self-hostable</h3>
+            <p class="mt-2 text-text-secondary leading-relaxed">The MockForge core is open source under MIT or Apache-2.0, so you can read exactly how it works, audit it, and run it entirely inside your own network if your data cannot leave it. The hosted product is a convenience, not a lock-in.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data privacy & GDPR: narrative + side panel -->
+    <section class="py-20 lg:py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-10 items-start">
+        <div class="lg:col-span-7 reveal">
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-brand-dark">Your data, and your right to take it back</h2>
+          <p class="mt-4 text-text-secondary text-lg leading-relaxed">We collect what is needed to run the service and nothing we cannot explain. You can export your organization's data and request erasure, and both actions are themselves written to the audit log.</p>
+          <ul class="mt-6 space-y-4">
+            <li class="flex items-start gap-3"><i class="ph-bold ph-download-simple text-brand-orange mt-1"></i><span class="text-text-secondary"><span class="text-brand-dark font-medium">Data export.</span> Pull your organization's records in a structured format on request.</span></li>
+            <li class="flex items-start gap-3"><i class="ph-bold ph-trash text-brand-orange mt-1"></i><span class="text-text-secondary"><span class="text-brand-dark font-medium">Erasure.</span> Request deletion of personal data in line with GDPR rights.</span></li>
+            <li class="flex items-start gap-3"><i class="ph-bold ph-map-pin text-brand-orange mt-1"></i><span class="text-text-secondary"><span class="text-brand-dark font-medium">Hosting region.</span> The hosted product runs in the United States. Self-host if you need data to stay in a specific jurisdiction.</span></li>
+          </ul>
+        </div>
+        <div class="lg:col-span-5 reveal">
+          <div class="rounded-2xl p-7 bg-white ring-1 ring-black/5 shadow-soft">
+            <h3 class="text-lg font-semibold text-brand-dark">Legal &amp; agreements</h3>
+            <p class="mt-2 text-text-secondary leading-relaxed">The documents that govern how we handle your data.</p>
+            <div class="mt-5 flex flex-col gap-3">
+              <a href="https://app.mockforge.dev/legal/dpa" class="inline-flex items-center justify-between gap-2 px-4 py-3 rounded-xl border border-black/10 hover:bg-black/5 dark:hover:bg-white/10 transition">
+                <span class="flex items-center gap-2"><i class="ph-bold ph-file-text text-brand-orange"></i> Data Processing Agreement</span>
+                <i class="ph-bold ph-arrow-up-right text-text-secondary"></i>
+              </a>
+              <a href="https://app.mockforge.dev/legal/privacy" class="inline-flex items-center justify-between gap-2 px-4 py-3 rounded-xl border border-black/10 hover:bg-black/5 dark:hover:bg-white/10 transition">
+                <span class="flex items-center gap-2"><i class="ph-bold ph-lock-simple text-brand-orange"></i> Privacy Policy</span>
+                <i class="ph-bold ph-arrow-up-right text-text-secondary"></i>
+              </a>
+              <a href="https://app.mockforge.dev/legal/terms" class="inline-flex items-center justify-between gap-2 px-4 py-3 rounded-xl border border-black/10 hover:bg-black/5 dark:hover:bg-white/10 transition">
+                <span class="flex items-center gap-2"><i class="ph-bold ph-scroll text-brand-orange"></i> Terms of Service</span>
+                <i class="ph-bold ph-arrow-up-right text-text-secondary"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Compliance & roadmap: honest status + checklist -->
+    <section class="py-20 lg:py-24 bg-white border-y border-black/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-brand-dark reveal">Compliance, and our SOC 2 roadmap</h2>
+        <p class="mt-4 text-text-secondary text-lg leading-relaxed max-w-3xl reveal">We will be straight with you about where we are. MockForge is <span class="text-brand-dark font-medium">not yet SOC 2 certified</span>. We are building toward a SOC 2 Type II examination, and many of the controls an auditor looks for are already in place. Here is the honest state of that work.</p>
+
+        <div class="mt-10 grid lg:grid-cols-2 gap-6">
+          <div class="rounded-2xl p-7 bg-surface-subtle ring-1 ring-black/5 shadow-soft reveal">
+            <h3 class="text-lg font-semibold text-brand-dark flex items-center gap-2"><i class="ph-bold ph-check-circle text-emerald-500"></i> In place today</h3>
+            <ul class="mt-4 space-y-2.5 text-text-secondary">
+              <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>Logical tenant isolation and access control</li>
+              <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>Encryption in transit and at rest</li>
+              <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>SSO, MFA, and role-based authorization</li>
+              <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>Tamper-evident, append-only audit logging of authentication, configuration, billing, and data-export events</li>
+              <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>Coordinated vulnerability disclosure process</li>
+            </ul>
+          </div>
+          <div class="rounded-2xl p-7 bg-surface-subtle ring-1 ring-black/5 shadow-soft reveal">
+            <h3 class="text-lg font-semibold text-brand-dark flex items-center gap-2"><i class="ph-bold ph-circle-dashed text-brand-orange"></i> On the roadmap</h3>
+            <ul class="mt-4 space-y-2.5 text-text-secondary">
+              <li class="flex items-start gap-2.5"><i class="ph-bold ph-arrow-right text-brand-orange mt-1"></i>Database-enforced row-level tenant isolation</li>
+              <li class="flex items-start gap-2.5"><i class="ph-bold ph-arrow-right text-brand-orange mt-1"></i>Formal policy set and access reviews</li>
+              <li class="flex items-start gap-2.5"><i class="ph-bold ph-arrow-right text-brand-orange mt-1"></i>Continuous control monitoring</li>
+              <li class="flex items-start gap-2.5"><i class="ph-bold ph-arrow-right text-brand-orange mt-1"></i>SOC 2 Type II observation window and independent audit</li>
+            </ul>
+            <!-- TODO(@ray): if you want a public target date for the Type II window, insert it here (e.g. "Targeted for H2 2026"). Left out deliberately so we never publish a date we cannot stand behind. -->
+            <p class="mt-5 text-sm text-text-secondary">Pursuing a compliance review and need our current status or security documentation? <a href="#disclosure" class="text-brand-orange hover:underline">Get in touch</a> and we will share where things stand.</p>
+          </div>
+        </div>
+        <p class="mt-6 text-sm text-text-secondary reveal">GDPR: MockForge provides a Data Processing Agreement and supports data export and erasure to help you meet your obligations as a controller.</p>
+      </div>
+    </section>
+
+    <!-- Sub-processors: divide-y rows -->
+    <section class="py-20 lg:py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-brand-dark reveal">Sub-processors</h2>
+        <p class="mt-4 text-text-secondary text-lg leading-relaxed max-w-2xl reveal">The hosted product relies on a small set of infrastructure providers. The Data Processing Agreement carries the authoritative, current list.</p>
+        <div class="mt-8 rounded-2xl bg-white ring-1 ring-black/5 shadow-soft divide-y divide-black/5 reveal">
+          <div class="grid sm:grid-cols-3 gap-2 p-6">
+            <div class="font-medium text-brand-dark">Fly.io</div>
+            <div class="text-text-secondary sm:col-span-2">Application compute and managed PostgreSQL hosting (United States).</div>
+          </div>
+          <div class="grid sm:grid-cols-3 gap-2 p-6">
+            <div class="font-medium text-brand-dark">Cloudflare</div>
+            <div class="text-text-secondary sm:col-span-2">DNS, CDN, TLS edge, and DDoS / WAF protection.</div>
+          </div>
+          <div class="grid sm:grid-cols-3 gap-2 p-6">
+            <div class="font-medium text-brand-dark">Stripe</div>
+            <div class="text-text-secondary sm:col-span-2">Payment processing and subscription billing (PCI-DSS Level 1).</div>
+          </div>
+          <div class="grid sm:grid-cols-3 gap-2 p-6">
+            <div class="font-medium text-brand-dark">Sentry</div>
+            <div class="text-text-secondary sm:col-span-2">Application error monitoring and diagnostics.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Responsible disclosure + final CTA -->
+    <section id="disclosure" class="py-20 lg:py-24 bg-white border-y border-black/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-10 items-center">
+        <div class="lg:col-span-7 reveal">
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-brand-dark">Found something? Tell us.</h2>
+          <p class="mt-4 text-text-secondary text-lg leading-relaxed">We welcome coordinated disclosure from security researchers. Report a vulnerability through our security policy and we will acknowledge it and keep you updated through the fix. Please give us a reasonable window before any public disclosure.</p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="https://github.com/SaaSy-Solutions/mockforge/security/policy" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-brand-orange text-white font-medium shadow-soft hover:opacity-90 active:scale-[.98] transition">
+              <i class="ph-bold ph-bug-beetle"></i> Security policy
+            </a>
+            <a href="mailto:security@mockforge.dev" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-black/10 hover:bg-black/5 dark:hover:bg-white/10 active:scale-[.98] transition">
+              <i class="ph-bold ph-envelope-simple"></i> security@mockforge.dev
+            </a>
+          </div>
+        </div>
+        <div class="lg:col-span-5 reveal">
+          <div class="rounded-2xl p-7 bg-gradient-to-br from-brand-dark to-slate-800 text-white shadow-note">
+            <h3 class="text-lg font-semibold">Start with the free, local tier</h3>
+            <p class="mt-2 text-slate-300 leading-relaxed">The fastest way to evaluate MockForge against your own security requirements is to run it yourself. No account, no data leaving your machine.</p>
+            <a href="https://app.mockforge.dev/register" class="mt-5 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-brand-orange text-white font-medium shadow-soft hover:opacity-90 active:scale-[.98] transition">
+              Get started free <i class="ph-bold ph-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+</body>
+</html>
