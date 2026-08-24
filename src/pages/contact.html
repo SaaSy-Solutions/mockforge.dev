@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Contact — MockForge</title>
+    <meta name="description" content="How to reach the MockForge team: GitHub issues for bugs and feature requests, security@mockforge.dev for vulnerability reports, and LinkedIn for company inquiries." />
+    <meta name="robots" content="noindex, follow" />
+
+    <meta property="og:title" content="Contact — MockForge" />
+    <meta property="og:description" content="Reach the MockForge team via GitHub, email, or LinkedIn." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mockforge.dev/contact" />
+
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-surface-subtle dark:bg-gray-900 text-text-primary dark:text-gray-100 antialiased">
+    {{HEADER}}
+
+    <section class="py-16 sm:py-20">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <p class="text-sm font-medium uppercase tracking-wide text-brand-orange">Contact</p>
+        <h1 class="mt-3 text-4xl font-semibold tracking-tight text-brand-dark dark:text-white">
+          Get in touch with the MockForge team
+        </h1>
+        <p class="mt-4 text-lg text-text-secondary leading-relaxed">
+          MockForge is an open-source project first. The fastest way to get help or shape the
+          product is through our public channels below. For anything sensitive, use email.
+        </p>
+
+        <div class="mt-12 space-y-6">
+          <div class="rounded-2xl p-7 bg-white ring-1 ring-black/5 shadow-soft">
+            <h2 class="text-xl font-semibold text-brand-dark">Bugs and feature requests</h2>
+            <p class="mt-2 text-text-secondary leading-relaxed">
+              Open an issue on the public tracker. Include your MockForge version, the protocol
+              you are mocking, and a minimal spec or config that reproduces the problem.
+            </p>
+            <a href="https://github.com/SaaSy-Solutions/mockforge/issues"
+               class="mt-4 inline-flex items-center gap-2 font-medium text-brand-orange hover:underline">
+              github.com/SaaSy-Solutions/mockforge/issues
+            </a>
+          </div>
+
+          <div class="rounded-2xl p-7 bg-white ring-1 ring-black/5 shadow-soft">
+            <h2 class="text-xl font-semibold text-brand-dark">Security vulnerabilities</h2>
+            <p class="mt-2 text-text-secondary leading-relaxed">
+              Do not open public issues for suspected vulnerabilities. Email
+              <a href="mailto:security@mockforge.dev" class="text-brand-orange hover:underline">security@mockforge.dev</a>
+              instead. We will acknowledge your report and work with you on a fix and disclosure.
+            </p>
+          </div>
+
+          <div class="rounded-2xl p-7 bg-white ring-1 ring-black/5 shadow-soft">
+            <h2 class="text-xl font-semibold text-brand-dark">Company and cloud inquiries</h2>
+            <p class="mt-2 text-text-secondary leading-relaxed">
+              For questions about MockForge Cloud, enterprise plans, or partnerships, reach us on
+              <a href="https://www.linkedin.com/company/mockforge" target="_blank" rel="noopener noreferrer"
+                 class="text-brand-orange hover:underline">LinkedIn</a>,
+              or see <a href="/pricing.html" class="text-brand-orange hover:underline">pricing</a>
+              for plan details.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {{FOOTER}}
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

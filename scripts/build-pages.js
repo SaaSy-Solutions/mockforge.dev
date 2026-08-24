@@ -27,7 +27,7 @@ const outputRoot = positional[0]
   ? path.resolve(projectRoot, positional[0])
   : projectRoot;
 
-function renderSharedHeadBlock(includeGaMeta) {
+function renderSharedHeadBlock(includeGaMeta, includeOrgLd = true) {
   return `
     <link rel="stylesheet" href="/public/styles.css" />
     <link rel="alternate" type="application/rss+xml" title="MockForge Engineering Notes" href="/rss.xml" />
@@ -81,7 +81,34 @@ function renderSharedHeadBlock(includeGaMeta) {
       .reveal.in { opacity: 1; transform: none; }
       @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
     </style>
-    ${includeGaMeta ? `<meta name="ga-measurement-id" content="${process.env.GA_MEASUREMENT_ID || ''}" />` : ''}
+    ${includeOrgLd ? `<script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "MockForge",
+        "url": "https://mockforge.dev/",
+        "logo": "https://mockforge.dev/public/logo-transparent.png",
+        "description": "Open-source API mocking framework for REST, gRPC, GraphQL, WebSockets, and SMTP.",
+        "sameAs": [
+          "https://github.com/SaaSy-Solutions/mockforge",
+          "https://www.linkedin.com/company/mockforge"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "email": "security@mockforge.dev",
+          "url": "https://mockforge.dev/contact.html"
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "28 E 200 N",
+          "addressLocality": "Franklin",
+          "addressRegion": "IN",
+          "postalCode": "46131",
+          "addressCountry": "US"
+        }
+      }
+    </script>` : ''}
   `.trim();
 }
 
@@ -149,6 +176,7 @@ function renderFooter() {
           <a href="https://app.mockforge.dev/legal/terms" class="text-text-secondary hover:text-text-primary">Terms</a>
           <a href="https://app.mockforge.dev/legal/dpa" class="text-text-secondary hover:text-text-primary">DPA</a>
           <a href="/trust.html" class="text-text-secondary hover:text-text-primary">Trust</a>
+          <a href="/contact.html" class="text-text-secondary hover:text-text-primary">Contact</a>
         </div>
       </div>
     </footer>
@@ -377,7 +405,7 @@ ${items}
 
 function getPageConfig(file) {
   if (file === 'index.html') {
-    return { logoHref: '#top', featuresHref: '#features', includeGaMeta: true };
+    return { logoHref: '#top', featuresHref: '#features', includeGaMeta: true, includeOrgLd: false };
   }
 
   if (file === 'compare-wiremock.html' || file === 'compare-mockserver.html') {
@@ -459,7 +487,7 @@ for (const file of pageFiles) {
   ensurePlaceholder(text, '{{FOOTER}}', file);
   ensurePlaceholder(text, '{{SHELL_SCRIPT}}', file);
 
-  text = text.replace('{{SHARED_HEAD_BLOCK}}', renderSharedHeadBlock(config.includeGaMeta));
+  text = text.replace('{{SHARED_HEAD_BLOCK}}', renderSharedHeadBlock(config.includeGaMeta, config.includeOrgLd));
   text = text.replace('{{HEADER}}', renderHeader(config));
   text = text.replace('{{FOOTER}}', renderFooter());
   text = text.replace('{{SHELL_SCRIPT}}', renderShellScript());
@@ -551,6 +579,16 @@ if (outputRoot !== projectRoot && !flagCheck) {
   const cnamePath = path.join(projectRoot, 'CNAME');
   if (fs.existsSync(cnamePath)) {
     fs.copyFileSync(cnamePath, path.join(outputRoot, 'CNAME'));
+  }
+
+  // Serve agent/SEO discovery files from the dist root, not only under
+  // /public/. Scanners and agents expect /robots.txt, /sitemap.xml,
+  // /llms.txt, and /openapi.json at the domain root.
+  for (const rootAsset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'openapi.json']) {
+    const assetPath = path.join(projectRoot, 'public', rootAsset);
+    if (fs.existsSync(assetPath)) {
+      fs.copyFileSync(assetPath, path.join(outputRoot, rootAsset));
+    }
   }
 }
 

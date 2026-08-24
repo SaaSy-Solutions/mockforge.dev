@@ -3,15 +3,24 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MockForge — API Drift Detection and Contract Alerting</title>
-    <meta name="description" content="How MockForge teams can detect API contract drift early and turn failures into actionable alerts." />
+    <title>Privacy — MockForge</title>
+    <meta name="description" content="What the mockforge.dev marketing site collects: Google Analytics 4 page and click events, a local theme preference in localStorage. No accounts, forms, or ads on this site." />
+    <meta name="robots" content="noindex, follow" />
+
+    <meta property="og:title" content="Privacy — MockForge" />
+    <meta property="og:description" content="What the mockforge.dev marketing site collects and why." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mockforge.dev/privacy" />
+
     <link rel="icon" href="/public/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="/public/styles.css" />
     <link rel="alternate" type="application/rss+xml" title="MockForge Engineering Notes" href="/rss.xml" />
     <script>
@@ -65,47 +74,35 @@
       @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
     </style>
     <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "API Drift Detection and Contract Alerting",
-  "description": "Why we treat contract drift as an alerting event and how endpoint-level mismatch metadata shortens triage loops.",
-  "datePublished": "2026-03-08T00:00:00.000Z",
-  "url": "https://mockforge.dev/note-api-drift-detection-and-contract-alerting.html",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://mockforge.dev/note-api-drift-detection-and-contract-alerting.html"
-  },
-  "author": {
-    "@type": "Organization",
-    "name": "MockForge",
-    "url": "https://mockforge.dev/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "MockForge",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://mockforge.dev/public/logo-transparent.png"
-    }
-  }
-}
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "MockForge",
+        "url": "https://mockforge.dev/",
+        "logo": "https://mockforge.dev/public/logo-transparent.png",
+        "description": "Open-source API mocking framework for REST, gRPC, GraphQL, WebSockets, and SMTP.",
+        "sameAs": [
+          "https://github.com/SaaSy-Solutions/mockforge",
+          "https://www.linkedin.com/company/mockforge"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "email": "security@mockforge.dev",
+          "url": "https://mockforge.dev/contact.html"
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "28 E 200 N",
+          "addressLocality": "Franklin",
+          "addressRegion": "IN",
+          "postalCode": "46131",
+          "addressCountry": "US"
+        }
+      }
     </script>
-      <!-- social:begin -->
-    <link rel="canonical" href="https://mockforge.dev/note-api-drift-detection-and-contract-alerting.html" />
-    <meta property="og:title" content="API Drift Detection and Contract Alerting" />
-    <meta property="og:description" content="Why we treat contract drift as an alerting event and how endpoint-level mismatch metadata shortens triage loops." />
-    <meta property="og:type" content="article" />
-    <meta property="og:url" content="https://mockforge.dev/note-api-drift-detection-and-contract-alerting.html" />
-    <meta property="og:image" content="https://mockforge.dev/public/og-image.png" />
-    <meta property="og:site_name" content="MockForge" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="API Drift Detection and Contract Alerting" />
-    <meta name="twitter:description" content="Why we treat contract drift as an alerting event and how endpoint-level mismatch metadata shortens triage loops." />
-    <meta name="twitter:image" content="https://mockforge.dev/public/og-image.png" />
-    <!-- social:end -->
   </head>
-  <body class="bg-surface-subtle text-text-primary antialiased font-sans">
+  <body class="bg-surface-subtle dark:bg-gray-900 text-text-primary dark:text-gray-100 antialiased">
     <header class="sticky top-0 z-40 backdrop-blur bg-white/90 dark:bg-slate-900 border-b border-black/5 dark:border-white/10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
@@ -146,20 +143,68 @@
       </div>
     </header>
 
-    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
-      <article class="rounded-2xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
-        <a href="/engineering-notes.html" class="text-sm font-medium text-brand-orange hover:opacity-80">← Back to Engineering Notes</a>
-        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">March 8, 2026</p>
-        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">API Drift Detection and Contract Alerting</h1>
-        <p class="mt-6 text-lg leading-8 text-slate-700">Most integration failures are not sudden outages. They are slow contract drift that nobody sees until deployment day.</p>
-        <p class="mt-5 leading-8 text-slate-700">Our current model is to run spec-driven checks continuously and treat schema mismatch as an alerting event, not a debugging surprise. This catches nullable flips, enum additions, and response-shape regressions while teams still have rollback room.</p>
-        <p class="mt-5 leading-8 text-slate-700">The practical win is faster triage: failures now include endpoint, expected shape, observed payload, and severity metadata so operators can route to the right service owner immediately.</p>
-        <div class="mt-8 flex flex-wrap gap-3 text-sm">
-          <a href="https://docs.mockforge.dev" class="inline-flex items-center rounded-xl bg-brand-orange px-4 py-2 font-medium text-white hover:opacity-90 transition">Docs</a>
-          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-black/10 px-4 py-2 font-medium text-text-primary hover:bg-black/5 dark:hover:bg-white/10 transition">GitHub</a>
+    <section class="py-16 sm:py-20">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <p class="text-sm font-medium uppercase tracking-wide text-brand-orange">Privacy</p>
+        <h1 class="mt-3 text-4xl font-semibold tracking-tight text-brand-dark dark:text-white">
+          What this website collects
+        </h1>
+        <p class="mt-4 text-lg text-text-secondary leading-relaxed">
+          This policy covers the public marketing site at mockforge.dev. It is intentionally short
+          because the site is static: it has no user accounts, no comment forms, no advertising,
+          and no server-side sessions.
+        </p>
+
+        <div class="mt-12 space-y-10">
+          <div>
+            <h2 class="text-xl font-semibold text-brand-dark">Analytics</h2>
+            <p class="mt-2 text-text-secondary leading-relaxed">
+              We use Google Analytics 4 to understand aggregate traffic: page views, referrers,
+              and which documentation or download links visitors click. Click events record the
+              link text and destination so we know which features people are interested in.
+              Google may set its own cookies as part of measurement; you can opt out with
+              Google's browser add-on or any standard cookie blocker.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-semibold text-brand-dark">Local storage</h2>
+            <p class="mt-2 text-text-secondary leading-relaxed">
+              The only value this site stores in your browser is a single
+              <code>theme</code> key in localStorage that remembers whether you chose light or
+              dark mode. It never leaves your device and is not shared with anyone.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-semibold text-brand-dark">Data we do not collect</h2>
+            <p class="mt-2 text-text-secondary leading-relaxed">
+              This site does not ask for your name, email address, or payment details, does not
+              run third-party ad networks, and does not sell or share visitor data. The open-source
+              MockForge software runs on your own infrastructure; when you use it locally, no data
+              is sent to us.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-semibold text-brand-dark">MockForge Cloud</h2>
+            <p class="mt-2 text-text-secondary leading-relaxed">
+              The hosted cloud application at app.mockforge.dev is a separate service with its own
+              account data handling, described during sign-up. Questions about cloud data can go to
+              <a href="mailto:security@mockforge.dev" class="text-brand-orange hover:underline">security@mockforge.dev</a>.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-semibold text-brand-dark">Questions</h2>
+            <p class="mt-2 text-text-secondary leading-relaxed">
+              If you have questions about this policy, contact us via the
+              <a href="/contact.html" class="text-brand-orange hover:underline">contact page</a>.
+            </p>
+          </div>
         </div>
-      </article>
-    </main>
+      </div>
+    </section>
 
     <footer class="py-10 border-t border-black/5 dark:border-white/10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -183,7 +228,6 @@
         </div>
       </div>
     </footer>
-
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         var toggle = document.getElementById('themeToggle');

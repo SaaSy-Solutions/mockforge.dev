@@ -1,0 +1,961 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "MockForge Management API",
+    "version": "0.3.0",
+    "description": "HTTP management API exposed by every running MockForge server under `/__mockforge/api` (default `http://localhost:8080/__mockforge/api`).\n\nUse it to create, list, update, and delete mocks at runtime, inspect server stats and capabilities, validate configuration, manage chaos and network-profile settings, and read conformance violations.\n\nThis document covers the core endpoints compiled into every build. Feature-gated protocol endpoints (SMTP mailbox, MQTT, Kafka, AMQP, state machines, conformance runs) are additionally available depending on the server's compiled features — query `GET /capabilities` at runtime to discover them. Full documentation: https://docs.mockforge.dev",
+    "contact": {
+      "name": "MockForge",
+      "url": "https://mockforge.dev/contact.html",
+      "email": "security@mockforge.dev"
+    },
+    "license": {
+      "name": "MIT OR Apache-2.0",
+      "url": "https://github.com/SaaSy-Solutions/mockforge"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/__mockforge/api",
+      "description": "Local MockForge instance (default admin port)"
+    }
+  ],
+  "tags": [
+    { "name": "server", "description": "Health, capabilities, stats, and configuration" },
+    { "name": "mocks", "description": "Create and manage runtime mocks" },
+    { "name": "conformance", "description": "Spec-conformance violations observed by the server" },
+    { "name": "migration", "description": "Per-route migration mode between mock and proxy" },
+    { "name": "proxy", "description": "Proxy replacement rules and traffic inspection" },
+    { "name": "chaos", "description": "Chaos engineering and network profile controls" },
+    { "name": "mockai", "description": "Learn mocks from examples and explain generated rules" }
+  ],
+  "paths": {
+    "/capabilities": {
+      "get": {
+        "operationId": "getCapabilities",
+        "tags": ["server"],
+        "summary": "List enabled features and server version",
+        "description": "Reports which features and protocols are available in this build. Query this first: feature-gated endpoint groups (smtp, mqtt, kafka, conformance, behavioral-cloning) are only present when listed here.",
+        "responses": {
+          "200": {
+            "description": "Feature list and version",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Capabilities" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "getHealth",
+        "tags": ["server"],
+        "summary": "Health check",
+        "description": "Liveness probe for the management API.",
+        "responses": {
+          "200": {
+            "description": "Server is healthy",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Health" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats": {
+      "get": {
+        "operationId": "getStats",
+        "tags": ["server"],
+        "summary": "Server statistics",
+        "description": "Uptime, request counters, and mock/route counts for the running server.",
+        "responses": {
+          "200": {
+            "description": "Current server stats",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ServerStats" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config": {
+      "get": {
+        "operationId": "getConfig",
+        "tags": ["server"],
+        "summary": "Get server configuration",
+        "description": "Returns the active server configuration (version, port, loaded-spec flag, and related settings).",
+        "responses": {
+          "200": {
+            "description": "Active configuration",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ServerConfigInfo" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/validate": {
+      "post": {
+        "operationId": "validateConfig",
+        "tags": ["server"],
+        "summary": "Validate a configuration",
+        "description": "Validates a configuration payload without applying it.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Validation result",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/config/bulk": {
+      "post": {
+        "operationId": "bulkUpdateConfig",
+        "tags": ["server"],
+        "summary": "Bulk-update configuration",
+        "description": "Applies multiple configuration updates in one call.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update result",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/mocks": {
+      "get": {
+        "operationId": "listMocks",
+        "tags": ["mocks"],
+        "summary": "List mocks",
+        "description": "Returns all registered mocks with total and enabled counts.",
+        "responses": {
+          "200": {
+            "description": "All mocks",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MockList" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createMock",
+        "tags": ["mocks"],
+        "summary": "Create a mock",
+        "description": "Registers a new mock. If `id` is omitted the server assigns a UUID. Returns 409 when the ID already exists.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MockConfig" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Mock created (includes the assigned `id`)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MockConfig" }
+              }
+            }
+          },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      }
+    },
+    "/mocks/{id}": {
+      "parameters": [
+        { "$ref": "#/components/parameters/MockId" }
+      ],
+      "get": {
+        "operationId": "getMock",
+        "tags": ["mocks"],
+        "summary": "Get a mock by ID",
+        "responses": {
+          "200": {
+            "description": "The mock",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MockConfig" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "operationId": "updateMock",
+        "tags": ["mocks"],
+        "summary": "Update a mock",
+        "description": "Replaces the mock configuration for the given ID.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MockConfig" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated mock",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MockConfig" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteMock",
+        "tags": ["mocks"],
+        "summary": "Delete a mock",
+        "responses": {
+          "200": {
+            "description": "Mock deleted",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/export": {
+      "get": {
+        "operationId": "exportMocks",
+        "tags": ["mocks"],
+        "summary": "Export all mocks",
+        "description": "Serializes the current mock set for backup or sharing.",
+        "responses": {
+          "200": {
+            "description": "Exported mock set",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/import": {
+      "post": {
+        "operationId": "importMocks",
+        "tags": ["mocks"],
+        "summary": "Import mocks",
+        "description": "Loads a previously exported mock set into the server.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Import result",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/spec": {
+      "get": {
+        "operationId": "getLoadedSpec",
+        "tags": ["server"],
+        "summary": "Get the loaded OpenAPI spec",
+        "description": "Returns the OpenAPI specification the server was started with, if any. 404 when no spec was loaded.",
+        "responses": {
+          "200": {
+            "description": "The loaded OpenAPI document",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/conformance/violations": {
+      "get": {
+        "operationId": "listConformanceViolations",
+        "tags": ["conformance"],
+        "summary": "List spec-conformance violations",
+        "description": "Returns recent requests rejected by request validation, served from a bounded in-memory ring buffer.",
+        "responses": {
+          "200": {
+            "description": "Recent violations",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "clearConformanceViolations",
+        "tags": ["conformance"],
+        "summary": "Clear conformance violations",
+        "responses": {
+          "200": {
+            "description": "Buffer cleared",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/migration/status": {
+      "get": {
+        "operationId": "getMigrationStatus",
+        "tags": ["migration"],
+        "summary": "Migration status overview",
+        "responses": {
+          "200": {
+            "description": "Aggregate migration status",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/migration/routes": {
+      "get": {
+        "operationId": "getMigrationRoutes",
+        "tags": ["migration"],
+        "summary": "List per-route migration modes",
+        "responses": {
+          "200": {
+            "description": "Route migration modes",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/migration/routes/{pattern}/toggle": {
+      "post": {
+        "operationId": "toggleRouteMigration",
+        "tags": ["migration"],
+        "summary": "Toggle a route between mock and proxy",
+        "parameters": [
+          { "$ref": "#/components/parameters/RoutePattern" }
+        ],
+        "responses": {
+          "200": {
+            "description": "New mode applied",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/migration/routes/{pattern}": {
+      "put": {
+        "operationId": "setRouteMigrationMode",
+        "tags": ["migration"],
+        "summary": "Set a route's migration mode explicitly",
+        "parameters": [
+          { "$ref": "#/components/parameters/RoutePattern" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mode set",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/migration/groups": {
+      "get": {
+        "operationId": "getMigrationGroups",
+        "tags": ["migration"],
+        "summary": "List migration groups",
+        "responses": {
+          "200": {
+            "description": "Migration groups",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/migration/groups/{group}/toggle": {
+      "post": {
+        "operationId": "toggleGroupMigration",
+        "tags": ["migration"],
+        "summary": "Toggle a migration group",
+        "parameters": [
+          { "$ref": "#/components/parameters/GroupName" }
+        ],
+        "responses": {
+          "200": {
+            "description": "New mode applied",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/migration/groups/{group}": {
+      "put": {
+        "operationId": "setGroupMigrationMode",
+        "tags": ["migration"],
+        "summary": "Set a group's migration mode explicitly",
+        "parameters": [
+          { "$ref": "#/components/parameters/GroupName" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mode set",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/proxy/rules": {
+      "get": {
+        "operationId": "listProxyRules",
+        "tags": ["proxy"],
+        "summary": "List proxy replacement rules",
+        "responses": {
+          "200": {
+            "description": "Proxy rules",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createProxyRule",
+        "tags": ["proxy"],
+        "summary": "Create a proxy replacement rule",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rule created",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/proxy/rules/{id}": {
+      "parameters": [
+        { "$ref": "#/components/parameters/RuleId" }
+      ],
+      "get": {
+        "operationId": "getProxyRule",
+        "tags": ["proxy"],
+        "summary": "Get a proxy rule",
+        "responses": {
+          "200": {
+            "description": "The rule",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "operationId": "updateProxyRule",
+        "tags": ["proxy"],
+        "summary": "Update a proxy rule",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated rule",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteProxyRule",
+        "tags": ["proxy"],
+        "summary": "Delete a proxy rule",
+        "responses": {
+          "200": {
+            "description": "Rule deleted",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/proxy/inspect": {
+      "get": {
+        "operationId": "inspectProxyTraffic",
+        "tags": ["proxy"],
+        "summary": "Inspect proxied traffic",
+        "responses": {
+          "200": {
+            "description": "Recent proxied request/response pairs",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chaos/config": {
+      "get": {
+        "operationId": "getChaosConfig",
+        "tags": ["chaos"],
+        "summary": "Get chaos configuration",
+        "responses": {
+          "200": {
+            "description": "Active chaos configuration",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "updateChaosConfig",
+        "tags": ["chaos"],
+        "summary": "Update chaos configuration",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated chaos configuration",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/network/profiles": {
+      "get": {
+        "operationId": "listNetworkProfiles",
+        "tags": ["chaos"],
+        "summary": "List network profiles",
+        "description": "Named latency/loss/bandwidth profiles that can be applied at runtime.",
+        "responses": {
+          "200": {
+            "description": "Available profiles",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/network/profile/apply": {
+      "post": {
+        "operationId": "applyNetworkProfile",
+        "tags": ["chaos"],
+        "summary": "Apply a network profile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile applied",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/mockai/learn": {
+      "post": {
+        "operationId": "learnFromExamples",
+        "tags": ["mockai"],
+        "summary": "Learn mock rules from examples",
+        "description": "Generates mock rules from provided request/response examples.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generated rules",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/mockai/rules/explanations": {
+      "get": {
+        "operationId": "listRuleExplanations",
+        "tags": ["mockai"],
+        "summary": "List rule explanations",
+        "responses": {
+          "200": {
+            "description": "Explanations for generated rules",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mockai/rules/{id}/explanation": {
+      "get": {
+        "operationId": "getRuleExplanation",
+        "tags": ["mockai"],
+        "summary": "Get one rule explanation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Rule identifier",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The explanation",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "MockId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Mock identifier (UUID assigned by the server on create)",
+        "schema": { "type": "string" }
+      },
+      "RoutePattern": {
+        "name": "pattern",
+        "in": "path",
+        "required": true,
+        "description": "Route pattern, e.g. /api/v1/users/:id",
+        "schema": { "type": "string" }
+      },
+      "GroupName": {
+        "name": "group",
+        "in": "path",
+        "required": true,
+        "description": "Migration group name",
+        "schema": { "type": "string" }
+      },
+      "RuleId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Proxy rule identifier",
+        "schema": { "type": "string" }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Malformed request body or invalid parameters",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "No resource with the given identifier",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "A resource with the same identifier already exists",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "description": "Axum-style plain-text error body. Non-2xx responses carry a short human-readable message.",
+        "properties": {
+          "message": { "type": "string" }
+        }
+      },
+      "Health": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "const": "healthy" },
+          "service": { "type": "string", "const": "mockforge-management" },
+          "timestamp": { "type": "string", "description": "RFC 3339 timestamp" }
+        }
+      },
+      "Capabilities": {
+        "type": "object",
+        "properties": {
+          "features": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Compiled-in features. Core values: core, http, management, mocks, proxy, ai, chaos, network-profiles, state-machines, migration, snapshot-diff, mockai. Optional: smtp, mqtt, kafka, conformance, behavioral-cloning."
+          },
+          "version": { "type": "string", "description": "MockForge version (CARGO_PKG_VERSION)" }
+        }
+      },
+      "ServerStats": {
+        "type": "object",
+        "properties": {
+          "uptime_seconds": { "type": "integer", "format": "int64", "minimum": 0 },
+          "total_requests": { "type": "integer", "format": "int64", "minimum": 0 },
+          "active_mocks": { "type": "integer", "minimum": 0 },
+          "enabled_mocks": { "type": "integer", "minimum": 0 },
+          "registered_routes": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "ServerConfigInfo": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "string" },
+          "port": { "type": "integer" },
+          "spec_loaded": { "type": "boolean" }
+        },
+        "additionalProperties": true
+      },
+      "MockResponse": {
+        "type": "object",
+        "required": ["body"],
+        "properties": {
+          "body": {
+            "description": "Response body as JSON",
+            "type": "object",
+            "additionalProperties": true
+          },
+          "headers": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "description": "Optional custom response headers"
+          }
+        }
+      },
+      "RequestMatchCriteria": {
+        "type": "object",
+        "properties": {
+          "headers": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "description": "Headers that must match (case-insensitive names)"
+          },
+          "query_params": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "description": "Query parameters that must match"
+          },
+          "body_pattern": {
+            "type": "string",
+            "description": "Exact-match or regex body pattern"
+          },
+          "json_path": {
+            "type": "string",
+            "description": "JSONPath expression for JSON body matching"
+          }
+        }
+      },
+      "MockConfig": {
+        "type": "object",
+        "required": ["method", "path", "response"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier. Auto-generated (UUID) on create when omitted."
+          },
+          "name": { "type": "string", "description": "Human-readable name" },
+          "method": { "type": "string", "description": "HTTP method, e.g. GET, POST" },
+          "path": { "type": "string", "description": "API path pattern to match" },
+          "response": { "$ref": "#/components/schemas/MockResponse" },
+          "enabled": { "type": "boolean", "default": true },
+          "latency_ms": { "type": "integer", "format": "int64", "description": "Optional latency to inject" },
+          "status_code": { "type": "integer", "description": "Optional HTTP status code override" },
+          "request_match": { "$ref": "#/components/schemas/RequestMatchCriteria" },
+          "priority": { "type": "integer", "description": "Higher-priority mocks match first" },
+          "scenario": { "type": "string", "description": "Scenario name for stateful mocking" },
+          "required_scenario_state": { "type": "string", "description": "Required scenario state for this mock to be active" },
+          "new_scenario_state": { "type": "string", "description": "Scenario state to transition to after this mock matches" }
+        }
+      },
+      "MockList": {
+        "type": "object",
+        "properties": {
+          "mocks": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MockConfig" }
+          },
+          "total": { "type": "integer", "minimum": 0 },
+          "enabled": { "type": "integer", "minimum": 0 }
+        }
+      }
+    }
+  }
+}
