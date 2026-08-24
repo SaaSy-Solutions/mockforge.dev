@@ -1,0 +1,3618 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "MockForge Registry Server API",
+    "description": "This document describes the **CORE surface** of the MockForge Cloud API served by the Registry Server (`registry.mockforge.dev`). It covers health/meta endpoints, authentication, scoped API tokens, projects, organizations, the marketplace (templates, scenarios, plugins), hosted mock deployments, and core billing operations.\n\nOther capability groups exist on the platform **beyond this document**, including workspaces, AI studio, SSO, admin, and extended observability APIs.\n\n## Authentication\nTwo credential types are accepted via the same HTTP bearer scheme:\n\n- A JWT access token obtained from login/registration (`Authorization: Bearer <access_token>`).\n- A scoped API token created from the tokens endpoint (sent identically as a bearer token; permissions limited by its scopes).\n\nEndpoints marked public require no credentials.\n\n## Rate limits\nGlobal limit of 60 requests per minute and a per-user limit of 100 requests per minute. Exceeding either returns `429`.\n\n## Errors\nErrors are returned as structured JSON objects with an `error` field and optional human-readable `message`.",
+    "contact": {
+      "name": "MockForge Security",
+      "email": "security@mockforge.dev",
+      "url": "https://mockforge.dev/contact.html"
+    },
+    "license": {
+      "name": "Dual-licensed under MIT OR Apache-2.0",
+      "url": "https://github.com/mockforge/mockforge"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://registry.mockforge.dev"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "health",
+      "description": "Health checks, service status, public stats, FAQ, and legal documents."
+    },
+    {
+      "name": "auth",
+      "description": "Registration, login, token refresh, password management, email verification."
+    },
+    {
+      "name": "tokens",
+      "description": "Scoped API token lifecycle."
+    },
+    {
+      "name": "projects",
+      "description": "Project listing."
+    },
+    {
+      "name": "organizations",
+      "description": "Organization CRUD, members, quotas, usage, and billing overview."
+    },
+    {
+      "name": "marketplace",
+      "description": "Template, scenario, and plugin discovery, retrieval, and publishing."
+    },
+    {
+      "name": "hosted-mocks",
+      "description": "Hosted mock deployments: lifecycle, logs, metrics, traffic capture."
+    },
+    {
+      "name": "billing",
+      "description": "Subscription, invoices, Stripe checkout and customer portal."
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["health"],
+        "operationId": "getHealth",
+        "summary": "Get overall service health",
+        "description": "Returns the aggregate health of the Registry Server, including database connectivity and dependent services.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Service is healthy.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/live": {
+      "get": {
+        "tags": ["health"],
+        "operationId": "getLiveness",
+        "summary": "Liveness probe",
+        "description": "Kubernetes-style liveness probe indicating whether the process is running.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Process is alive.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "tags": ["health"],
+        "operationId": "getReadiness",
+        "summary": "Readiness probe",
+        "description": "Kubernetes-style readiness probe indicating whether the server can serve traffic.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Service is ready to accept traffic.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/circuits": {
+      "get": {
+        "tags": ["health"],
+        "operationId": "getCircuitBreakers",
+        "summary": "Circuit breaker states",
+        "description": "Returns the current state of the circuit breakers guarding downstream dependencies.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Circuit breaker states.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/stats": {
+      "get": {
+        "tags": ["health"],
+        "operationId": "getPublicStats",
+        "summary": "Get public registry statistics",
+        "description": "Returns aggregate public statistics about the registry, such as counts of published templates, scenarios, and plugins.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Registry statistics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/status": {
+      "get": {
+        "tags": ["health"],
+        "operationId": "getServiceStatus",
+        "summary": "Get service status",
+        "description": "Returns detailed runtime status of the Registry Server and its subsystems.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Service status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/faq": {
+      "get": {
+        "tags": ["health"],
+        "operationId": "getFaq",
+        "summary": "Get FAQ content",
+        "description": "Returns the frequently asked questions served by the registry.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "FAQ content.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/legal/terms": {
+      "get": {
+        "tags": ["health"],
+        "operationId": "getTermsOfService",
+        "summary": "Get Terms of Service",
+        "description": "Returns the current MockForge Cloud Terms of Service document.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Terms of Service content.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/legal/privacy": {
+      "get": {
+        "tags": ["health"],
+        "operationId": "getPrivacyPolicy",
+        "summary": "Get Privacy Policy",
+        "description": "Returns the current MockForge Cloud Privacy Policy document.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Privacy Policy content.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/legal/dpa": {
+      "get": {
+        "tags": ["health"],
+        "operationId": "getDataProcessingAgreement",
+        "summary": "Get Data Processing Agreement",
+        "description": "Returns the current Data Processing Agreement document.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "DPA content.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/billing/config": {
+      "get": {
+        "tags": ["billing"],
+        "operationId": "getBillingConfig",
+        "summary": "Get public billing configuration",
+        "description": "Returns publicly visible billing configuration such as available plans and pricing tiers.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Billing configuration.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": ["auth"],
+        "operationId": "registerUser",
+        "summary": "Register a new account",
+        "description": "Creates a new MockForge Cloud account with a username, email, and password, and returns an initial access token.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "email", "password"],
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Account created; authentication response returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": ["auth"],
+        "operationId": "login",
+        "summary": "Log in",
+        "description": "Authenticates with email and password (and a two-factor code when 2FA is enabled) and returns an access/refresh token pair.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "two_factor_code": {
+                    "type": "string",
+                    "description": "TOTP code, required when two-factor authentication is enabled."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated; token pair returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseV2"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/token/refresh": {
+      "post": {
+        "tags": ["auth"],
+        "operationId": "refreshToken",
+        "summary": "Refresh access token",
+        "description": "Exchanges a refresh token for a new token pair. When no refresh token is supplied in the body, the `mockforge_refresh` cookie is used instead.",
+        "security": [],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refresh_token": {
+                    "type": "string",
+                    "description": "Omit to fall back to the mockforge_refresh cookie."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "New token pair issued.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "refresh_token": {
+                      "type": "string"
+                    },
+                    "access_token_expires_at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": ["auth"],
+        "operationId": "logout",
+        "summary": "Log out",
+        "description": "Invalidates the current session/refresh token and clears authentication cookies.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Logged out.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/password/reset-request": {
+      "post": {
+        "tags": ["auth"],
+        "operationId": "requestPasswordReset",
+        "summary": "Request password reset",
+        "description": "Sends a password-reset email to the given address if it corresponds to an existing account.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reset request accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/password/reset": {
+      "post": {
+        "tags": ["auth"],
+        "operationId": "resetPassword",
+        "summary": "Reset password with token",
+        "description": "Completes a password reset using the token delivered by email and a new password.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token", "new_password"],
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  },
+                  "new_password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/verify-email": {
+      "get": {
+        "tags": ["auth"],
+        "operationId": "verifyEmail",
+        "summary": "Verify email address",
+        "description": "Confirms an email address using the verification token supplied as a query parameter.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "description": "Email verification token from the verification link.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email verified.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/verify": {
+      "get": {
+        "tags": ["auth"],
+        "operationId": "verifyToken",
+        "summary": "Verify current bearer token",
+        "description": "Validates the presented JWT or API token and returns basic identity claims when it is valid.",
+        "responses": {
+          "200": {
+            "description": "Token is valid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "valid": {
+                      "type": "boolean"
+                    },
+                    "user_id": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": ["auth"],
+        "operationId": "getCurrentUser",
+        "summary": "Get current authenticated user",
+        "description": "Returns profile information for the user identified by the presented bearer credentials.",
+        "responses": {
+          "200": {
+            "description": "Current user profile.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user_id": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/change-password": {
+      "post": {
+        "tags": ["auth"],
+        "operationId": "changePassword",
+        "summary": "Change password",
+        "description": "Changes the password of the authenticated user after verifying the current password.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["current_password", "new_password"],
+                "properties": {
+                  "current_password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "new_password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password changed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/tokens": {
+      "post": {
+        "tags": ["tokens"],
+        "operationId": "createApiToken",
+        "summary": "Create a scoped API token",
+        "description": "Creates a new API token with the given name and scopes. The full token value is returned exactly once and cannot be retrieved afterwards.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token created; secret shown once.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenCreated"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": ["tokens"],
+        "operationId": "listApiTokens",
+        "summary": "List API tokens",
+        "description": "Lists the authenticated user's API tokens. Only metadata is returned; token secrets are never exposed.",
+        "responses": {
+          "200": {
+            "description": "List of API tokens.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TokenInfo"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/tokens/scopes": {
+      "get": {
+        "tags": ["tokens"],
+        "operationId": "listTokenScopes",
+        "summary": "List available token scopes",
+        "description": "Returns every scope that may be granted to an API token, with labels and descriptions.",
+        "responses": {
+          "200": {
+            "description": "Available scopes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Scope"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/tokens/{token_id}": {
+      "delete": {
+        "tags": ["tokens"],
+        "operationId": "revokeApiToken",
+        "summary": "Revoke an API token",
+        "description": "Permanently revokes the identified API token. Requests bearing the revoked token are rejected thereafter.",
+        "parameters": [
+          {
+            "name": "token_id",
+            "in": "path",
+            "required": true,
+            "description": "Identifier of the token to revoke.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/tokens/{token_id}/rotate": {
+      "post": {
+        "tags": ["tokens"],
+        "operationId": "rotateApiToken",
+        "summary": "Rotate an API token",
+        "description": "Issues a replacement secret for the identified token. The new secret is shown once.",
+        "parameters": [
+          {
+            "name": "token_id",
+            "in": "path",
+            "required": true,
+            "description": "Identifier of the token to rotate.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token rotated; new secret shown once.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenCreated"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/projects": {
+      "get": {
+        "tags": ["projects"],
+        "operationId": "listProjects",
+        "summary": "List projects",
+        "description": "Lists projects visible to the authenticated user.",
+        "responses": {
+          "200": {
+            "description": "List of projects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Project"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/organizations": {
+      "get": {
+        "tags": ["organizations"],
+        "operationId": "listOrganizations",
+        "summary": "List organizations",
+        "description": "Lists organizations the authenticated user belongs to.",
+        "responses": {
+          "200": {
+            "description": "List of organizations.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": ["organizations"],
+        "operationId": "createOrganization",
+        "summary": "Create an organization",
+        "description": "Creates a new organization owned by the authenticated user.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Organization created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/slug/{slug}": {
+      "get": {
+        "tags": ["organizations"],
+        "operationId": "getOrganizationBySlug",
+        "summary": "Look up organization by slug",
+        "description": "Fetches an organization by its URL-friendly slug.",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "description": "URL-friendly organization slug.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching organization.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{org_id}": {
+      "get": {
+        "tags": ["organizations"],
+        "operationId": "getOrganization",
+        "summary": "Get an organization",
+        "description": "Fetches a single organization by identifier.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "description": "Organization identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["organizations"],
+        "operationId": "updateOrganization",
+        "summary": "Update an organization",
+        "description": "Applies a partial update to an organization the caller is permitted to administer.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "description": "Organization identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated organization.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["organizations"],
+        "operationId": "deleteOrganization",
+        "summary": "Delete an organization",
+        "description": "Deletes an organization and its associated resources.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "description": "Organization identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{org_id}/members": {
+      "get": {
+        "tags": ["organizations"],
+        "operationId": "listOrganizationMembers",
+        "summary": "List organization members",
+        "description": "Lists the members of an organization together with their roles.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "description": "Organization identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of members.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Member"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "post": {
+        "tags": ["organizations"],
+        "operationId": "addOrganizationMember",
+        "summary": "Add a member to an organization",
+        "description": "Invites or adds a user to the organization with a specific role.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "description": "Organization identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Member added.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Member"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{org_id}/members/{user_id}": {
+      "patch": {
+        "tags": ["organizations"],
+        "operationId": "updateOrganizationMember",
+        "summary": "Update an organization member",
+        "description": "Changes a member's role or other membership attributes.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "description": "Organization identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "description": "Identifier of the member to update.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Member updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Member"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["organizations"],
+        "operationId": "removeOrganizationMember",
+        "summary": "Remove an organization member",
+        "description": "Removes a user from the organization.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "description": "Organization identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "description": "Identifier of the member to remove.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Member removed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{org_id}/quota": {
+      "get": {
+        "tags": ["organizations"],
+        "operationId": "getOrganizationQuota",
+        "summary": "Get organization quota",
+        "description": "Returns the resource quotas configured for the organization.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "description": "Organization identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization quotas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": ["organizations"],
+        "operationId": "setOrganizationQuota",
+        "summary": "Set organization quota",
+        "description": "Updates the resource quotas configured for the organization.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "description": "Organization identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated quotas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{org_id}/usage": {
+      "get": {
+        "tags": ["organizations"],
+        "operationId": "getOrganizationUsage",
+        "summary": "Get organization usage",
+        "description": "Returns current resource consumption of the organization against its quotas.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "description": "Organization identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usage summary.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{org_id}/billing": {
+      "get": {
+        "tags": ["organizations"],
+        "operationId": "getOrganizationBilling",
+        "summary": "Get organization billing overview",
+        "description": "Returns billing information for the organization, such as plan state and payment summary.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "description": "Organization identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Billing overview.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/marketplace/templates/search": {
+      "post": {
+        "tags": ["marketplace"],
+        "operationId": "searchTemplates",
+        "summary": "Search marketplace templates",
+        "description": "Searches published templates by free-text query, category, and tags, with pagination.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateSearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Paginated template search results.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateSearchResults"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/api/v1/marketplace/templates/publish": {
+      "post": {
+        "tags": ["marketplace"],
+        "operationId": "publishTemplate",
+        "summary": "Publish a template",
+        "description": "Publishes a new template (or new version of an existing template) to the marketplace.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "slug", "description"],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "slug": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Template published.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "download_url": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/templates/{name}/{version}": {
+      "get": {
+        "tags": ["marketplace"],
+        "operationId": "getTemplateVersion",
+        "summary": "Get a template version",
+        "description": "Retrieves the metadata and details of a specific version of a named template.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Template name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "description": "Template version (e.g. semantic version).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template version details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/templates/{name}/{version}/reviews": {
+      "get": {
+        "tags": ["marketplace"],
+        "operationId": "getTemplateReviews",
+        "summary": "Get template reviews",
+        "description": "Lists community reviews for a specific version of a template.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Template name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "description": "Template version.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template reviews.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/marketplace/scenarios/search": {
+      "post": {
+        "tags": ["marketplace"],
+        "operationId": "searchScenarios",
+        "summary": "Search marketplace scenarios",
+        "description": "Searches published scenarios by free-text query, category, and tags.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScenarioSearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Scenario search results.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScenarioSearchResults"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/api/v1/marketplace/scenarios/publish": {
+      "post": {
+        "tags": ["marketplace"],
+        "operationId": "publishScenario",
+        "summary": "Publish a scenario",
+        "description": "Publishes a scenario package to the marketplace. The package is supplied base64-encoded together with its manifest and checksum.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["manifest", "package", "checksum"],
+                "properties": {
+                  "manifest": {
+                    "type": "string",
+                    "description": "Serialized scenario manifest."
+                  },
+                  "package": {
+                    "type": "string",
+                    "contentEncoding": "base64",
+                    "description": "Base64-encoded scenario package."
+                  },
+                  "checksum": {
+                    "type": "string",
+                    "description": "Integrity checksum of the package."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Scenario published.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "download_url": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/scenarios/{name}": {
+      "get": {
+        "tags": ["marketplace"],
+        "operationId": "getScenario",
+        "summary": "Get a scenario",
+        "description": "Retrieves metadata for a named scenario, including its latest version.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Scenario name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scenario details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScenarioSearchEntry"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/scenarios/{name}/versions/{version}": {
+      "get": {
+        "tags": ["marketplace"],
+        "operationId": "getScenarioVersion",
+        "summary": "Get a scenario version",
+        "description": "Retrieves details for a specific version of a named scenario.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Scenario name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "description": "Scenario version.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scenario version details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/plugins/search": {
+      "post": {
+        "tags": ["marketplace"],
+        "operationId": "searchPlugins",
+        "summary": "Search marketplace plugins",
+        "description": "Searches published plugins. The request body carries search filters.",
+        "security": [],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Plugin search results.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/api/v1/plugins/publish": {
+      "post": {
+        "tags": ["marketplace"],
+        "operationId": "publishPlugin",
+        "summary": "Publish a plugin",
+        "description": "Publishes a new plugin (or new version of an existing plugin) to the marketplace.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Plugin published.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/plugins/{name}": {
+      "get": {
+        "tags": ["marketplace"],
+        "operationId": "getPlugin",
+        "summary": "Get a plugin",
+        "description": "Retrieves metadata for a named plugin, including its available versions.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Plugin name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Plugin details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/plugins/{name}/versions/{version}": {
+      "get": {
+        "tags": ["marketplace"],
+        "operationId": "getPluginVersion",
+        "summary": "Get a plugin version",
+        "description": "Retrieves details for a specific version of a named plugin.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Plugin name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "description": "Plugin version.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Plugin version details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/plugins/{name}/versions/{version}/download": {
+      "get": {
+        "tags": ["marketplace"],
+        "operationId": "downloadPluginVersion",
+        "summary": "Download a plugin version",
+        "description": "Downloads the distributable artifact for a specific version of a named plugin.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Plugin name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "description": "Plugin version.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Plugin artifact bytes.",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/plugins/{name}/reviews": {
+      "get": {
+        "tags": ["marketplace"],
+        "operationId": "getPluginReviews",
+        "summary": "Get plugin reviews",
+        "description": "Lists community reviews for a named plugin.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Plugin name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Plugin reviews.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "post": {
+        "tags": ["marketplace"],
+        "operationId": "createPluginReview",
+        "summary": "Create a plugin review",
+        "description": "Submits a review for a named plugin as the authenticated user.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Plugin name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Review submitted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/plugins/{name}/security": {
+      "get": {
+        "tags": ["marketplace"],
+        "operationId": "getPluginSecurityReport",
+        "summary": "Get plugin security report",
+        "description": "Returns the security analysis report for a named plugin.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Plugin name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Security report.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/specs/upload": {
+      "post": {
+        "tags": ["hosted-mocks"],
+        "operationId": "uploadSpec",
+        "summary": "Upload an OpenAPI spec",
+        "description": "Uploads an OpenAPI specification for hosting and returns the URL at which it can be referenced by subsequent deployments.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Spec uploaded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "URL of the uploaded spec."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks": {
+      "post": {
+        "tags": ["hosted-mocks"],
+        "operationId": "createDeployment",
+        "summary": "Create a hosted mock deployment",
+        "description": "Creates a new hosted mock deployment from a previously uploaded spec or inline configuration.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "slug": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Deployment created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Deployment"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": ["hosted-mocks"],
+        "operationId": "listDeployments",
+        "summary": "List hosted mock deployments",
+        "description": "Lists hosted mock deployments visible to the authenticated user.",
+        "responses": {
+          "200": {
+            "description": "List of deployments.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Deployment"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}": {
+      "get": {
+        "tags": ["hosted-mocks"],
+        "operationId": "getDeployment",
+        "summary": "Get a hosted mock deployment",
+        "description": "Fetches a single hosted mock deployment by identifier.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deployment details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Deployment"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["hosted-mocks"],
+        "operationId": "deleteDeployment",
+        "summary": "Delete a hosted mock deployment",
+        "description": "Tears down and deletes the identified hosted mock deployment.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deployment deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/status": {
+      "patch": {
+        "tags": ["hosted-mocks"],
+        "operationId": "updateDeploymentStatus",
+        "summary": "Update deployment status",
+        "description": "Reports a status transition for a deployment, optionally with an error message and resulting deployment URL.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeploymentStatusUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/redeploy": {
+      "post": {
+        "tags": ["hosted-mocks"],
+        "operationId": "redeployDeployment",
+        "summary": "Redeploy a hosted mock",
+        "description": "Triggers a redeployment of an existing hosted mock, optionally with updated configuration or a new spec URL.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "config_json": {
+                    "type": "string",
+                    "description": "Updated configuration JSON."
+                  },
+                  "spec_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL of a replacement OpenAPI spec."
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Redeployment triggered.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Deployment"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/smoke-runs": {
+      "post": {
+        "tags": ["hosted-mocks"],
+        "operationId": "runSmokeTests",
+        "summary": "Run smoke tests against a deployment",
+        "description": "Starts a smoke-test run against the deployment, optionally constrained by a latency budget and HTTP methods.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "latency_budget_ms": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "Maximum acceptable latency in milliseconds."
+                  },
+                  "methods": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "HTTP methods to exercise during the run."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Smoke-run started or completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/set-domain": {
+      "post": {
+        "tags": ["hosted-mocks"],
+        "operationId": "setCustomDomain",
+        "summary": "Set a custom domain",
+        "description": "Associates a custom domain with the deployment.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["domain"],
+                "properties": {
+                  "domain": {
+                    "type": "string",
+                    "description": "Custom hostname to associate with the deployment."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Domain set.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/stop": {
+      "post": {
+        "tags": ["hosted-mocks"],
+        "operationId": "stopDeployment",
+        "summary": "Stop a deployment",
+        "description": "Stops serving the deployment while retaining its configuration.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deployment stopped.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/start": {
+      "post": {
+        "tags": ["hosted-mocks"],
+        "operationId": "startDeployment",
+        "summary": "Start a deployment",
+        "description": "Resumes serving a previously stopped deployment.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deployment started.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/logs": {
+      "get": {
+        "tags": ["hosted-mocks"],
+        "operationId": "getDeploymentLogs",
+        "summary": "Get deployment logs",
+        "description": "Returns build/deployment logs for the deployment.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deployment logs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/runtime-logs": {
+      "get": {
+        "tags": ["hosted-mocks"],
+        "operationId": "getRuntimeLogs",
+        "summary": "Get runtime logs",
+        "description": "Returns runtime logs emitted while the deployed mock has been serving traffic.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Runtime logs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/runtime-requests": {
+      "get": {
+        "tags": ["hosted-mocks"],
+        "operationId": "getRuntimeRequests",
+        "summary": "Get runtime requests",
+        "description": "Returns recorded runtime requests served by the deployment.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recorded runtime requests.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/metrics": {
+      "get": {
+        "tags": ["hosted-mocks"],
+        "operationId": "getDeploymentMetrics",
+        "summary": "Get deployment metrics",
+        "description": "Returns request-counting metrics for the deployment, broken down by response class.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deployment metrics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Metrics"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/captures": {
+      "get": {
+        "tags": ["hosted-mocks"],
+        "operationId": "listCaptures",
+        "summary": "List captured traffic",
+        "description": "Returns captured request/response pairs recorded for the deployment while capture is enabled.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Captured traffic entries.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/captures/enable": {
+      "post": {
+        "tags": ["hosted-mocks"],
+        "operationId": "enableCaptures",
+        "summary": "Enable traffic capture",
+        "description": "Turns on recording of request/response pairs for the deployment.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Capture enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/captures/disable": {
+      "post": {
+        "tags": ["hosted-mocks"],
+        "operationId": "disableCaptures",
+        "summary": "Disable traffic capture",
+        "description": "Turns off recording of request/response pairs for the deployment.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Capture disabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/captures/clear": {
+      "post": {
+        "tags": ["hosted-mocks"],
+        "operationId": "clearCaptures",
+        "summary": "Clear captured traffic",
+        "description": "Discards all previously captured traffic for the deployment.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Captures cleared.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/captures/replay": {
+      "post": {
+        "tags": ["hosted-mocks"],
+        "operationId": "replayCaptures",
+        "summary": "Replay captured traffic",
+        "description": "Replays captured request/response pairs against the deployment, e.g. to seed fixtures.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Replay result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/captures/export-har": {
+      "get": {
+        "tags": ["hosted-mocks"],
+        "operationId": "exportCapturesHar",
+        "summary": "Export captures as HAR",
+        "description": "Exports all captured traffic for the deployment in HTTP Archive (HAR) format.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "HAR archive of captured traffic.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/hosted-mocks/{deployment_id}/captures/export-jsonl": {
+      "get": {
+        "tags": ["hosted-mocks"],
+        "operationId": "exportCapturesJsonl",
+        "summary": "Export captures as JSON Lines",
+        "description": "Exports all captured traffic for the deployment as newline-delimited JSON records.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DeploymentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON Lines stream of captured records.",
+            "content": {
+              "application/x-ndjson": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v1/subscription": {
+      "get": {
+        "tags": ["billing"],
+        "operationId": "getSubscription",
+        "summary": "Get current subscription",
+        "description": "Returns the authenticated user's active subscription, including plan and renewal state.",
+        "responses": {
+          "200": {
+            "description": "Current subscription.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/subscription/invoices": {
+      "get": {
+        "tags": ["billing"],
+        "operationId": "listInvoices",
+        "summary": "List invoices",
+        "description": "Lists invoices issued for the authenticated user's subscription.",
+        "responses": {
+          "200": {
+            "description": "Invoice history.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/billing/checkout": {
+      "post": {
+        "tags": ["billing"],
+        "operationId": "createCheckoutSession",
+        "summary": "Create a Stripe checkout session",
+        "description": "Creates a Stripe Checkout session for starting or upgrading a subscription.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Checkout session created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          }
+        }
+      }
+    },
+    "/api/v1/billing/portal": {
+      "post": {
+        "tags": ["billing"],
+        "operationId": "createPortalSession",
+        "summary": "Create a Stripe portal session",
+        "description": "Creates a Stripe Customer Portal session so the user can manage billing, invoices, and payment methods.",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Portal session created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT access token obtained from login/registration, or a scoped API token; both are sent as `Authorization: Bearer <credential>`."
+      }
+    },
+    "parameters": {
+      "DeploymentId": {
+        "name": "deployment_id",
+        "in": "path",
+        "required": true,
+        "description": "Hosted mock deployment identifier.",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Invalid request payload or parameters.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Missing, invalid, expired, or insufficiently scoped credentials.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Authenticated but not permitted to perform this action.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "PaymentRequired": {
+        "description": "Payment required before the operation can complete.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Requested resource does not exist.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "TooManyRequests": {
+        "description": "Rate limit exceeded (global 60/min or per-user 100/min).",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "description": "Structured API error.",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Machine-readable error code or message."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error detail, when available."
+          }
+        },
+        "required": ["error"]
+      },
+      "SuccessMessage": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["success", "message"]
+      },
+      "AuthResponse": {
+        "type": "object",
+        "description": "Authentication response returned by registration.",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Bearer access token."
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": ["token", "user_id", "username"],
+        "additionalProperties": true
+      },
+      "AuthResponseV2": {
+        "type": "object",
+        "description": "Authentication response with refresh token support.",
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "access_token_expires_at": {
+            "type": "string",
+            "description": "Expiry timestamp of the access token."
+          }
+        },
+        "required": ["access_token", "refresh_token", "access_token_expires_at"],
+        "additionalProperties": true
+      },
+      "TokenCreate": {
+        "type": "object",
+        "description": "Request to create a scoped API token.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Human-readable token name."
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Scopes granted to the token."
+          },
+          "expires_at": {
+            "type": "string",
+            "description": "Optional expiry timestamp."
+          }
+        },
+        "required": ["name", "scopes"]
+      },
+      "TokenCreated": {
+        "type": "object",
+        "description": "Creation result for an API token; the secret value is shown exactly once.",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Full token secret; only ever returned here."
+          },
+          "token_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Identifier used to manage (rotate/revoke) the token later."
+          },
+          "token_prefix": {
+            "type": "string",
+            "description": "Non-secret prefix used to identify the token in listings."
+          }
+        },
+        "required": ["token", "token_id", "token_prefix"]
+      },
+      "TokenInfo": {
+        "type": "object",
+        "description": "API token metadata as returned by listings; never includes the secret.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "token_prefix": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "name", "token_prefix"],
+        "additionalProperties": true
+      },
+      "Scope": {
+        "type": "object",
+        "description": "A scope that can be granted to an API token.",
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "Scope identifier to pass in TokenCreate.scopes."
+          },
+          "label": {
+            "type": "string",
+            "description": "Short display label."
+          },
+          "description": {
+            "type": "string",
+            "description": "What the scope permits."
+          }
+        },
+        "required": ["value", "label", "description"]
+      },
+      "Project": {
+        "type": "object",
+        "description": "A project within an organization.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "org_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "slug": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "org_id", "slug"],
+        "additionalProperties": true
+      },
+      "Organization": {
+        "type": "object",
+        "description": "An organization account. Detailed field layout is not part of this core specification.",
+        "additionalProperties": true
+      },
+      "Member": {
+        "type": "object",
+        "description": "An organization membership. Detailed field layout is not part of this core specification.",
+        "additionalProperties": true
+      },
+      "TemplateSearchRequest": {
+        "type": "object",
+        "description": "Filter parameters for template search.",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Free-text search query."
+          },
+          "category": {
+            "type": "string",
+            "description": "Category filter."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tag filters."
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Page number for pagination."
+          }
+        }
+      },
+      "TemplateSearchResults": {
+        "type": "object",
+        "description": "Paginated template search results.",
+        "properties": {
+          "templates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TemplateSearchEntry"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of matching templates."
+          },
+          "page": {
+            "type": "integer",
+            "description": "Current page number."
+          }
+        },
+        "required": ["templates", "total", "page"]
+      },
+      "TemplateSearchEntry": {
+        "type": "object",
+        "description": "A template entry within search results.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "stats": {
+            "type": "object",
+            "description": "Aggregate community statistics.",
+            "properties": {
+              "downloads": {
+                "type": "integer"
+              },
+              "stars": {
+                "type": "integer"
+              },
+              "forks": {
+                "type": "integer"
+              }
+            },
+            "required": ["downloads", "stars", "forks"]
+          },
+          "compatibility": {
+            "type": "object",
+            "description": "MockForge version compatibility constraints.",
+            "properties": {
+              "min_version": {
+                "type": "string"
+              },
+              "max_version": {
+                "type": "string"
+              },
+              "required_features": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": ["min_version", "required_features"]
+          }
+        },
+        "required": ["id", "name", "description", "stats", "compatibility"],
+        "additionalProperties": true
+      },
+      "ScenarioSearchRequest": {
+        "type": "object",
+        "description": "Filter parameters for scenario search.",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Free-text search query."
+          },
+          "category": {
+            "type": "string",
+            "description": "Category filter."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tag filters."
+          }
+        }
+      },
+      "ScenarioSearchResults": {
+        "type": "object",
+        "description": "Scenario search results.",
+        "properties": {
+          "scenarios": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScenarioSearchEntry"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of matching scenarios."
+          },
+          "page": {
+            "type": "integer",
+            "description": "Current page number."
+          }
+        },
+        "required": ["scenarios", "total", "page"]
+      },
+      "ScenarioSearchEntry": {
+        "type": "object",
+        "description": "A scenario entry.",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "description", "version"],
+        "additionalProperties": true
+      },
+      "Deployment": {
+        "type": "object",
+        "description": "A hosted mock deployment.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "org_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "project_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Owning project, when the deployment belongs to one."
+          }
+        },
+        "required": ["id", "org_id"],
+        "additionalProperties": true
+      },
+      "DeploymentStatusUpdate": {
+        "type": "object",
+        "description": "Status transition report for a deployment.",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "New deployment status."
+          },
+          "error_message": {
+            "type": "string",
+            "description": "Error detail when the transition reports a failure."
+          },
+          "deployment_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL where the deployment is reachable after the transition."
+          }
+        },
+        "required": ["status"]
+      },
+      "Metrics": {
+        "type": "object",
+        "description": "Request metrics for a hosted mock deployment.",
+        "properties": {
+          "requests": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Total requests served."
+          },
+          "requests_2xx": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Requests answered with a 2xx status."
+          },
+          "requests_4xx": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Requests answered with a 4xx status."
+          }
+        },
+        "required": ["requests", "requests_2xx", "requests_4xx"],
+        "additionalProperties": true
+      }
+    }
+  }
+}

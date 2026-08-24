@@ -39,8 +39,9 @@
 
 ## API
 
-- OpenAPI spec for the MockForge management API (mounted at `/__mockforge/api` on any running server): https://mockforge.dev/openapi.json
-- The management API lets agents create, update, and delete mocks at runtime over HTTP — no browser or UI required.
+- MockForge Cloud API (live): https://registry.mockforge.dev — auth, API tokens, organizations, marketplace, hosted mocks, billing. OpenAPI spec: https://mockforge.dev/openapi.registry.json
+- Live demo instance (no signup): https://api.mockforge.dev — a real MockForge server running the bundled example specs (ecommerce store, weather, chat). Mock endpoints are callable directly; the management API lets you create and modify mocks at runtime. Management API spec: https://mockforge.dev/openapi.json
+- The management API (mounted at `/__mockforge/api` on any MockForge server, including the demo) lets agents create, update, and delete mocks over HTTP — no browser or UI required.
 
 ## Contact
 
