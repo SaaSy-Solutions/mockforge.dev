@@ -583,8 +583,8 @@ if (outputRoot !== projectRoot && !flagCheck) {
 
   // Serve agent/SEO discovery files from the dist root, not only under
   // /public/. Scanners and agents expect /robots.txt, /sitemap.xml,
-  // /llms.txt, and /openapi.json at the domain root.
-  for (const rootAsset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'openapi.json']) {
+  // /llms.txt, /openapi.json, and /openapi.registry.json at the domain root.
+  for (const rootAsset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'openapi.json', 'openapi.registry.json']) {
     const assetPath = path.join(projectRoot, 'public', rootAsset);
     if (fs.existsSync(assetPath)) {
       fs.copyFileSync(assetPath, path.join(outputRoot, rootAsset));
