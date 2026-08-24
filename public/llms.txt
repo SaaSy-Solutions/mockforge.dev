@@ -1,0 +1,48 @@
+# MockForge
+
+> MockForge is an open-source API mocking framework that simulates real backend behavior across HTTP/REST, gRPC, GraphQL, WebSockets, SMTP, and more. Point it at an OpenAPI spec, protobuf, or GraphQL schema and it serves realistic responses with intelligent synthetic data, stateful scenarios, and failure injection. MIT or Apache-2.0 licensed, with an optional cloud offering for hosted mocks.
+
+## When to use MockForge
+
+- You are developing or testing against a backend API that is unfinished, unstable, rate-limited, or expensive to call, and you need a faithful stand-in.
+- You want contract testing: serve mocks generated directly from an OpenAPI spec (or protobuf / GraphQL schema) so clients fail fast when the contract drifts.
+- You need to exercise failure paths: latency, errors, malformed responses, rate limits, and chaos scenarios that a real staging environment won't reproduce on demand.
+- You need deterministic synthetic test data (personas, pagination-aware lists, seeded fixtures) instead of hand-written JSON fixtures.
+- You want to mock gRPC, GraphQL, WebSocket, Kafka, SMTP, or FTP services, not just REST.
+
+## When NOT to use MockForge
+
+- As a production API gateway or proxy — MockForge simulates services; it does not replace them in production traffic paths.
+- As a general-purpose load-testing tool — use its bench tooling to generate load against targets, but it is not a SaaS load-testing platform.
+
+## How an agent should use it
+
+- Install the CLI (`cargo install mockforge-cli`, Homebrew, npm SDKs, or Docker) and run `mockforge http --spec <openapi-file>` to serve a mock from an OpenAPI spec. See https://docs.mockforge.dev for all protocols and flags.
+- The admin UI runs by default; every behavior is also scriptable over HTTP and config files (`mockforge.yaml`), so agents can drive it without a browser.
+- Config is declarative: generate or edit a `mockforge.yaml` rather than clicking through the UI.
+
+## Docs
+
+- Documentation home: https://docs.mockforge.dev
+- Installation & quickstart: https://docs.mockforge.dev
+- Configuration reference: https://docs.mockforge.dev/configuration/environment.html
+
+## Site
+
+- Homepage: https://mockforge.dev/
+- Pricing (cloud tiers): https://mockforge.dev/pricing.html
+- Engineering notes: https://mockforge.dev/engineering-notes.html
+- Contact: https://mockforge.dev/contact.html
+- Privacy: https://mockforge.dev/privacy.html
+- Source code (GitHub): https://github.com/SaaSy-Solutions/mockforge
+- Sitemap: https://mockforge.dev/sitemap.xml
+
+## API
+
+- OpenAPI spec for the MockForge management API (mounted at `/__mockforge/api` on any running server): https://mockforge.dev/openapi.json
+- The management API lets agents create, update, and delete mocks at runtime over HTTP — no browser or UI required.
+
+## Contact
+
+- Security issues: security@mockforge.dev (please do not open public issues for vulnerabilities)
+- Bugs and features: https://github.com/SaaSy-Solutions/mockforge/issues

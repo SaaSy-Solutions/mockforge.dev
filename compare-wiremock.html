@@ -85,6 +85,34 @@
       .reveal.in { opacity: 1; transform: none; }
       @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
     </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "MockForge",
+        "url": "https://mockforge.dev/",
+        "logo": "https://mockforge.dev/public/logo-transparent.png",
+        "description": "Open-source API mocking framework for REST, gRPC, GraphQL, WebSockets, and SMTP.",
+        "sameAs": [
+          "https://github.com/SaaSy-Solutions/mockforge",
+          "https://www.linkedin.com/company/mockforge"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "email": "security@mockforge.dev",
+          "url": "https://mockforge.dev/contact.html"
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "28 E 200 N",
+          "addressLocality": "Franklin",
+          "addressRegion": "IN",
+          "postalCode": "46131",
+          "addressCountry": "US"
+        }
+      }
+    </script>
   </head>
   <body class="bg-surface-subtle text-text-primary antialiased selection:bg-brand-orange/20">
     <header class="sticky top-0 z-40 backdrop-blur bg-white/90 dark:bg-slate-900 border-b border-black/5 dark:border-white/10">
@@ -283,6 +311,7 @@
           <a href="https://app.mockforge.dev/legal/terms" class="text-text-secondary hover:text-text-primary">Terms</a>
           <a href="https://app.mockforge.dev/legal/dpa" class="text-text-secondary hover:text-text-primary">DPA</a>
           <a href="/trust.html" class="text-text-secondary hover:text-text-primary">Trust</a>
+          <a href="/contact.html" class="text-text-secondary hover:text-text-primary">Contact</a>
         </div>
       </div>
     </footer>
