@@ -27,7 +27,7 @@ const outputRoot = positional[0]
   ? path.resolve(projectRoot, positional[0])
   : projectRoot;
 
-function renderSharedHeadBlock(includeGaMeta, includeOrgLd = true) {
+function renderSharedHeadBlock(includeOrgLd = true) {
   return `
     <link rel="stylesheet" href="/public/styles.css" />
     <link rel="alternate" type="application/rss+xml" title="MockForge Engineering Notes" href="/rss.xml" />
@@ -93,12 +93,25 @@ function renderSharedHeadBlock(includeGaMeta, includeOrgLd = true) {
           "https://github.com/SaaSy-Solutions/mockforge",
           "https://www.linkedin.com/company/mockforge"
         ],
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "contactType": "customer support",
-          "email": "security@mockforge.dev",
-          "url": "https://mockforge.dev/contact.html"
-        },
+        "contactPoint": [
+          {
+            "@type": "ContactPoint",
+            "contactType": "sales",
+            "email": "sales@mockforge.dev",
+            "url": "https://mockforge.dev/contact.html"
+          },
+          {
+            "@type": "ContactPoint",
+            "contactType": "security",
+            "email": "security@mockforge.dev",
+            "url": "https://mockforge.dev/trust.html"
+          },
+          {
+            "@type": "ContactPoint",
+            "contactType": "technical support",
+            "url": "https://github.com/SaaSy-Solutions/mockforge/issues"
+          }
+        ],
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "28 E 200 N",
@@ -136,7 +149,7 @@ function renderHeader({ logoHref, featuresHref }) {
               <svg id="moon" class="h-5 w-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
             </button>
           </nav>
-          <button id="menuBtn" class="md:hidden p-2 rounded-lg border border-black/10 dark:border-white/20" aria-label="Open menu">
+          <button id="menuBtn" type="button" class="md:hidden p-2 rounded-lg border border-black/10 dark:border-white/20" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
           </button>
         </div>
@@ -204,13 +217,19 @@ function renderShellScript() {
         }
 
         if (menuBtn && mobileMenu) {
+          var setMenu = function (open) {
+            mobileMenu.classList.toggle('hidden', !open);
+            menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+          };
+
           menuBtn.addEventListener('click', function () {
-            mobileMenu.classList.toggle('hidden');
+            setMenu(mobileMenu.classList.contains('hidden'));
           });
 
           mobileMenu.querySelectorAll('a').forEach(function (link) {
             link.addEventListener('click', function () {
-              mobileMenu.classList.add('hidden');
+              setMenu(false);
             });
           });
         }
@@ -403,16 +422,50 @@ ${items}
 `;
 }
 
+// Alias URLs that people (and our own transactional emails) reach for but
+// that have no page of their own. GitHub Pages serves /notes from notes.html,
+// so each alias becomes a tiny redirect page: meta refresh for no-JS clients,
+// location.replace for everyone else, and a canonical pointing at the target.
+const REDIRECTS = {
+  'notes.html': { to: '/engineering-notes.html', label: 'Engineering Notes' },
+  'blog.html': { to: '/engineering-notes.html', label: 'Engineering Notes' },
+  'docs.html': { to: 'https://docs.mockforge.dev/', label: 'MockForge documentation' },
+  'security.html': { to: '/trust.html', label: 'Trust & Security' },
+  'terms.html': { to: 'https://app.mockforge.dev/legal/terms', label: 'Terms of Service' },
+  'dpa.html': { to: 'https://app.mockforge.dev/legal/dpa', label: 'Data Processing Agreement' },
+};
+
+function renderRedirectPage({ to, label }) {
+  const canonical = to.startsWith('/') ? `https://mockforge.dev${to}` : to;
+  const safeLabel = escapeHtmlAttr(label);
+  return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redirecting to ${safeLabel} | MockForge</title>
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href="${canonical}" />
+    <meta http-equiv="refresh" content="0; url=${to}" />
+    <script>location.replace(${JSON.stringify(to)} + location.hash);</script>
+  </head>
+  <body>
+    <p>This page has moved to <a href="${to}">${safeLabel}</a>.</p>
+  </body>
+</html>
+`;
+}
+
 function getPageConfig(file) {
   if (file === 'index.html') {
-    return { logoHref: '#top', featuresHref: '#features', includeGaMeta: true, includeOrgLd: false };
+    return { logoHref: '#top', featuresHref: '#features', includeOrgLd: false };
   }
 
   if (file === 'compare-wiremock.html' || file === 'compare-mockserver.html') {
-    return { logoHref: '/', featuresHref: '/#features', includeGaMeta: false };
+    return { logoHref: '/', featuresHref: '/#features' };
   }
 
-  return { logoHref: '/', featuresHref: '/#features', includeGaMeta: true };
+  return { logoHref: '/', featuresHref: '/#features' };
 }
 
 function ensurePlaceholder(text, placeholder, file) {
@@ -476,18 +529,52 @@ let wrote = 0;
 let skipped = 0;
 let created = 0;
 
+// Write one generated file, honoring --check and drift protection: if the
+// root file already exists and differs from what we would write, someone
+// edited root directly without porting the change back to src. In --check
+// mode just report; in default mode skip the write unless --force.
+function emit(file, text) {
+  const outputPath = path.join(outputRoot, file);
+  const existsOnDisk = fs.existsSync(outputPath);
+  const isDifferent = existsOnDisk && fs.readFileSync(outputPath, 'utf8') !== text;
+
+  if (flagCheck) {
+    if (!existsOnDisk) {
+      console.log(`MISSING ${file} (would be created)`);
+    } else if (isDifferent) {
+      drifted.push(file);
+      console.log(`DRIFT   ${file} (root differs from generated)`);
+    }
+    return;
+  }
+
+  if (protect && isDifferent) {
+    drifted.push(file);
+    console.warn(
+      `SKIP    ${file} — root has local edits not in src; re-run with --force to overwrite`
+    );
+    skipped += 1;
+    return;
+  }
+
+  fs.writeFileSync(outputPath, text);
+  if (existsOnDisk) {
+    wrote += 1;
+  } else {
+    created += 1;
+  }
+}
+
 for (const file of pageFiles) {
   const config = getPageConfig(file);
-  const sourcePath = path.join(sourceRoot, file);
-  const outputPath = path.join(outputRoot, file);
-  let text = fs.readFileSync(sourcePath, 'utf8');
+  let text = fs.readFileSync(path.join(sourceRoot, file), 'utf8');
 
   ensurePlaceholder(text, '{{SHARED_HEAD_BLOCK}}', file);
   ensurePlaceholder(text, '{{HEADER}}', file);
   ensurePlaceholder(text, '{{FOOTER}}', file);
   ensurePlaceholder(text, '{{SHELL_SCRIPT}}', file);
 
-  text = text.replace('{{SHARED_HEAD_BLOCK}}', renderSharedHeadBlock(config.includeGaMeta, config.includeOrgLd));
+  text = text.replace('{{SHARED_HEAD_BLOCK}}', renderSharedHeadBlock(config.includeOrgLd));
   text = text.replace('{{HEADER}}', renderHeader(config));
   text = text.replace('{{FOOTER}}', renderFooter());
   text = text.replace('{{SHELL_SCRIPT}}', renderShellScript());
@@ -506,71 +593,18 @@ for (const file of pageFiles) {
     }
   }
 
-  // Drift detection: if the root file already exists and its content differs
-  // from what we would write, that's a sign someone edited root directly
-  // without porting the change back to src. In --check mode just report;
-  // in default mode skip the write unless --force.
-  const existsOnDisk = fs.existsSync(outputPath);
-  const onDisk = existsOnDisk ? fs.readFileSync(outputPath, 'utf8') : null;
-  const isDifferent = existsOnDisk && onDisk !== text;
-
-  if (flagCheck) {
-    if (!existsOnDisk) {
-      console.log(`MISSING ${file} (would be created)`);
-    } else if (isDifferent) {
-      drifted.push(file);
-      console.log(`DRIFT   ${file} (root differs from generated)`);
-    }
-    continue;
-  }
-
-  if (protect && isDifferent) {
-    drifted.push(file);
-    console.warn(
-      `SKIP    ${file} — root has local edits not in src; re-run with --force to overwrite`
-    );
-    skipped += 1;
-    continue;
-  }
-
-  fs.writeFileSync(outputPath, text);
-  if (existsOnDisk) {
-    wrote += 1;
-  } else {
-    created += 1;
-  }
+  emit(file, text);
 }
 
-// Generate /rss.xml from the parsed note metadata. Subject to the same
-// drift-protection rules as HTML pages: skip if the on-disk file has local
-// edits, unless --force or building to a fresh out-dir.
-if (noteMeta.length > 0) {
-  const rssPath = path.join(outputRoot, 'rss.xml');
-  const rssText = renderRssFeed(noteMeta);
-  const rssExists = fs.existsSync(rssPath);
-  const rssOnDisk = rssExists ? fs.readFileSync(rssPath, 'utf8') : null;
-  const rssDifferent = rssExists && rssOnDisk !== rssText;
-
-  if (flagCheck) {
-    if (!rssExists) {
-      console.log(`MISSING rss.xml (would be created)`);
-    } else if (rssDifferent) {
-      drifted.push('rss.xml');
-      console.log(`DRIFT   rss.xml (root differs from generated)`);
-    }
-  } else if (protect && rssDifferent) {
-    console.warn(
-      `SKIP    rss.xml — root has local edits not in src; re-run with --force to overwrite`
-    );
-    skipped += 1;
-  } else {
-    fs.writeFileSync(rssPath, rssText);
-    if (rssExists) {
-      wrote += 1;
-    } else {
-      created += 1;
-    }
+for (const [file, redirect] of Object.entries(REDIRECTS)) {
+  if (pageFiles.includes(file)) {
+    throw new Error(`Redirect ${file} collides with src/pages/${file}`);
   }
+  emit(file, renderRedirectPage(redirect));
+}
+
+if (noteMeta.length > 0) {
+  emit('rss.xml', renderRssFeed(noteMeta));
 }
 
 if (outputRoot !== projectRoot && !flagCheck) {

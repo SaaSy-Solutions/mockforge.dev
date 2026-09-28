@@ -39,12 +39,11 @@
           "url": "https://mockforge.dev/",
           "logo": "https://mockforge.dev/public/logo-transparent.png",
           "sameAs": ["https://github.com/SaaSy-Solutions/mockforge", "https://www.linkedin.com/company/mockforge"],
-          "contactPoint": {
-            "@type": "ContactPoint",
-            "contactType": "customer support",
-            "email": "security@mockforge.dev",
-            "url": "https://mockforge.dev/contact.html"
-          },
+          "contactPoint": [
+            { "@type": "ContactPoint", "contactType": "sales", "email": "sales@mockforge.dev", "url": "https://mockforge.dev/contact.html" },
+            { "@type": "ContactPoint", "contactType": "security", "email": "security@mockforge.dev", "url": "https://mockforge.dev/trust.html" },
+            { "@type": "ContactPoint", "contactType": "technical support", "url": "https://github.com/SaaSy-Solutions/mockforge/issues" }
+          ],
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "28 E 200 N",
@@ -79,7 +78,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Icons: Phosphor web font (real library glyphs, not hand-rolled SVG) -->
-    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+    <link rel="stylesheet" href="/public/vendor/phosphor/phosphor.css" />
 
     <link rel="stylesheet" href="/public/styles.css" />
     <link rel="alternate" type="application/rss+xml" title="MockForge Engineering Notes" href="/rss.xml" />
@@ -158,7 +157,7 @@
               <svg id="moon" class="h-5 w-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
             </button>
           </nav>
-          <button id="menuBtn" class="md:hidden p-2 rounded-lg border border-black/10 dark:border-white/20" aria-label="Open menu">
+          <button id="menuBtn" type="button" class="md:hidden p-2 rounded-lg border border-black/10 dark:border-white/20" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
           </button>
         </div>
@@ -204,10 +203,12 @@
               <div class="flex items-center gap-3 rounded-xl bg-brand-dark px-4 py-3 font-mono text-sm text-slate-100">
                 <span class="text-brand-orange select-none">$</span>
                 <span id="installCmd" class="flex-1 truncate">cargo install mockforge-cli</span>
-                <button id="copyInstall" class="text-slate-400 hover:text-white transition" aria-label="Copy install command">
-                  <i id="copyIcon" class="ph ph-copy text-lg"></i>
-                  <i id="copiedIcon" class="ph-bold ph-check text-lg text-emerald-400 hidden"></i>
+                <button id="copyInstall" type="button" class="inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 font-sans text-xs font-medium text-slate-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-orange transition" aria-label="Copy install command">
+                  <i id="copyIcon" class="ph ph-copy text-lg" aria-hidden="true"></i>
+                  <i id="copiedIcon" class="ph-bold ph-check text-lg text-emerald-400 hidden" aria-hidden="true"></i>
+                  <span id="copyLabel">Copy</span>
                 </button>
+                <span id="copyStatus" class="sr-only" role="status" aria-live="polite"></span>
               </div>
             </div>
           </div>
@@ -498,13 +499,19 @@ Listening on <span class="text-emerald-400">http://localhost:8080</span></pre>
         }
 
         if (menuBtn && mobileMenu) {
+          var setMenu = function (open) {
+            mobileMenu.classList.toggle('hidden', !open);
+            menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+          };
+
           menuBtn.addEventListener('click', function () {
-            mobileMenu.classList.toggle('hidden');
+            setMenu(mobileMenu.classList.contains('hidden'));
           });
 
           mobileMenu.querySelectorAll('a').forEach(function (link) {
             link.addEventListener('click', function () {
-              mobileMenu.classList.add('hidden');
+              setMenu(false);
             });
           });
         }
@@ -531,66 +538,53 @@ Listening on <span class="text-emerald-400">http://localhost:8080</span></pre>
 // Copy-install button (scroll-reveal is wired globally in the shared shell script).
 document.addEventListener('DOMContentLoaded', function () {
   var copyBtn = document.getElementById('copyInstall');
-  if (copyBtn) {
-    copyBtn.addEventListener('click', function () {
-      var cmd = document.getElementById('installCmd').textContent;
-      var copyIcon = document.getElementById('copyIcon');
-      var copiedIcon = document.getElementById('copiedIcon');
-      navigator.clipboard.writeText(cmd).then(function () {
-        copyIcon.classList.add('hidden');
-        copiedIcon.classList.remove('hidden');
-        setTimeout(function () {
-          copiedIcon.classList.add('hidden');
-          copyIcon.classList.remove('hidden');
-        }, 1500);
-      });
-    });
+  if (!copyBtn) return;
+  var copyIcon = document.getElementById('copyIcon');
+  var copiedIcon = document.getElementById('copiedIcon');
+  var copyLabel = document.getElementById('copyLabel');
+  var copyStatus = document.getElementById('copyStatus');
+  var resetTimer;
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok ? Promise.resolve() : Promise.reject(new Error('copy failed'));
   }
-});
-</script>
 
-<script>
-// CTA click tracking + sign-up conversion tracking
-document.addEventListener('click', function (e) {
-  var link = e.target.closest('a');
-  if (!link || typeof window.gtag !== 'function') return;
+  function show(copied) {
+    clearTimeout(resetTimer);
+    copyIcon.classList.toggle('hidden', copied);
+    copiedIcon.classList.toggle('hidden', !copied);
+    copyLabel.textContent = copied ? 'Copied' : 'Copy failed';
+    copyLabel.classList.toggle('text-emerald-400', copied);
+    copyStatus.textContent = copied ? 'Install command copied to clipboard' : 'Could not copy. Select the command and copy it manually.';
+    resetTimer = setTimeout(function () {
+      copiedIcon.classList.add('hidden');
+      copyIcon.classList.remove('hidden');
+      copyLabel.textContent = 'Copy';
+      copyLabel.classList.remove('text-emerald-400');
+      copyStatus.textContent = '';
+    }, 2000);
+  }
 
-  var href = link.getAttribute('href') || '';
-  var text = (link.textContent || '').trim().slice(0, 80);
-
-  window.gtag('event', 'cta_click', {
-    cta_text: text,
-    cta_href: href,
-    page_path: window.location.pathname
+  copyBtn.addEventListener('click', function () {
+    var cmd = document.getElementById('installCmd').textContent.trim();
+    var attempt = (navigator.clipboard && window.isSecureContext)
+      ? navigator.clipboard.writeText(cmd).catch(function () { return fallbackCopy(cmd); })
+      : fallbackCopy(cmd);
+    attempt.then(function () { show(true); }, function () { show(false); });
   });
-
-  // Track sign-up intent (clicks to register page)
-  if (href.indexOf('/register') !== -1) {
-    window.gtag('event', 'begin_sign_up', {
-      page_path: window.location.pathname
-    });
-  }
 });
 </script>
 
-<script>
-(function () {
-  var meta = document.querySelector('meta[name="ga-measurement-id"]');
-  var id = (meta && meta.content || '').trim();
-  if (!id || typeof window.gtag === 'function') return;
-
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){ dataLayer.push(arguments); }
-  window.gtag = gtag;
-  gtag('js', new Date());
-  gtag('config', id, { page_path: window.location.pathname });
-
-  var s = document.createElement('script');
-  s.async = true;
-  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
-  document.head.appendChild(s);
-})();
-</script>
 
 </body>
 </html>

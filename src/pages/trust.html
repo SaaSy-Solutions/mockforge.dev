@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Trust &amp; Security — MockForge</title>
-    <meta name="description" content="How MockForge protects your data: tenant isolation, SSO and MFA, tamper-evident audit logs, encryption in transit and at rest, GDPR tooling, and our SOC 2 Type II roadmap." />
+    <meta name="description" content="How MockForge protects your data: tenant isolation, SSO and MFA, tamper-evident audit logs, encryption in transit, GDPR tooling, and our SOC 2 Type II roadmap." />
 
     <link rel="canonical" href="https://mockforge.dev/trust.html" />
 
@@ -29,7 +29,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+    <link rel="stylesheet" href="/public/vendor/phosphor/phosphor.css" />
 
     {{SHARED_HEAD_BLOCK}}
 </head>
@@ -63,7 +63,7 @@
           <div class="rounded-2xl p-7 bg-gradient-to-br from-brand-dark to-slate-800 text-white shadow-note">
             <p class="text-sm font-medium text-slate-300">At a glance</p>
             <ul class="mt-4 space-y-3 text-slate-300">
-              <li class="flex items-start gap-3"><i class="ph-bold ph-lock-key text-brand-orange mt-0.5"></i><span>Encrypted in transit (TLS 1.2+) and at rest.</span></li>
+              <li class="flex items-start gap-3"><i class="ph-bold ph-lock-key text-brand-orange mt-0.5"></i><span>Encrypted in transit (TLS 1.2+), edge to origin.</span></li>
               <li class="flex items-start gap-3"><i class="ph-bold ph-buildings text-brand-orange mt-0.5"></i><span>Per-organization tenant isolation on every request.</span></li>
               <li class="flex items-start gap-3"><i class="ph-bold ph-fingerprint text-brand-orange mt-0.5"></i><span>SSO (SAML &amp; OIDC) with DNS-verified domains, plus MFA.</span></li>
               <li class="flex items-start gap-3"><i class="ph-bold ph-seal-check text-brand-orange mt-0.5"></i><span>Tamper-evident, append-only audit log.</span></li>
@@ -100,7 +100,7 @@
           <div class="rounded-2xl p-7 bg-surface-subtle ring-1 ring-black/5 shadow-soft reveal">
             <i class="ph-bold ph-lock-key text-2xl text-brand-orange"></i>
             <h3 class="mt-3 text-lg font-semibold text-brand-dark">Encryption</h3>
-            <p class="mt-2 text-text-secondary leading-relaxed">All traffic is served over TLS 1.2+ with HTTPS enforced. Databases and persistent volumes are encrypted at rest by our infrastructure providers.</p>
+            <p class="mt-2 text-text-secondary leading-relaxed">All traffic is served over TLS 1.2+ with HTTPS enforced, including the hop from Cloudflare&#39;s edge to our origin. Uploaded files and off-host database backups live in Cloudflare R2, which encrypts stored data at rest.</p>
           </div>
           <div class="rounded-2xl p-7 bg-surface-subtle ring-1 ring-black/5 shadow-soft reveal">
             <i class="ph-bold ph-shield-warning text-2xl text-brand-orange"></i>
@@ -131,7 +131,7 @@
           <ul class="mt-6 space-y-4">
             <li class="flex items-start gap-3"><i class="ph-bold ph-download-simple text-brand-orange mt-1"></i><span class="text-text-secondary"><span class="text-brand-dark font-medium">Data export.</span> Pull your organization's records in a structured format on request.</span></li>
             <li class="flex items-start gap-3"><i class="ph-bold ph-trash text-brand-orange mt-1"></i><span class="text-text-secondary"><span class="text-brand-dark font-medium">Erasure.</span> Request deletion of personal data in line with GDPR rights.</span></li>
-            <li class="flex items-start gap-3"><i class="ph-bold ph-map-pin text-brand-orange mt-1"></i><span class="text-text-secondary"><span class="text-brand-dark font-medium">Hosting region.</span> The hosted product runs in the United States. Self-host if you need data to stay in a specific jurisdiction.</span></li>
+            <li class="flex items-start gap-3"><i class="ph-bold ph-map-pin text-brand-orange mt-1"></i><span class="text-text-secondary"><span class="text-brand-dark font-medium">Hosting region.</span> The MockForge API, web app, and database run in the United States (Ashburn, Virginia). Hosted mocks run in the region you pick for each deployment. Self-host if you need data to stay in a specific jurisdiction.</span></li>
           </ul>
         </div>
         <div class="lg:col-span-5 reveal">
@@ -168,7 +168,7 @@
             <h3 class="text-lg font-semibold text-brand-dark flex items-center gap-2"><i class="ph-bold ph-check-circle text-emerald-500"></i> In place today</h3>
             <ul class="mt-4 space-y-2.5 text-text-secondary">
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>Logical tenant isolation and access control</li>
-              <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>Encryption in transit and at rest</li>
+              <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>Encryption in transit; object storage and backups encrypted at rest</li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>SSO, MFA, and role-based authorization</li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>Tamper-evident, append-only audit logging of authentication, configuration, billing, and data-export events</li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>Coordinated vulnerability disclosure process</li>
@@ -197,12 +197,16 @@
         <p class="mt-4 text-text-secondary text-lg leading-relaxed max-w-2xl reveal">The hosted product relies on a small set of infrastructure providers. The Data Processing Agreement carries the authoritative, current list.</p>
         <div class="mt-8 rounded-2xl bg-white ring-1 ring-black/5 shadow-soft divide-y divide-black/5 reveal">
           <div class="grid sm:grid-cols-3 gap-2 p-6">
+            <div class="font-medium text-brand-dark">Hetzner</div>
+            <div class="text-text-secondary sm:col-span-2">Cloud server in Ashburn, Virginia (United States) that runs the MockForge API, web app, and primary PostgreSQL database.</div>
+          </div>
+          <div class="grid sm:grid-cols-3 gap-2 p-6">
             <div class="font-medium text-brand-dark">Fly.io</div>
-            <div class="text-text-secondary sm:col-span-2">Application compute and managed PostgreSQL hosting (United States).</div>
+            <div class="text-text-secondary sm:col-span-2">Compute for hosted mock deployments (<code>*.mocks.mockforge.dev</code>), in the region you choose for each deployment.</div>
           </div>
           <div class="grid sm:grid-cols-3 gap-2 p-6">
             <div class="font-medium text-brand-dark">Cloudflare</div>
-            <div class="text-text-secondary sm:col-span-2">DNS, CDN, TLS edge, and DDoS / WAF protection.</div>
+            <div class="text-text-secondary sm:col-span-2">DNS, CDN, TLS edge, DDoS / WAF protection, and the secure tunnel to our origin server; R2 object storage for uploaded specs, plugins, and off-host database backups.</div>
           </div>
           <div class="grid sm:grid-cols-3 gap-2 p-6">
             <div class="font-medium text-brand-dark">Stripe</div>
@@ -211,6 +215,10 @@
           <div class="grid sm:grid-cols-3 gap-2 p-6">
             <div class="font-medium text-brand-dark">Sentry</div>
             <div class="text-text-secondary sm:col-span-2">Application error monitoring and diagnostics.</div>
+          </div>
+          <div class="grid sm:grid-cols-3 gap-2 p-6">
+            <div class="font-medium text-brand-dark">Brevo</div>
+            <div class="text-text-secondary sm:col-span-2">Transactional email delivery for account and security notifications.</div>
           </div>
         </div>
       </div>
