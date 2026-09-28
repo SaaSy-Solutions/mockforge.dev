@@ -30,7 +30,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Icons: Phosphor web font -->
-    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+    <link rel="stylesheet" href="/public/vendor/phosphor/phosphor.css" />
 
     {{SHARED_HEAD_BLOCK}}
   </head>
@@ -134,7 +134,7 @@
             <h2 class="text-xl font-semibold text-brand-dark">Enterprise</h2>
             <p class="mt-2 text-text-secondary">Need dedicated infrastructure, SLAs, custom integrations, or volume pricing?</p>
           </div>
-          <a href="https://saasysolutionsllc.com/#contact" class="inline-flex items-center gap-2 text-brand-orange font-medium hover:gap-3 transition-all whitespace-nowrap">Contact sales <i class="ph-bold ph-arrow-right"></i></a>
+          <a href="mailto:sales@mockforge.dev?subject=MockForge%20Enterprise" class="inline-flex items-center gap-2 text-brand-orange font-medium hover:gap-3 transition-all whitespace-nowrap">Contact sales <i class="ph-bold ph-arrow-right"></i></a>
         </div>
       </div>
     </section>
@@ -227,7 +227,7 @@
           </div>
           <div>
             <dt class="font-semibold text-brand-dark">Do you offer annual pricing?</dt>
-            <dd class="mt-1.5 text-sm text-text-secondary leading-relaxed">Yes. Annual plans get 2 months free. Contact us for details.</dd>
+            <dd class="mt-1.5 text-sm text-text-secondary leading-relaxed">Yes. Annual plans get 2 months free. Email <a href="mailto:sales@mockforge.dev?subject=MockForge%20annual%20billing" class="text-brand-orange hover:underline">sales@mockforge.dev</a> for details.</dd>
           </div>
         </dl>
       </div>
@@ -238,38 +238,5 @@
 
     {{SHELL_SCRIPT}}
 
-    <script>
-    // CTA click + sign-up conversion tracking
-    document.addEventListener('click', function (e) {
-      var link = e.target.closest('a');
-      if (!link || typeof window.gtag !== 'function') return;
-      var href = link.getAttribute('href') || '';
-      window.gtag('event', 'cta_click', {
-        cta_text: (link.textContent || '').trim().slice(0, 80),
-        cta_href: href,
-        page_path: window.location.pathname
-      });
-      if (href.indexOf('/register') !== -1) {
-        window.gtag('event', 'begin_sign_up', { page_path: window.location.pathname });
-      }
-    });
-    </script>
-
-    <script>
-    (function () {
-      var meta = document.querySelector('meta[name="ga-measurement-id"]');
-      var id = (meta && meta.content || '').trim();
-      if (!id || typeof window.gtag === 'function') return;
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){ dataLayer.push(arguments); }
-      window.gtag = gtag;
-      gtag('js', new Date());
-      gtag('config', id, { page_path: window.location.pathname });
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
-      document.head.appendChild(s);
-    })();
-    </script>
   </body>
 </html>

@@ -95,8 +95,9 @@ Always browser-verify BOTH modes (the theme persists in `localStorage.theme` —
 
 Add to the `<head>` of any page that uses icons (taste bans hand-rolled SVG paths):
 ```html
-<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<link rel="stylesheet" href="/public/vendor/phosphor/phosphor.css" />
 ```
+The icons are self-hosted (Phosphor v2.1.1, `public/vendor/phosphor/`, woff2 only); do not load them from a CDN.
 Use `<i class="ph ph-globe-hemisphere-west"></i>`. Weights: `ph` (regular), `ph-bold`, `ph-fill`, `ph-duotone`. One family across the site. To swap an icon in a button label without `innerHTML` (a security hook blocks `innerHTML`), pre-render both glyphs and toggle `.hidden` (see the copy-install button on the homepage).
 
 ---

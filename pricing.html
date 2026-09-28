@@ -30,7 +30,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Icons: Phosphor web font -->
-    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+    <link rel="stylesheet" href="/public/vendor/phosphor/phosphor.css" />
 
     <link rel="stylesheet" href="/public/styles.css" />
     <link rel="alternate" type="application/rss+xml" title="MockForge Engineering Notes" href="/rss.xml" />
@@ -96,12 +96,25 @@
           "https://github.com/SaaSy-Solutions/mockforge",
           "https://www.linkedin.com/company/mockforge"
         ],
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "contactType": "customer support",
-          "email": "security@mockforge.dev",
-          "url": "https://mockforge.dev/contact.html"
-        },
+        "contactPoint": [
+          {
+            "@type": "ContactPoint",
+            "contactType": "sales",
+            "email": "sales@mockforge.dev",
+            "url": "https://mockforge.dev/contact.html"
+          },
+          {
+            "@type": "ContactPoint",
+            "contactType": "security",
+            "email": "security@mockforge.dev",
+            "url": "https://mockforge.dev/trust.html"
+          },
+          {
+            "@type": "ContactPoint",
+            "contactType": "technical support",
+            "url": "https://github.com/SaaSy-Solutions/mockforge/issues"
+          }
+        ],
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "28 E 200 N",
@@ -137,7 +150,7 @@
               <svg id="moon" class="h-5 w-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
             </button>
           </nav>
-          <button id="menuBtn" class="md:hidden p-2 rounded-lg border border-black/10 dark:border-white/20" aria-label="Open menu">
+          <button id="menuBtn" type="button" class="md:hidden p-2 rounded-lg border border-black/10 dark:border-white/20" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
           </button>
         </div>
@@ -251,7 +264,7 @@
             <h2 class="text-xl font-semibold text-brand-dark">Enterprise</h2>
             <p class="mt-2 text-text-secondary">Need dedicated infrastructure, SLAs, custom integrations, or volume pricing?</p>
           </div>
-          <a href="https://saasysolutionsllc.com/#contact" class="inline-flex items-center gap-2 text-brand-orange font-medium hover:gap-3 transition-all whitespace-nowrap">Contact sales <i class="ph-bold ph-arrow-right"></i></a>
+          <a href="mailto:sales@mockforge.dev?subject=MockForge%20Enterprise" class="inline-flex items-center gap-2 text-brand-orange font-medium hover:gap-3 transition-all whitespace-nowrap">Contact sales <i class="ph-bold ph-arrow-right"></i></a>
         </div>
       </div>
     </section>
@@ -344,7 +357,7 @@
           </div>
           <div>
             <dt class="font-semibold text-brand-dark">Do you offer annual pricing?</dt>
-            <dd class="mt-1.5 text-sm text-text-secondary leading-relaxed">Yes. Annual plans get 2 months free. Contact us for details.</dd>
+            <dd class="mt-1.5 text-sm text-text-secondary leading-relaxed">Yes. Annual plans get 2 months free. Email <a href="mailto:sales@mockforge.dev?subject=MockForge%20annual%20billing" class="text-brand-orange hover:underline">sales@mockforge.dev</a> for details.</dd>
           </div>
         </dl>
       </div>
@@ -393,13 +406,19 @@
         }
 
         if (menuBtn && mobileMenu) {
+          var setMenu = function (open) {
+            mobileMenu.classList.toggle('hidden', !open);
+            menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+          };
+
           menuBtn.addEventListener('click', function () {
-            mobileMenu.classList.toggle('hidden');
+            setMenu(mobileMenu.classList.contains('hidden'));
           });
 
           mobileMenu.querySelectorAll('a').forEach(function (link) {
             link.addEventListener('click', function () {
-              mobileMenu.classList.add('hidden');
+              setMenu(false);
             });
           });
         }
@@ -422,38 +441,5 @@
       });
     </script>
 
-    <script>
-    // CTA click + sign-up conversion tracking
-    document.addEventListener('click', function (e) {
-      var link = e.target.closest('a');
-      if (!link || typeof window.gtag !== 'function') return;
-      var href = link.getAttribute('href') || '';
-      window.gtag('event', 'cta_click', {
-        cta_text: (link.textContent || '').trim().slice(0, 80),
-        cta_href: href,
-        page_path: window.location.pathname
-      });
-      if (href.indexOf('/register') !== -1) {
-        window.gtag('event', 'begin_sign_up', { page_path: window.location.pathname });
-      }
-    });
-    </script>
-
-    <script>
-    (function () {
-      var meta = document.querySelector('meta[name="ga-measurement-id"]');
-      var id = (meta && meta.content || '').trim();
-      if (!id || typeof window.gtag === 'function') return;
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){ dataLayer.push(arguments); }
-      window.gtag = gtag;
-      gtag('js', new Date());
-      gtag('config', id, { page_path: window.location.pathname });
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
-      document.head.appendChild(s);
-    })();
-    </script>
   </body>
 </html>

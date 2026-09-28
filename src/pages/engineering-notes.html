@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <!-- Icons: Phosphor web font -->
-    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+    <link rel="stylesheet" href="/public/vendor/phosphor/phosphor.css" />
     {{SHARED_HEAD_BLOCK}}
 </head>
   <body class="bg-surface-subtle text-text-primary antialiased font-sans selection:bg-brand-orange/20">
@@ -47,7 +47,7 @@
           <p class="mt-3 text-slate-700">How MockForge's conformance testing framework grew from basic spec validation into a structured 47-check framework with SARIF output, per-category targeting, and multi-protocol contract checking.</p>
           <div class="mt-4 flex gap-4 text-sm">
             <a href="/note-conformance-maturity.html" class="text-brand-orange hover:opacity-80">Read full note</a>
-            <a href="https://docs.mockforge.dev/CONFORMANCE_TESTING.html" class="text-brand-orange hover:opacity-80">Conformance Guide</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge/blob/main/docs/CONFORMANCE_TESTING.md" class="text-brand-orange hover:opacity-80">Conformance Guide</a>
           </div>
         </article>
 
@@ -67,7 +67,7 @@
           <p class="mt-3 text-slate-700">Custom mocks without forking the codebase — write response generators, data transformers, and protocol handlers in any WASM-compilable language, sandboxed and simple to wire up.</p>
           <div class="mt-4 flex gap-4 text-sm">
             <a href="/note-wasm-plugins.html" class="text-brand-orange hover:opacity-80">Read full note</a>
-            <a href="https://docs.mockforge.dev/plugins" class="text-brand-orange hover:opacity-80">Plugin SDK Docs</a>
+            <a href="https://docs.mockforge.dev/user-guide/plugins.html" class="text-brand-orange hover:opacity-80">Plugin SDK Docs</a>
           </div>
         </article>
 
@@ -390,37 +390,7 @@
     {{FOOTER}}
 
     {{SHELL_SCRIPT}}
-  
-<script>
-document.addEventListener('click', function (e) {
-  const link = e.target.closest('a');
-  if (!link || typeof window.gtag !== 'function') return;
-  window.gtag('event', 'cta_click', {
-    cta_text: (link.textContent || '').trim().slice(0, 80),
-    cta_href: link.getAttribute('href') || '',
-    page_path: window.location.pathname
-  });
-});
-</script>
 
-<script>
-(function () {
-  var meta = document.querySelector('meta[name="ga-measurement-id"]');
-  var id = (meta && meta.content || '').trim();
-  if (!id || typeof window.gtag === 'function') return;
-
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){ dataLayer.push(arguments); }
-  window.gtag = gtag;
-  gtag('js', new Date());
-  gtag('config', id, { page_path: window.location.pathname });
-
-  var s = document.createElement('script');
-  s.async = true;
-  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
-  document.head.appendChild(s);
-})();
-</script>
 
 </body>
 </html>

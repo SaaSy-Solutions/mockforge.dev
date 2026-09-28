@@ -128,7 +128,7 @@
               <svg id="moon" class="h-5 w-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
             </button>
           </nav>
-          <button id="menuBtn" class="md:hidden p-2 rounded-lg border border-black/10 dark:border-white/20" aria-label="Open menu">
+          <button id="menuBtn" type="button" class="md:hidden p-2 rounded-lg border border-black/10 dark:border-white/20" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
           </button>
         </div>
@@ -164,7 +164,7 @@
 
         <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">What "wire-compatible" actually means</h2>
         <p class="mt-4 leading-8 text-slate-700">A wire-compatible Kafka mock implements the parts of the Kafka protocol your client cares about — produce, fetch, metadata, group coordination — well enough that the client's unmodified code dials it and works. It usually doesn't implement replication, log compaction, or anything that requires real durability. That's the trade: complexity gone, realism kept where it matters for tests.</p>
-        <p class="mt-4 leading-8 text-slate-700">MockForge's Kafka listener falls in this category. So does <a href="https://github.com/confluentinc/kafka-rest" class="text-brand-orange hover:opacity-80">Confluent's kafka-rest</a> for the REST proxy case, and parts of the <a href="https://github.com/charmbracelet/kafka" class="text-brand-orange hover:opacity-80">Kafka Streams test utilities</a> if you're in the JVM world.</p>
+        <p class="mt-4 leading-8 text-slate-700">MockForge's Kafka listener falls in this category. So does <a href="https://github.com/confluentinc/kafka-rest" class="text-brand-orange hover:opacity-80">Confluent's kafka-rest</a> for the REST proxy case, and parts of the <a href="https://kafka.apache.org/42/streams/developer-guide/testing/" class="text-brand-orange hover:opacity-80">Kafka Streams test utilities</a> if you're in the JVM world.</p>
 
         <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Setting it up</h2>
         <p class="mt-4 leading-8 text-slate-700">With MockForge installed (<code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">cargo install mockforge-cli</code>), bring up the Kafka listener with topic auto-creation enabled and (optionally) seed messages your tests will consume:</p>
@@ -280,13 +280,19 @@ p.flush()</code></pre>
         }
 
         if (menuBtn && mobileMenu) {
+          var setMenu = function (open) {
+            mobileMenu.classList.toggle('hidden', !open);
+            menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+          };
+
           menuBtn.addEventListener('click', function () {
-            mobileMenu.classList.toggle('hidden');
+            setMenu(mobileMenu.classList.contains('hidden'));
           });
 
           mobileMenu.querySelectorAll('a').forEach(function (link) {
             link.addEventListener('click', function () {
-              mobileMenu.classList.add('hidden');
+              setMenu(false);
             });
           });
         }

@@ -22,4 +22,5 @@ jobs:
       - run: npm run build:css
       - run: npm run build:pages
       - run: npm run build:site
+      - run: npm run check:links -- --internal-only
       - run: git diff --exit-code
