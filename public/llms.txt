@@ -47,3 +47,7 @@
 
 - Security issues: security@mockforge.dev (please do not open public issues for vulnerabilities)
 - Bugs and features: https://github.com/SaaSy-Solutions/mockforge/issues
+- Support: support@mockforge.dev
+- Sales and enterprise: sales@mockforge.dev
+- Privacy and data requests: privacy@mockforge.dev
+- Legal and agreements: legal@mockforge.dev
