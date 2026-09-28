@@ -109,6 +109,7 @@ function renderSharedHeadBlock(includeOrgLd = true) {
           {
             "@type": "ContactPoint",
             "contactType": "technical support",
+            "email": "support@mockforge.dev",
             "url": "https://github.com/SaaSy-Solutions/mockforge/issues"
           }
         ],
