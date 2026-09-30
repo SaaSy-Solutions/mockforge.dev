@@ -64,7 +64,7 @@
             <p class="text-sm font-medium text-slate-300">At a glance</p>
             <ul class="mt-4 space-y-3 text-slate-300">
               <li class="flex items-start gap-3"><i class="ph-bold ph-lock-key text-brand-orange mt-0.5"></i><span>Encrypted in transit (TLS 1.2+), edge to origin.</span></li>
-              <li class="flex items-start gap-3"><i class="ph-bold ph-buildings text-brand-orange mt-0.5"></i><span>Per-organization tenant isolation on every request.</span></li>
+              <li class="flex items-start gap-3"><i class="ph-bold ph-buildings text-brand-orange mt-0.5"></i><span>Per-organization tenant isolation on every request, backed by database row-level security.</span></li>
               <li class="flex items-start gap-3"><i class="ph-bold ph-fingerprint text-brand-orange mt-0.5"></i><span>SSO (SAML &amp; OIDC) with DNS-verified domains, plus MFA.</span></li>
               <li class="flex items-start gap-3"><i class="ph-bold ph-seal-check text-brand-orange mt-0.5"></i><span>Tamper-evident, append-only audit log.</span></li>
               <li class="flex items-start gap-3"><i class="ph-bold ph-git-branch text-brand-orange mt-0.5"></i><span>Open-source core you can read and self-host.</span></li>
@@ -84,7 +84,7 @@
           <div class="rounded-2xl p-7 bg-surface-subtle ring-1 ring-black/5 shadow-soft reveal md:col-span-2">
             <i class="ph-bold ph-buildings text-2xl text-brand-orange"></i>
             <h3 class="mt-3 text-lg font-semibold text-brand-dark">Tenant isolation</h3>
-            <p class="mt-2 text-text-secondary leading-relaxed">Every API request is scoped to your organization and authorized against your membership before any data is read or written. We are adding database row-level security as a defense-in-depth backstop so a single application bug cannot cross a tenant boundary. Cross-organization access is denied by default.</p>
+            <p class="mt-2 text-text-secondary leading-relaxed">Every API request is scoped to your organization and authorized against your membership before any data is read or written. Beneath that, Postgres row-level security enforces the same boundary on every organization-keyed table: request traffic runs as a database role that cannot bypass it, so a single application bug cannot read or write another tenant's rows. Cross-organization access is denied by default.</p>
           </div>
           <div class="rounded-2xl p-7 bg-gradient-to-br from-brand-dark to-slate-800 text-white shadow-note reveal">
             <i class="ph-bold ph-seal-check text-2xl text-brand-orange"></i>
@@ -167,7 +167,7 @@
           <div class="rounded-2xl p-7 bg-surface-subtle ring-1 ring-black/5 shadow-soft reveal">
             <h3 class="text-lg font-semibold text-brand-dark flex items-center gap-2"><i class="ph-bold ph-check-circle text-emerald-500"></i> In place today</h3>
             <ul class="mt-4 space-y-2.5 text-text-secondary">
-              <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>Logical tenant isolation and access control</li>
+              <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>Tenant isolation and access control, enforced in the application and by database row-level security</li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>Encryption in transit; object storage and backups encrypted at rest</li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>SSO, MFA, and role-based authorization</li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-emerald-500 mt-1"></i>Tamper-evident, append-only audit logging of authentication, configuration, billing, and data-export events</li>
@@ -177,7 +177,6 @@
           <div class="rounded-2xl p-7 bg-surface-subtle ring-1 ring-black/5 shadow-soft reveal">
             <h3 class="text-lg font-semibold text-brand-dark flex items-center gap-2"><i class="ph-bold ph-circle-dashed text-brand-orange"></i> On the roadmap</h3>
             <ul class="mt-4 space-y-2.5 text-text-secondary">
-              <li class="flex items-start gap-2.5"><i class="ph-bold ph-arrow-right text-brand-orange mt-1"></i>Database-enforced row-level tenant isolation</li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-arrow-right text-brand-orange mt-1"></i>Formal policy set and access reviews</li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-arrow-right text-brand-orange mt-1"></i>Continuous control monitoring</li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-arrow-right text-brand-orange mt-1"></i>SOC 2 Type II observation window and independent audit</li>
