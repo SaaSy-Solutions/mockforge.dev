@@ -431,14 +431,16 @@ const REDIRECTS = {
   'notes.html': { to: '/engineering-notes.html', label: 'Engineering Notes' },
   'blog.html': { to: '/engineering-notes.html', label: 'Engineering Notes' },
   'docs.html': { to: 'https://docs.mockforge.dev/', label: 'MockForge documentation' },
+  'docs/index.html': { to: 'https://docs.mockforge.dev/', label: 'MockForge documentation' },
   'security.html': { to: '/trust.html', label: 'Trust & Security' },
-  'terms.html': { to: 'https://app.mockforge.dev/legal/terms', label: 'Terms of Service' },
-  'dpa.html': { to: 'https://app.mockforge.dev/legal/dpa', label: 'Data Processing Agreement' },
+  'terms.html': { to: 'https://app.mockforge.dev/legal/terms', label: 'Terms of Service', note: 'v2.0, effective September 27, 2026' },
+  'dpa.html': { to: 'https://app.mockforge.dev/legal/dpa', label: 'Data Processing Agreement', note: 'v2.0, effective September 27, 2026' },
 };
 
-function renderRedirectPage({ to, label }) {
+function renderRedirectPage({ to, label, note }) {
   const canonical = to.startsWith('/') ? `https://mockforge.dev${to}` : to;
   const safeLabel = escapeHtmlAttr(label);
+  const noteHtml = note ? ` (${escapeHtmlAttr(note)})` : '';
   return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -451,7 +453,7 @@ function renderRedirectPage({ to, label }) {
     <script>location.replace(${JSON.stringify(to)} + location.hash);</script>
   </head>
   <body>
-    <p>This page has moved to <a href="${to}">${safeLabel}</a>.</p>
+    <p>This page has moved to <a href="${to}">${safeLabel}</a>${noteHtml}.</p>
   </body>
 </html>
 `;
@@ -558,6 +560,7 @@ function emit(file, text) {
     return;
   }
 
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, text);
   if (existsOnDisk) {
     wrote += 1;
