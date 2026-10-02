@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Release Notes: New App Shell, Bench Campaign Mode, and a GDPR Fix</title>
+    <meta name="description" content="What shipped in MockForge v0.3.227: a full redesign of the logged-in Cloud portal (task-based sidebar, command palette, derived health dashboard), campaign mode for bench-chunked, a GDPR account-erasure fix, and a wasmtime security bump." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/public/styles.css" />
+    <link rel="alternate" type="application/rss+xml" title="MockForge Engineering Notes" href="/rss.xml" />
+    <script>
+      (function () {
+        try {
+          var storedTheme = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (error) {
+          console.warn('Theme initialization failed:', error);
+        }
+      })();
+    </script>
+    <style>
+      html, body { height: 100%; }
+      * { transition: background-color 0.2s ease, border-color 0.2s ease; }
+      html.dark { color-scheme: dark; }
+      html.dark body { background-color: #0f172a; color: #e2e8f0; }
+      html.dark .bg-white { background-color: #1e293b !important; }
+      html.dark .bg-surface-subtle,
+      html.dark .bg-stone-50,
+      html.dark section:not(.bg-white):not([style*="background"]) { background-color: #0f172a; }
+      html.dark .text-text-primary,
+      html.dark .text-slate-900,
+      html.dark .text-brand-ink,
+      html.dark .text-brand-dark { color: #f1f5f9 !important; }
+      html.dark .text-text-secondary,
+      html.dark .text-slate-700,
+      html.dark .text-slate-600,
+      html.dark .text-slate-500,
+      html.dark .text-slate-300 { color: #cbd5e1 !important; }
+      html.dark .text-orange-700,
+      html.dark .text-orange-200 { color: #fdba74 !important; }
+      html.dark header { background-color: #0f172a !important; border-bottom-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark header nav a { color: #e2e8f0 !important; }
+      html.dark header nav a:hover { color: #ffffff !important; }
+      html.dark .border-black\/5,
+      html.dark .border-black\/10,
+      html.dark .border-slate-200,
+      html.dark .border-slate-300 { border-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark .ring-black\/5 { --tw-ring-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark .shadow-soft { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); }
+      html.dark .shadow-note { box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35); }
+      html.dark code { background-color: #1e293b; color: #e2e8f0; }
+      /* code inside a <pre> is its own block; don't paint the inline-code box behind it */
+      html.dark pre code { background-color: transparent; color: inherit; }
+      .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
+      .reveal.in { opacity: 1; transform: none; }
+      @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Release Notes: New App Shell, Bench Campaign Mode, and a GDPR Fix",
+  "description": "What shipped in MockForge v0.3.227: a full redesign of the logged-in Cloud portal (task-based sidebar, command palette, derived-health dashboard), campaign mode for bench-chunked, a GDPR account-erasure fix, and a wasmtime security bump.",
+  "datePublished": "2026-10-02T00:00:00.000Z",
+  "url": "https://mockforge.dev/note-v0-3-227-release.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://mockforge.dev/note-v0-3-227-release.html"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "MockForge",
+    "url": "https://mockforge.dev/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MockForge",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://mockforge.dev/public/logo-transparent.png"
+    }
+  }
+}
+    </script>
+      <!-- social:begin -->
+    <link rel="canonical" href="https://mockforge.dev/note-v0-3-227-release.html" />
+    <meta property="og:title" content="Release Notes: New App Shell, Bench Campaign Mode, and a GDPR Fix" />
+    <meta property="og:description" content="What shipped in MockForge v0.3.227: a full redesign of the logged-in Cloud portal (task-based sidebar, command palette, derived-health dashboard), campaign mode for bench-chunked, a GDPR account-erasure fix, and a wasmtime security bump." />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://mockforge.dev/note-v0-3-227-release.html" />
+    <meta property="og:image" content="https://mockforge.dev/public/og-image.png" />
+    <meta property="og:site_name" content="MockForge" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Release Notes: New App Shell, Bench Campaign Mode, and a GDPR Fix" />
+    <meta name="twitter:description" content="What shipped in MockForge v0.3.227: a full redesign of the logged-in Cloud portal (task-based sidebar, command palette, derived-health dashboard), campaign mode for bench-chunked, a GDPR account-erasure fix, and a wasmtime security bump." />
+    <meta name="twitter:image" content="https://mockforge.dev/public/og-image.png" />
+    <!-- social:end -->
+  </head>
+  <body class="bg-surface-subtle text-text-primary antialiased font-sans">
+    <header class="sticky top-0 z-40 backdrop-blur bg-white/90 dark:bg-slate-900 border-b border-black/5 dark:border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="/" class="flex items-center gap-3">
+            <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-8 w-8" />
+            <span class="font-semibold tracking-tight text-brand-dark dark:text-white">MockForge</span>
+          </a>
+          <nav class="hidden md:flex items-center gap-3 lg:gap-4">
+            <a href="https://docs.mockforge.dev" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Docs</a>
+            <a href="/engineering-notes.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Notes</a>
+            <a href="/#features" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Features</a>
+            <a href="/pricing.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Pricing</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">GitHub</a>
+            <a href="https://app.mockforge.dev/login" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Log In</a>
+            <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 lg:px-3 lg:py-2 rounded-lg text-white hover:opacity-90 shadow-soft whitespace-nowrap text-sm" style="background-color: #D35400;">
+              <span>Get started free</span>
+            </a>
+            <button id="themeToggle" class="p-2 rounded-lg border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10" aria-label="Toggle dark mode">
+              <svg id="sun" class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M7.05 7.05 5.636 5.636m12.728 0-1.414 1.414M7.05 16.95l-1.414 1.414"/><circle cx="12" cy="12" r="4"/></svg>
+              <svg id="moon" class="h-5 w-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+            </button>
+          </nav>
+          <button id="menuBtn" type="button" class="md:hidden p-2 rounded-lg border border-black/10 dark:border-white/20" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="mobileMenu" class="md:hidden hidden border-t border-black/5 dark:border-white/10 bg-white dark:bg-brand-dark">
+        <div class="px-4 py-3 space-y-2">
+          <a href="https://docs.mockforge.dev" class="block text-text-primary dark:text-white">Docs</a>
+          <a href="/engineering-notes.html" class="block text-text-primary dark:text-white">Notes</a>
+          <a href="/#features" class="block text-text-primary dark:text-white">Features</a>
+          <a href="/pricing.html" class="block text-text-primary dark:text-white">Pricing</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="block text-text-primary dark:text-white">GitHub</a>
+          <a href="https://app.mockforge.dev/login" class="block text-text-primary dark:text-white">Log In</a>
+          <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-white hover:opacity-90 shadow-soft" style="background-color: #D35400;">Get started free</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-2xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-brand-orange hover:opacity-80">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">October 2, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Release Notes: New App Shell, Bench Campaign Mode, and a GDPR Fix</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">v0.3.227 shipped October 1. The headline is a full redesign of the logged-in Cloud portal, but the release also brings campaign mode to <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-base">bench-chunked</code>, fixes GDPR account erasure for users with audit-log rows, and clears two wasmtime security advisories. Here's what changed and why.</p>
+
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">A calmer app shell</h2>
+        <p class="mt-4 leading-8 text-slate-700">The post-login portal grew organically, and it showed: inconsistent headers, a search box that didn't search much, and a dashboard that cheerfully reported "All Systems Operational" no matter what. We rebuilt the shell around a denser, calmer product-UI system.</p>
+        <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
+          <li><strong>Task-based sidebar.</strong> Navigation is grouped by what you're doing — Mocks, Protocols, Flows, Observe, Test &amp; Verify, Resilience, AI, Ecosystem, Settings — with groups that fold and remember their state. There's a workspace switcher and the user menu moved to the sidebar footer.</li>
+          <li><strong>Command palette.</strong> <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">⌘K</code> / <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">Ctrl+K</code> replaces the old header search: pages (including keywords and section names), recent pages, workspace switching, theme and refresh actions, and free-text log or service search that honors your default-scope preference.</li>
+          <li><strong>Dashboard that tells the truth.</strong> KPIs come first, then latency distribution, status breakdown, and servers/traffic. Health is now derived from server state and error rate instead of a hardcoded banner. Latency percentiles also render correctly now (p50 vs a bare "ms").</li>
+          <li><strong>Design-system cleanup.</strong> Refined neutral tokens in light and dark, calmer primitives (buttons, cards, metric cards with tabular figures), one input spec across every form, and <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">prefers-reduced-motion</code> honored globally. Dark mode got real fixes too — World State nodes, the Orchestration Builder panel, and the Registry Admin code block were hardcoded to light colors.</li>
+        </ul>
+        <p class="mt-4 leading-8 text-slate-700">Around forty pages were normalized onto the new shell in a follow-up pass: consistent page titles, aligned padding, readable badge contrast, and an error boundary that stays inside the shell with collapsible dev details. Cloud builds also stop showing a phantom "Disconnected" status.</p>
+
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Campaign mode for bench-chunked</h2>
+        <p class="mt-4 leading-8 text-slate-700">The Reality benchmarking side keeps gaining parity with <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">mockforge bench</code>. <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">bench-chunked</code> now supports <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">--rps N</code> (per-target cap on request starts per second) and <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">--cps</code> (new TCP/TLS connection per request), plus campaign mode: <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">--rounds N</code> or <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">--repeat-until &lt;duration&gt;</code> re-runs the whole pass into <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">&lt;output&gt;/round_N/</code>, with per-round stats in <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">campaign.jsonl</code> and <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">round-summaries/</code>, and <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">--keep-rounds N</code> rotating old round directories.</p>
+        <p class="mt-4 leading-8 text-slate-700">There was also a timing bug worth mentioning: <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">--chunk-interval-ms</code> used to wait <em>before</em> the first chunk and then send the last two back to back. It now sends the first chunk immediately and waits only between chunks, which is what the flag always promised.</p>
+
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">GDPR erasure that actually erases</h2>
+        <p class="mt-4 leading-8 text-slate-700">Account erasure no longer fails for users who have audit-log rows. This is the kind of bug that quietly breaks a compliance promise: the delete path worked in testing, then failed in production for exactly the long-lived accounts most likely to request erasure. If you run a hosted service with an audit trail, it's worth checking that your own erasure path handles the rows your audit trail creates.</p>
+
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Security hygiene: wasmtime 36.0.16</h2>
+        <p class="mt-4 leading-8 text-slate-700">A lockfile-only bump clears RUSTSEC-2026-0314 and RUSTSEC-2026-0316, including a wasmtime-wasi issue where a guest could panic the host through a filesystem datetime overflow. Our security-audit CI job caught it; the fix was a patch release with no code changes.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://github.com/SaaSy-Solutions/mockforge/releases/tag/v0.3.227" class="inline-flex items-center rounded-xl bg-brand-orange px-4 py-2 font-medium text-white hover:opacity-90 transition">v0.3.227 Release</a>
+          <a href="https://app.mockforge.dev/" class="inline-flex items-center rounded-xl border border-black/10 px-4 py-2 font-medium text-text-primary hover:bg-black/5 dark:hover:bg-white/10 transition">Cloud Portal</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-black/10 px-4 py-2 font-medium text-text-primary hover:bg-black/5 dark:hover:bg-white/10 transition">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    <footer class="py-10 border-t border-black/5 dark:border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-6 w-6" />
+          <span class="text-sm text-text-secondary">© <span id="year"></span> MockForge. MIT or Apache-2.0.</span>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm">
+          <a href="https://docs.mockforge.dev" class="text-text-secondary hover:text-text-primary">Docs</a>
+          <a href="/engineering-notes.html" class="text-text-secondary hover:text-text-primary">Notes</a>
+          <a href="/pricing.html" class="text-text-secondary hover:text-text-primary">Pricing</a>
+          <a href="/compare-wiremock.html" class="text-text-secondary hover:text-text-primary">Compare: WireMock</a>
+          <a href="/compare-mockserver.html" class="text-text-secondary hover:text-text-primary">Compare: MockServer</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary hover:text-text-primary">GitHub</a>
+          <a href="https://www.linkedin.com/company/mockforge" class="text-text-secondary hover:text-text-primary" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://app.mockforge.dev/legal/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
+          <a href="https://app.mockforge.dev/legal/terms" class="text-text-secondary hover:text-text-primary">Terms</a>
+          <a href="https://app.mockforge.dev/legal/dpa" class="text-text-secondary hover:text-text-primary">DPA</a>
+          <a href="/trust.html" class="text-text-secondary hover:text-text-primary">Trust</a>
+          <a href="/contact.html" class="text-text-secondary hover:text-text-primary">Contact</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var toggle = document.getElementById('themeToggle');
+        var html = document.documentElement;
+        var menuBtn = document.getElementById('menuBtn');
+        var mobileMenu = document.getElementById('mobileMenu');
+        var year = document.getElementById('year');
+
+        if (year) year.textContent = new Date().getFullYear();
+
+        if (toggle) {
+          toggle.addEventListener('click', function () {
+            html.classList.toggle('dark');
+            var isDark = html.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          });
+        }
+
+        if (menuBtn && mobileMenu) {
+          var setMenu = function (open) {
+            mobileMenu.classList.toggle('hidden', !open);
+            menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+          };
+
+          menuBtn.addEventListener('click', function () {
+            setMenu(mobileMenu.classList.contains('hidden'));
+          });
+
+          mobileMenu.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+              setMenu(false);
+            });
+          });
+        }
+
+        // Scroll-reveal for any element with .reveal (IntersectionObserver, no scroll listeners).
+        var reveals = document.querySelectorAll('.reveal');
+        if (reveals.length && 'IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                io.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.12 });
+          reveals.forEach(function (el) { io.observe(el); });
+        } else {
+          reveals.forEach(function (el) { el.classList.add('in'); });
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Release Notes: New App Shell, Bench Campaign Mode, and a GDPR Fix</title>
+    <meta name="description" content="What shipped in MockForge v0.3.227: a full redesign of the logged-in Cloud portal (task-based sidebar, command palette, derived health dashboard), campaign mode for bench-chunked, a GDPR account-erasure fix, and a wasmtime security bump." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-surface-subtle text-text-primary antialiased font-sans">
+    {{HEADER}}
+
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-2xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-brand-orange hover:opacity-80">&larr; Back to Engineering Notes</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">October 2, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">Release Notes: New App Shell, Bench Campaign Mode, and a GDPR Fix</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">v0.3.227 shipped October 1. The headline is a full redesign of the logged-in Cloud portal, but the release also brings campaign mode to <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-base">bench-chunked</code>, fixes GDPR account erasure for users with audit-log rows, and clears two wasmtime security advisories. Here's what changed and why.</p>
+
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">A calmer app shell</h2>
+        <p class="mt-4 leading-8 text-slate-700">The post-login portal grew organically, and it showed: inconsistent headers, a search box that didn't search much, and a dashboard that cheerfully reported "All Systems Operational" no matter what. We rebuilt the shell around a denser, calmer product-UI system.</p>
+        <ul class="mt-4 space-y-2 leading-8 text-slate-700 list-disc list-inside">
+          <li><strong>Task-based sidebar.</strong> Navigation is grouped by what you're doing — Mocks, Protocols, Flows, Observe, Test &amp; Verify, Resilience, AI, Ecosystem, Settings — with groups that fold and remember their state. There's a workspace switcher and the user menu moved to the sidebar footer.</li>
+          <li><strong>Command palette.</strong> <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">⌘K</code> / <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">Ctrl+K</code> replaces the old header search: pages (including keywords and section names), recent pages, workspace switching, theme and refresh actions, and free-text log or service search that honors your default-scope preference.</li>
+          <li><strong>Dashboard that tells the truth.</strong> KPIs come first, then latency distribution, status breakdown, and servers/traffic. Health is now derived from server state and error rate instead of a hardcoded banner. Latency percentiles also render correctly now (p50 vs a bare "ms").</li>
+          <li><strong>Design-system cleanup.</strong> Refined neutral tokens in light and dark, calmer primitives (buttons, cards, metric cards with tabular figures), one input spec across every form, and <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">prefers-reduced-motion</code> honored globally. Dark mode got real fixes too — World State nodes, the Orchestration Builder panel, and the Registry Admin code block were hardcoded to light colors.</li>
+        </ul>
+        <p class="mt-4 leading-8 text-slate-700">Around forty pages were normalized onto the new shell in a follow-up pass: consistent page titles, aligned padding, readable badge contrast, and an error boundary that stays inside the shell with collapsible dev details. Cloud builds also stop showing a phantom "Disconnected" status.</p>
+
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Campaign mode for bench-chunked</h2>
+        <p class="mt-4 leading-8 text-slate-700">The Reality benchmarking side keeps gaining parity with <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">mockforge bench</code>. <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">bench-chunked</code> now supports <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">--rps N</code> (per-target cap on request starts per second) and <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">--cps</code> (new TCP/TLS connection per request), plus campaign mode: <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">--rounds N</code> or <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">--repeat-until &lt;duration&gt;</code> re-runs the whole pass into <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">&lt;output&gt;/round_N/</code>, with per-round stats in <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">campaign.jsonl</code> and <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">round-summaries/</code>, and <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">--keep-rounds N</code> rotating old round directories.</p>
+        <p class="mt-4 leading-8 text-slate-700">There was also a timing bug worth mentioning: <code class="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-sm">--chunk-interval-ms</code> used to wait <em>before</em> the first chunk and then send the last two back to back. It now sends the first chunk immediately and waits only between chunks, which is what the flag always promised.</p>
+
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">GDPR erasure that actually erases</h2>
+        <p class="mt-4 leading-8 text-slate-700">Account erasure no longer fails for users who have audit-log rows. This is the kind of bug that quietly breaks a compliance promise: the delete path worked in testing, then failed in production for exactly the long-lived accounts most likely to request erasure. If you run a hosted service with an audit trail, it's worth checking that your own erasure path handles the rows your audit trail creates.</p>
+
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Security hygiene: wasmtime 36.0.16</h2>
+        <p class="mt-4 leading-8 text-slate-700">A lockfile-only bump clears RUSTSEC-2026-0314 and RUSTSEC-2026-0316, including a wasmtime-wasi issue where a guest could panic the host through a filesystem datetime overflow. Our security-audit CI job caught it; the fix was a patch release with no code changes.</p>
+
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://github.com/SaaSy-Solutions/mockforge/releases/tag/v0.3.227" class="inline-flex items-center rounded-xl bg-brand-orange px-4 py-2 font-medium text-white hover:opacity-90 transition">v0.3.227 Release</a>
+          <a href="https://app.mockforge.dev/" class="inline-flex items-center rounded-xl border border-black/10 px-4 py-2 font-medium text-text-primary hover:bg-black/5 dark:hover:bg-white/10 transition">Cloud Portal</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="inline-flex items-center rounded-xl border border-black/10 px-4 py-2 font-medium text-text-primary hover:bg-black/5 dark:hover:bg-white/10 transition">GitHub</a>
+        </div>
+      </article>
+    </main>
+
+    {{FOOTER}}
+
+    {{SHELL_SCRIPT}}
+  </body>
+</html>
