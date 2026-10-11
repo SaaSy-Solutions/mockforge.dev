@@ -198,18 +198,21 @@
                 Star on GitHub
               </a>
             </div>
-            <!-- install one-liner: the hero's single supporting element -->
-            <div class="mt-7 max-w-md">
+            <!-- Runnable OpenAPI example, followed by the request that verifies it. -->
+            <div class="mt-7 max-w-xl">
+              <p class="mb-2 text-sm text-text-secondary">Run the example with Docker:</p>
               <div class="flex items-center gap-3 rounded-xl bg-brand-dark px-4 py-3 font-mono text-sm text-slate-100">
                 <span class="text-brand-orange select-none">$</span>
-                <span id="installCmd" class="flex-1 truncate">cargo install mockforge-cli</span>
-                <button id="copyInstall" type="button" class="inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 font-sans text-xs font-medium text-slate-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-orange transition" aria-label="Copy install command">
+                <span id="installCmd" class="min-w-0 flex-1 whitespace-pre-wrap break-words">docker run --rm -p 3000:3000 ghcr.io/saasy-solutions/mockforge:latest serve --spec examples/openapi-demo.json --http-port 3000</span>
+                <button id="copyInstall" type="button" class="inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 font-sans text-xs font-medium text-slate-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-orange transition" aria-label="Copy quickstart command">
                   <i id="copyIcon" class="ph ph-copy text-lg" aria-hidden="true"></i>
                   <i id="copiedIcon" class="ph-bold ph-check text-lg text-emerald-400 hidden" aria-hidden="true"></i>
                   <span id="copyLabel">Copy</span>
                 </button>
                 <span id="copyStatus" class="sr-only" role="status" aria-live="polite"></span>
               </div>
+              <p class="mt-3 text-sm text-text-secondary">In another terminal: <code class="text-text-primary">curl http://localhost:3000/users</code></p>
+              <p class="mt-2 text-sm text-text-secondary">Measured 9.2 seconds from an uncached image pull to the first response. <a href="https://docs.mockforge.dev/getting-started/first-mock-benchmark.html" class="text-text-primary underline underline-offset-4">How we measured</a>.</p>
             </div>
           </div>
 
@@ -565,7 +568,7 @@ document.addEventListener('DOMContentLoaded', function () {
     copiedIcon.classList.toggle('hidden', !copied);
     copyLabel.textContent = copied ? 'Copied' : 'Copy failed';
     copyLabel.classList.toggle('text-emerald-400', copied);
-    copyStatus.textContent = copied ? 'Install command copied to clipboard' : 'Could not copy. Select the command and copy it manually.';
+    copyStatus.textContent = copied ? 'Quickstart command copied to clipboard' : 'Could not copy. Select the command and copy it manually.';
     resetTimer = setTimeout(function () {
       copiedIcon.classList.add('hidden');
       copyIcon.classList.remove('hidden');
