@@ -198,6 +198,7 @@
             </div>
             <ul class="mt-8 space-y-3 text-sm flex-grow">
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>10,000 requests/month</span></li>
+              <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>BYOK AI (use your own provider key)</span></li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>Local mocks only (no cloud hosting)</span></li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>HTTP protocol</span></li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>1 collaborator</span></li>
@@ -223,6 +224,7 @@
             </div>
             <ul class="mt-8 space-y-3 text-sm flex-grow">
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>250,000 requests/month</span></li>
+              <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>100,000 platform AI tokens/month</span></li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span><strong>3 hosted mocks</strong> (cloud-deployed)</span></li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>HTTP + gRPC protocols</span></li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>5 collaborators</span></li>
@@ -230,7 +232,7 @@
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>Email support</span></li>
             </ul>
             <a href="https://app.mockforge.dev/register?plan=pro" class="mt-8 block w-full text-center px-5 py-3 rounded-xl bg-brand-orange text-white hover:opacity-90 active:scale-[.98] transition shadow-soft font-medium">
-              Start Pro trial
+              Start 14-day Pro trial
             </a>
           </div>
 
@@ -246,6 +248,7 @@
             </div>
             <ul class="mt-8 space-y-3 text-sm flex-grow">
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>1,000,000 requests/month</span></li>
+              <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>1,000,000 platform AI tokens/month</span></li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span><strong>Unlimited hosted mocks</strong></span></li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>All 10+ protocols (HTTP, gRPC, GraphQL, WebSocket, Kafka, MQTT, AMQP, SMTP, FTP, TCP)</span></li>
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>20 collaborators</span></li>
@@ -254,7 +257,7 @@
               <li class="flex items-start gap-2.5"><i class="ph-bold ph-check text-brand-orange mt-0.5"></i><span>Priority support</span></li>
             </ul>
             <a href="https://app.mockforge.dev/register?plan=team" class="mt-8 block w-full text-center px-5 py-3 rounded-xl border border-black/10 hover:bg-black/5 dark:hover:bg-white/10 active:scale-[.98] transition font-medium">
-              Start Team trial
+              Start 14-day Team trial
             </a>
           </div>
         </div>
@@ -289,6 +292,12 @@
                 <td class="py-3 pr-4">Requests / month</td>
                 <td class="text-center py-3 px-4">10K</td>
                 <td class="text-center py-3 px-4">250K</td>
+                <td class="text-center py-3 px-4">1M</td>
+              </tr>
+              <tr class="border-b border-black/5">
+                <td class="py-3 pr-4">Platform AI tokens / month</td>
+                <td class="text-center py-3 px-4">0 (BYOK available)</td>
+                <td class="text-center py-3 px-4">100K</td>
                 <td class="text-center py-3 px-4">1M</td>
               </tr>
               <tr class="border-b border-black/5">
@@ -344,6 +353,14 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[0.6fr_1.4fr] gap-10">
         <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-brand-dark reveal">Pricing FAQ</h2>
         <dl class="grid sm:grid-cols-2 gap-x-8 gap-y-7 reveal">
+          <div>
+            <dt class="font-semibold text-brand-dark">What can I do with the AI allowance?</dt>
+            <dd class="mt-1.5 text-sm text-text-secondary leading-relaxed">Use platform AI for mock generation and AI-assisted workflows: Pro includes 100,000 tokens/month and Team includes 1,000,000. Tokens measure AI input and output, so longer prompts and responses use more. The number of generations depends on their size.</dd>
+          </div>
+          <div>
+            <dt class="font-semibold text-brand-dark">How does bring your own key (BYOK) work?</dt>
+            <dd class="mt-1.5 text-sm text-text-secondary leading-relaxed">Connect your own AI provider key on any plan, including Free. BYOK requests do not consume your MockForge platform AI allowance; your provider bills that usage separately. Free includes BYOK access and no platform AI tokens.</dd>
+          </div>
           <div>
             <dt class="font-semibold text-brand-dark">Can I use MockForge for free?</dt>
             <dd class="mt-1.5 text-sm text-text-secondary leading-relaxed">Yes. The CLI is open source (MIT/Apache-2.0) and always free for local development. The Free cloud tier includes 10K requests/month.</dd>
