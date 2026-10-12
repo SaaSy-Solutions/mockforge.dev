@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Frequently asked questions — MockForge</title>
+    <meta name="description" content="Answers about running MockForge locally, licensing, API protocols, CI testing, and getting help." />
+    <link rel="canonical" href="https://mockforge.dev/faq.html" />
+    <link rel="icon" href="/public/favicon.ico" sizes="any" />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-surface-subtle text-text-primary antialiased">
+    {{HEADER}}
+    <main class="py-16 sm:py-20">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-4xl font-semibold tracking-tight text-brand-dark">Frequently asked questions</h1>
+        <p class="mt-4 text-lg text-text-secondary leading-relaxed">Start here for local development and testing. For plan details, see <a href="/pricing.html" class="underline underline-offset-4">pricing</a>.</p>
+        <dl class="mt-12 space-y-8 text-base leading-relaxed">
+          <div>
+            <dt class="text-xl font-semibold text-brand-dark">Is MockForge open source?</dt>
+            <dd class="mt-2 text-text-secondary">Yes. MockForge is available under MIT or Apache-2.0. See the <a href="https://github.com/SaaSy-Solutions/mockforge" class="underline underline-offset-4">source repository and licenses</a>.</dd>
+          </div>
+          <div>
+            <dt class="text-xl font-semibold text-brand-dark">Do I need a Cloud account to run it?</dt>
+            <dd class="mt-2 text-text-secondary">You can run the CLI on your own machine without a Cloud account. Follow the <a href="https://docs.mockforge.dev/getting-started/installation.html" class="underline underline-offset-4">installation guide</a> to get started.</dd>
+          </div>
+          <div>
+            <dt class="text-xl font-semibold text-brand-dark">Which API protocols can I mock?</dt>
+            <dd class="mt-2 text-text-secondary">MockForge supports HTTP APIs, gRPC, GraphQL, WebSocket, and messaging protocols. Available commands depend on the features enabled in your build. Check the <a href="https://docs.mockforge.dev/" class="underline underline-offset-4">protocol documentation</a> for setup and configuration.</dd>
+          </div>
+          <div>
+            <dt class="text-xl font-semibold text-brand-dark">Can I use it in CI?</dt>
+            <dd class="mt-2 text-text-secondary">Yes. Run MockForge alongside your tests and point your application at its local endpoints. Keep your specification and configuration in version control so the same setup can run locally and in CI.</dd>
+          </div>
+          <div>
+            <dt class="text-xl font-semibold text-brand-dark">Where can I get help?</dt>
+            <dd class="mt-2 text-text-secondary">The <a href="/support.html" class="underline underline-offset-4">Support page</a> explains how to report a bug, ask about a Cloud account, or contact the team privately.</dd>
+          </div>
+        </dl>
+      </div>
+    </main>
+    {{FOOTER}}
+    {{SHELL_SCRIPT}}
+  </body>
+</html>
