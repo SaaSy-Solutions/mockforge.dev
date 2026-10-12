@@ -182,7 +182,7 @@ function renderFooter() {
           <a href="https://docs.mockforge.dev" class="text-text-secondary hover:text-text-primary">Docs</a>
           <a href="/engineering-notes.html" class="text-text-secondary hover:text-text-primary">Notes</a>
           <a href="/pricing.html" class="text-text-secondary hover:text-text-primary">Pricing</a>
-          <a href="/compare-wiremock.html" class="text-text-secondary hover:text-text-primary">Compare: WireMock</a>
+          <a href="/comparisons.html" class="text-text-secondary hover:text-text-primary">Compare tools</a>
           <a href="/compare-mockserver.html" class="text-text-secondary hover:text-text-primary">Compare: MockServer</a>
           <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary hover:text-text-primary">GitHub</a>
           <a href="https://www.linkedin.com/company/mockforge" class="text-text-secondary hover:text-text-primary" target="_blank" rel="noopener noreferrer">LinkedIn</a>
@@ -428,6 +428,7 @@ ${items}
 // so each alias becomes a tiny redirect page: meta refresh for no-JS clients,
 // location.replace for everyone else, and a canonical pointing at the target.
 const REDIRECTS = {
+  'vs/postman.html': { to: '/vs/postman-mock.html', label: 'MockForge vs Postman' },
   'notes.html': { to: '/engineering-notes.html', label: 'Engineering Notes' },
   'blog.html': { to: '/engineering-notes.html', label: 'Engineering Notes' },
   'docs.html': { to: 'https://docs.mockforge.dev/', label: 'MockForge documentation' },
@@ -511,6 +512,15 @@ if (outputRoot !== projectRoot) {
   ensureDir(outputRoot);
 }
 
+const COMPARISON_OUTPUTS = {
+  'compare-wiremock.html': 'vs/wiremock.html',
+  'compare-mockoon.html': 'vs/mockoon.html',
+  'compare-microcks.html': 'vs/microcks.html',
+  'compare-beeceptor.html': 'vs/beeceptor.html',
+  'compare-bruno.html': 'vs/bruno.html',
+  'compare-postman-mock.html': 'vs/postman-mock.html',
+};
+
 const pageFiles = fs.readdirSync(sourceRoot).filter((name) => name.endsWith('.html')).sort();
 
 // Parse engineering-notes index once for per-post metadata (slug → meta).
@@ -573,6 +583,7 @@ const sitemapUrls = new Set();
 const siteOrigin = 'https://mockforge.dev';
 
 for (const file of pageFiles) {
+  const outputFile = COMPARISON_OUTPUTS[file] || file;
   const config = getPageConfig(file);
   let text = fs.readFileSync(path.join(sourceRoot, file), 'utf8');
 
@@ -610,7 +621,7 @@ for (const file of pageFiles) {
     }
     const canonical = canonicalTags.length
       ? canonicalTags[0][1]
-      : `${siteOrigin}/${file === 'index.html' ? '' : file}`;
+      : `${siteOrigin}/${outputFile === 'index.html' ? '' : outputFile}`;
     const url = new URL(canonical);
     if (url.origin !== siteOrigin || url.search || url.hash) {
       throw new Error(`Invalid canonical URL in ${file}`);
@@ -622,7 +633,10 @@ for (const file of pageFiles) {
     if (!noindex) sitemapUrls.add(url.href);
   }
 
-  emit(file, text);
+  emit(outputFile, text);
+  if (outputFile !== file) {
+    emit(file, renderRedirectPage({ to: '/' + outputFile, label: 'MockForge comparison' }));
+  }
 }
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

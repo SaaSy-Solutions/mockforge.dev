@@ -1,5 +1,5 @@
 module.exports = {
-  content: ['./*.html'],
+  content: ['./src/pages/*.html', './scripts/build-pages.js'],
   darkMode: 'class',
   theme: {
     extend: {

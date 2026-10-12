@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth"><head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MockForge vs Bruno</title><meta name="description" content="Compare Bruno and MockForge for local development, configuration in Git, and API simulation workflows." />
+<meta property="og:title" content="MockForge vs Bruno" /><meta property="og:description" content="Compare Bruno and MockForge for local development, configuration in Git, and API simulation workflows." />
+<meta property="og:type" content="website" /><meta property="og:url" content="https://mockforge.dev/vs/bruno.html" />
+<meta property="og:image" content="https://mockforge.dev/public/og-image.png" /><meta name="twitter:card" content="summary_large_image" />
+<link rel="canonical" href="https://mockforge.dev/vs/bruno.html" />
+<link rel="icon" href="/public/favicon.ico" sizes="any" />
+<link rel="stylesheet" href="/public/vendor/phosphor/phosphor.css" />
+{{SHARED_HEAD_BLOCK}}
+</head><body class="bg-surface-subtle text-text-primary antialiased">
+{{HEADER}}
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+<a href="/comparisons.html" class="text-brand-orange underline underline-offset-4">All comparisons</a>
+<h1 class="mt-6 text-4xl md:text-5xl font-semibold tracking-tight text-brand-dark">MockForge vs Bruno</h1>
+<p class="mt-5 text-xl text-text-secondary max-w-3xl">A Git-friendly API client with local mocks, or a dedicated mock runtime?</p>
+<p class="mt-3 text-sm text-text-secondary">Reviewed October 12, 2026. Compare the documented workflows below using your own contract and fixtures.</p>
+<section class="mt-12 max-w-3xl"><h2 class="text-2xl font-semibold text-brand-dark">Where each tool fits</h2><p class="mt-4 text-text-secondary">Bruno is an offline-first API client with plain-text collections. Its local mock servers are currently marked Beta and can use saved responses or OpenAPI specifications. Matching rules and delays are supported; mock logs are held in memory.</p><p class="mt-4 text-text-secondary">Choose Bruno when sending requests and serving collection examples in the same desktop client is convenient. Choose MockForge when you want the mock runtime to run as a separate CLI process or container alongside any API client.</p><p class="mt-4 text-sm text-text-secondary">Bruno sources: <a class="underline underline-offset-4" href="https://docs.usebruno.com/introduction/getting-started">Bruno getting started</a>. <a class="underline underline-offset-4" href="https://docs.usebruno.com/mock-servers/overview">Local mock servers</a>. <a class="underline underline-offset-4" href="https://docs.usebruno.com/reference/overview">Collection formats</a>.</p></section>
+<section class="mt-12"><h2 class="text-2xl font-semibold text-brand-dark">What you can run with MockForge</h2>
+<div class="mt-5 overflow-x-auto rounded-xl border border-black/10 bg-white"><table class="w-full text-left text-sm"><caption class="sr-only">MockForge local workflow and supporting documentation</caption><thead><tr><th scope="col" class="px-4 py-3">Workflow</th><th scope="col" class="px-4 py-3">Available path</th><th scope="col" class="px-4 py-3">Proof and setup</th></tr></thead><tbody>
+<tr class="border-t border-black/10"><th scope="row" class="px-4 py-3">Local server</th><td class="px-4 py-3">Open-source CLI or container; no MockForge account required.</td><td class="px-4 py-3"><a class="underline" href="https://docs.mockforge.dev/getting-started/quick-start.html">Quick start</a></td></tr>
+<tr class="border-t border-black/10"><th scope="row" class="px-4 py-3">Configuration in Git</th><td class="px-4 py-3">Review YAML configuration and OpenAPI files alongside your code.</td><td class="px-4 py-3"><a class="underline" href="https://docs.mockforge.dev/configuration/files.html">Configuration files</a></td></tr>
+<tr class="border-t border-black/10"><th scope="row" class="px-4 py-3">Failure behavior</th><td class="px-4 py-3">Configure latency and fault simulation for your test environment.</td><td class="px-4 py-3"><a class="underline" href="https://docs.mockforge.dev/user-guide/chaos-engineering.html">Chaos configuration</a></td></tr>
+<tr class="border-t border-black/10"><th scope="row" class="px-4 py-3">Costs</th><td class="px-4 py-3">The open-source local runtime is free. Hosted plans are a separate choice.</td><td class="px-4 py-3"><a class="underline" href="/pricing.html">Hosted pricing</a></td></tr>
+</tbody></table></div></section>
+<section class="mt-12 max-w-3xl"><h2 class="text-2xl font-semibold text-brand-dark">Evaluate a migration</h2><p class="mt-4 text-text-secondary">Keep Bruno collections for exercising requests. Use the same OpenAPI contract to evaluate MockForge as the server. A collection export does not automatically transfer saved-example selection or mock rules into MockForge configuration.</p><p class="mt-4 text-text-secondary">External AI providers and upstream services use the connections you configure. Keep credentials out of committed configuration and use synthetic data for shared fixtures.</p><a class="mt-6 inline-flex rounded-xl bg-brand-orange px-5 py-3 text-white font-medium" href="https://docs.mockforge.dev/getting-started/quick-start.html">Run a local mock</a></section>
+</main>
+{{FOOTER}}
+{{SHELL_SCRIPT}}
+</body></html>
