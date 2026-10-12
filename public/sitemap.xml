@@ -2,8 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://mockforge.dev/</loc></url>
   <url><loc>https://mockforge.dev/compare-mockserver.html</loc></url>
-  <url><loc>https://mockforge.dev/compare-postman-mock.html</loc></url>
-  <url><loc>https://mockforge.dev/compare-wiremock.html</loc></url>
+  <url><loc>https://mockforge.dev/comparisons.html</loc></url>
   <url><loc>https://mockforge.dev/engineering-notes.html</loc></url>
   <url><loc>https://mockforge.dev/note-announcing-v1.html</loc></url>
   <url><loc>https://mockforge.dev/note-api-drift-detection-and-contract-alerting.html</loc></url>
@@ -43,4 +42,10 @@
   <url><loc>https://mockforge.dev/note-why-multi-protocol.html</loc></url>
   <url><loc>https://mockforge.dev/pricing.html</loc></url>
   <url><loc>https://mockforge.dev/trust.html</loc></url>
+  <url><loc>https://mockforge.dev/vs/beeceptor.html</loc></url>
+  <url><loc>https://mockforge.dev/vs/bruno.html</loc></url>
+  <url><loc>https://mockforge.dev/vs/microcks.html</loc></url>
+  <url><loc>https://mockforge.dev/vs/mockoon.html</loc></url>
+  <url><loc>https://mockforge.dev/vs/postman-mock.html</loc></url>
+  <url><loc>https://mockforge.dev/vs/wiremock.html</loc></url>
 </urlset>

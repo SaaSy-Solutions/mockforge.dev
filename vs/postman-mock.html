@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth"><head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MockForge vs Postman</title><meta name="description" content="Compare Postman and MockForge for local development, configuration in Git, and API simulation workflows." />
+<meta property="og:title" content="MockForge vs Postman" /><meta property="og:description" content="Compare Postman and MockForge for local development, configuration in Git, and API simulation workflows." />
+<meta property="og:type" content="website" /><meta property="og:url" content="https://mockforge.dev/vs/postman-mock.html" />
+<meta property="og:image" content="https://mockforge.dev/public/og-image.png" /><meta name="twitter:card" content="summary_large_image" />
+<link rel="canonical" href="https://mockforge.dev/vs/postman-mock.html" />
+<link rel="icon" href="/public/favicon.ico" sizes="any" />
+<link rel="stylesheet" href="/public/vendor/phosphor/phosphor.css" />
+<link rel="stylesheet" href="/public/styles.css" />
+    <link rel="alternate" type="application/rss+xml" title="MockForge Engineering Notes" href="/rss.xml" />
+    <script>
+      (function () {
+        try {
+          var storedTheme = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (error) {
+          console.warn('Theme initialization failed:', error);
+        }
+      })();
+    </script>
+    <style>
+      html, body { height: 100%; }
+      * { transition: background-color 0.2s ease, border-color 0.2s ease; }
+      html.dark { color-scheme: dark; }
+      html.dark body { background-color: #0f172a; color: #e2e8f0; }
+      html.dark .bg-white { background-color: #1e293b !important; }
+      html.dark .bg-surface-subtle,
+      html.dark .bg-stone-50,
+      html.dark section:not(.bg-white):not([style*="background"]) { background-color: #0f172a; }
+      html.dark .text-text-primary,
+      html.dark .text-slate-900,
+      html.dark .text-brand-ink,
+      html.dark .text-brand-dark { color: #f1f5f9 !important; }
+      html.dark .text-text-secondary,
+      html.dark .text-slate-700,
+      html.dark .text-slate-600,
+      html.dark .text-slate-500,
+      html.dark .text-slate-300 { color: #cbd5e1 !important; }
+      html.dark .text-orange-700,
+      html.dark .text-orange-200 { color: #fdba74 !important; }
+      html.dark header { background-color: #0f172a !important; border-bottom-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark header nav a { color: #e2e8f0 !important; }
+      html.dark header nav a:hover { color: #ffffff !important; }
+      html.dark .border-black\/5,
+      html.dark .border-black\/10,
+      html.dark .border-slate-200,
+      html.dark .border-slate-300 { border-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark .ring-black\/5 { --tw-ring-color: rgba(255, 255, 255, 0.1) !important; }
+      html.dark .shadow-soft { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); }
+      html.dark .shadow-note { box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35); }
+      html.dark code { background-color: #1e293b; color: #e2e8f0; }
+      /* code inside a <pre> is its own block; don't paint the inline-code box behind it */
+      html.dark pre code { background-color: transparent; color: inherit; }
+      .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
+      .reveal.in { opacity: 1; transform: none; }
+      @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "MockForge",
+        "url": "https://mockforge.dev/",
+        "logo": "https://mockforge.dev/public/logo-transparent.png",
+        "description": "Open-source API mocking framework for REST, gRPC, GraphQL, WebSockets, and SMTP.",
+        "sameAs": [
+          "https://github.com/SaaSy-Solutions/mockforge",
+          "https://www.linkedin.com/company/mockforge"
+        ],
+        "contactPoint": [
+          {
+            "@type": "ContactPoint",
+            "contactType": "sales",
+            "email": "sales@mockforge.dev",
+            "url": "https://mockforge.dev/contact.html"
+          },
+          {
+            "@type": "ContactPoint",
+            "contactType": "security",
+            "email": "security@mockforge.dev",
+            "url": "https://mockforge.dev/trust.html"
+          },
+          {
+            "@type": "ContactPoint",
+            "contactType": "technical support",
+            "email": "support@mockforge.dev",
+            "url": "https://github.com/SaaSy-Solutions/mockforge/issues"
+          }
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "28 E 200 N",
+          "addressLocality": "Franklin",
+          "addressRegion": "IN",
+          "postalCode": "46131",
+          "addressCountry": "US"
+        }
+      }
+    </script>
+</head><body class="bg-surface-subtle text-text-primary antialiased">
+<header class="sticky top-0 z-40 backdrop-blur bg-white/90 dark:bg-slate-900 border-b border-black/5 dark:border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="/" class="flex items-center gap-3">
+            <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-8 w-8" />
+            <span class="font-semibold tracking-tight text-brand-dark dark:text-white">MockForge</span>
+          </a>
+          <nav class="hidden md:flex items-center gap-3 lg:gap-4">
+            <a href="https://docs.mockforge.dev" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Docs</a>
+            <a href="/engineering-notes.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Notes</a>
+            <a href="/#features" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Features</a>
+            <a href="/pricing.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Pricing</a>
+            <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">GitHub</a>
+            <a href="https://app.mockforge.dev/login" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Log In</a>
+            <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 lg:px-3 lg:py-2 rounded-lg text-white hover:opacity-90 shadow-soft whitespace-nowrap text-sm" style="background-color: #D35400;">
+              <span>Get started free</span>
+            </a>
+            <button id="themeToggle" class="p-2 rounded-lg border border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10" aria-label="Toggle dark mode">
+              <svg id="sun" class="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M7.05 7.05 5.636 5.636m12.728 0-1.414 1.414M7.05 16.95l-1.414 1.414"/><circle cx="12" cy="12" r="4"/></svg>
+              <svg id="moon" class="h-5 w-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+            </button>
+          </nav>
+          <button id="menuBtn" type="button" class="md:hidden p-2 rounded-lg border border-black/10 dark:border-white/20" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="mobileMenu" class="md:hidden hidden border-t border-black/5 dark:border-white/10 bg-white dark:bg-brand-dark">
+        <div class="px-4 py-3 space-y-2">
+          <a href="https://docs.mockforge.dev" class="block text-text-primary dark:text-white">Docs</a>
+          <a href="/engineering-notes.html" class="block text-text-primary dark:text-white">Notes</a>
+          <a href="/#features" class="block text-text-primary dark:text-white">Features</a>
+          <a href="/pricing.html" class="block text-text-primary dark:text-white">Pricing</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="block text-text-primary dark:text-white">GitHub</a>
+          <a href="https://app.mockforge.dev/login" class="block text-text-primary dark:text-white">Log In</a>
+          <a href="https://app.mockforge.dev/register" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-white hover:opacity-90 shadow-soft" style="background-color: #D35400;">Get started free</a>
+        </div>
+      </div>
+    </header>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+<a href="/comparisons.html" class="text-brand-orange underline underline-offset-4">All comparisons</a>
+<h1 class="mt-6 text-4xl md:text-5xl font-semibold tracking-tight text-brand-dark">MockForge vs Postman</h1>
+<p class="mt-5 text-xl text-text-secondary max-w-3xl">Programmable mocks inside an API workspace, or a standalone server?</p>
+<p class="mt-3 text-sm text-text-secondary">Reviewed October 12, 2026. Compare the documented workflows below using your own contract and fixtures.</p>
+<section class="mt-12 max-w-3xl"><h2 class="text-2xl font-semibold text-brand-dark">Where each tool fits</h2><p class="mt-4 text-text-secondary">Postman supports JavaScript-based local mocks with dynamic responses and state, as well as cloud deployment and collection-example mocks. Local View stores mock configuration and scenario files in a local Git repository.</p><p class="mt-4 text-text-secondary">Choose Postman when programmable mock handlers and API development belong in the same application. Choose MockForge when you want to operate the mock as a standalone CLI or container using specifications and configuration files.</p><p class="mt-4 text-sm text-text-secondary">Postman sources: <a class="underline underline-offset-4" href="https://learning.postman.com/docs/design-apis/mock-apis/local-mock-servers">Programmable local mocks</a>. <a class="underline underline-offset-4" href="https://learning.postman.com/docs/design-apis/mock-apis/set-up-mock-servers">Cloud deployment</a>.</p></section>
+<section class="mt-12"><h2 class="text-2xl font-semibold text-brand-dark">What you can run with MockForge</h2>
+<div class="mt-5 overflow-x-auto rounded-xl border border-black/10 bg-white"><table class="w-full text-left text-sm"><caption class="sr-only">MockForge local workflow and supporting documentation</caption><thead><tr><th scope="col" class="px-4 py-3">Workflow</th><th scope="col" class="px-4 py-3">Available path</th><th scope="col" class="px-4 py-3">Proof and setup</th></tr></thead><tbody>
+<tr class="border-t border-black/10"><th scope="row" class="px-4 py-3">Local server</th><td class="px-4 py-3">Open-source CLI or container; no MockForge account required.</td><td class="px-4 py-3"><a class="underline" href="https://docs.mockforge.dev/getting-started/quick-start.html">Quick start</a></td></tr>
+<tr class="border-t border-black/10"><th scope="row" class="px-4 py-3">Configuration in Git</th><td class="px-4 py-3">Review YAML configuration and OpenAPI files alongside your code.</td><td class="px-4 py-3"><a class="underline" href="https://docs.mockforge.dev/configuration/files.html">Configuration files</a></td></tr>
+<tr class="border-t border-black/10"><th scope="row" class="px-4 py-3">Failure behavior</th><td class="px-4 py-3">Configure latency and fault simulation for your test environment.</td><td class="px-4 py-3"><a class="underline" href="https://docs.mockforge.dev/user-guide/chaos-engineering.html">Chaos configuration</a></td></tr>
+<tr class="border-t border-black/10"><th scope="row" class="px-4 py-3">Costs</th><td class="px-4 py-3">The open-source local runtime is free. Hosted plans are a separate choice.</td><td class="px-4 py-3"><a class="underline" href="/pricing.html">Hosted pricing</a></td></tr>
+</tbody></table></div></section>
+<section class="mt-12 max-w-3xl"><h2 class="text-2xl font-semibold text-brand-dark">Evaluate a migration</h2><p class="mt-4 text-text-secondary">Keep Postman collections as request clients if they suit your team. Evaluate a MockForge server from a shared OpenAPI contract; Postman JavaScript scenarios and pm.state behavior need an explicit migration, not a format-only conversion.</p><p class="mt-4 text-text-secondary">External AI providers and upstream services use the connections you configure. Keep credentials out of committed configuration and use synthetic data for shared fixtures.</p><a class="mt-6 inline-flex rounded-xl bg-brand-orange px-5 py-3 text-white font-medium" href="https://docs.mockforge.dev/getting-started/quick-start.html">Run a local mock</a></section>
+</main>
+<footer class="py-10 border-t border-black/5 dark:border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-6 w-6" />
+          <span class="text-sm text-text-secondary">© <span id="year"></span> MockForge. MIT or Apache-2.0.</span>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm">
+          <a href="https://docs.mockforge.dev" class="text-text-secondary hover:text-text-primary">Docs</a>
+          <a href="/engineering-notes.html" class="text-text-secondary hover:text-text-primary">Notes</a>
+          <a href="/pricing.html" class="text-text-secondary hover:text-text-primary">Pricing</a>
+          <a href="/comparisons.html" class="text-text-secondary hover:text-text-primary">Compare tools</a>
+          <a href="/compare-mockserver.html" class="text-text-secondary hover:text-text-primary">Compare: MockServer</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary hover:text-text-primary">GitHub</a>
+          <a href="https://www.linkedin.com/company/mockforge" class="text-text-secondary hover:text-text-primary" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://app.mockforge.dev/legal/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
+          <a href="https://app.mockforge.dev/legal/terms" class="text-text-secondary hover:text-text-primary">Terms</a>
+          <a href="https://app.mockforge.dev/legal/dpa" class="text-text-secondary hover:text-text-primary">DPA</a>
+          <a href="/trust.html" class="text-text-secondary hover:text-text-primary">Trust</a>
+          <a href="/contact.html" class="text-text-secondary hover:text-text-primary">Contact</a>
+        </div>
+      </div>
+    </footer>
+<script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var toggle = document.getElementById('themeToggle');
+        var html = document.documentElement;
+        var menuBtn = document.getElementById('menuBtn');
+        var mobileMenu = document.getElementById('mobileMenu');
+        var year = document.getElementById('year');
+
+        if (year) year.textContent = new Date().getFullYear();
+
+        if (toggle) {
+          toggle.addEventListener('click', function () {
+            html.classList.toggle('dark');
+            var isDark = html.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          });
+        }
+
+        if (menuBtn && mobileMenu) {
+          var setMenu = function (open) {
+            mobileMenu.classList.toggle('hidden', !open);
+            menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+          };
+
+          menuBtn.addEventListener('click', function () {
+            setMenu(mobileMenu.classList.contains('hidden'));
+          });
+
+          mobileMenu.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+              setMenu(false);
+            });
+          });
+        }
+
+        // Scroll-reveal for any element with .reveal (IntersectionObserver, no scroll listeners).
+        var reveals = document.querySelectorAll('.reveal');
+        if (reveals.length && 'IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                io.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.12 });
+          reveals.forEach(function (el) { io.observe(el); });
+        } else {
+          reveals.forEach(function (el) { el.classList.add('in'); });
+        }
+      });
+    </script>
+</body></html>

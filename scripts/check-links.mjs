@@ -28,10 +28,15 @@ if (!fs.existsSync(path.join(siteRoot, 'index.html'))) {
   process.exit(2);
 }
 
-const sources = [
-  ...fs.readdirSync(siteRoot).filter((f) => f.endsWith('.html')),
-  'llms.txt',
-].filter((f) => fs.existsSync(path.join(siteRoot, f)));
+function htmlSources(directory, prefix = '') {
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
+    const relative = path.join(prefix, entry.name);
+    if (entry.isDirectory()) return htmlSources(path.join(directory, entry.name), relative);
+    return entry.name.endsWith('.html') ? [relative] : [];
+  });
+}
+const sources = [...htmlSources(siteRoot), 'llms.txt']
+  .filter(file => fs.existsSync(path.join(siteRoot, file)));
 
 // Attribute-based references in HTML, plus bare URLs in text files.
 const HTML_REF = /<(?:a|link|script|img|source)\b[^>]*?\s(?:href|src)="([^"]+)"/gi;
