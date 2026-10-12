@@ -569,6 +569,9 @@ function emit(file, text) {
   }
 }
 
+const sitemapUrls = new Set();
+const siteOrigin = 'https://mockforge.dev';
+
 for (const file of pageFiles) {
   const config = getPageConfig(file);
   let text = fs.readFileSync(path.join(sourceRoot, file), 'utf8');
@@ -597,8 +600,37 @@ for (const file of pageFiles) {
     }
   }
 
+  // Indexable pages use their actual canonical URL; redirects and the 404
+  // page are excluded. Generating this during each build keeps new notes
+  // discoverable without maintaining a second hand-written page list.
+  if (file !== '404.html') {
+    const canonicalTags = [...text.matchAll(/<link\b(?=[^>]*\brel=["']canonical["'])[^>]*\bhref=["']([^"']+)["'][^>]*>/gi)];
+    if (canonicalTags.length > 1) {
+      throw new Error(`Multiple canonical URLs in ${file}`);
+    }
+    const canonical = canonicalTags.length
+      ? canonicalTags[0][1]
+      : `${siteOrigin}/${file === 'index.html' ? '' : file}`;
+    const url = new URL(canonical);
+    if (url.origin !== siteOrigin || url.search || url.hash) {
+      throw new Error(`Invalid canonical URL in ${file}`);
+    }
+    if (canonicalTags.length === 0) {
+      text = text.replace('</head>', `    <link rel="canonical" href="${escapeHtmlAttr(canonical)}" />\n  </head>`);
+    }
+    const noindex = /<meta\b(?=[^>]*\bname=["'](?:robots|googlebot)["'])[^>]*\bcontent=["'][^"']*\bnoindex\b/gi.test(text);
+    if (!noindex) sitemapUrls.add(url.href);
+  }
+
   emit(file, text);
 }
+
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${[...sitemapUrls].sort().map(url => `  <url><loc>${escapeXml(url)}</loc></url>`).join('\n')}
+</urlset>
+`;
+emit('public/sitemap.xml', sitemap);
 
 for (const [file, redirect] of Object.entries(REDIRECTS)) {
   if (pageFiles.includes(file)) {
@@ -619,10 +651,13 @@ if (outputRoot !== projectRoot && !flagCheck) {
     fs.copyFileSync(cnamePath, path.join(outputRoot, 'CNAME'));
   }
 
+  fs.writeFileSync(path.join(outputRoot, 'public', 'sitemap.xml'), sitemap);
+  fs.writeFileSync(path.join(outputRoot, 'sitemap.xml'), sitemap);
+
   // Serve agent/SEO discovery files from the dist root, not only under
   // /public/. Scanners and agents expect /robots.txt, /sitemap.xml,
   // /llms.txt, /openapi.json, and /openapi.registry.json at the domain root.
-  for (const rootAsset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'openapi.json', 'openapi.registry.json']) {
+  for (const rootAsset of ['robots.txt', 'llms.txt', 'openapi.json', 'openapi.registry.json']) {
     const assetPath = path.join(projectRoot, 'public', rootAsset);
     if (fs.existsSync(assetPath)) {
       fs.copyFileSync(assetPath, path.join(outputRoot, rootAsset));
