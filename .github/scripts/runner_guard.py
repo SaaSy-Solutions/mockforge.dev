@@ -37,6 +37,15 @@ def problems(workflows: pathlib.Path, approved: set[str]) -> list[str]:
                 if key not in approved:
                     found.append(f"{key}: self-hosted runner is not approved")
                 continue
+            matrix_key = re.fullmatch(r"\$\{\{\s*matrix\.([A-Za-z0-9_-]+)\s*\}\}", text.strip())
+            if matrix_key:
+                matrix = (job.get("strategy") or {}).get("matrix") or {}
+                name = matrix_key.group(1)
+                labels = {str(v) for v in matrix.get(name) or []}
+                labels |= {str(x[name]) for x in matrix.get("include") or [] if name in x}
+                if not labels or not labels <= FREE:
+                    found.append(f"{key}: matrix.{name} may select {sorted(labels - FREE) or 'an unchecked label'}")
+                continue
             if EXPRESSION.search(text):
                 # Every quoted label an expression can select must be free.
                 labels = set(re.findall(r"'([^']+)'", text))
