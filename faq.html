@@ -8,6 +8,54 @@
     <link rel="canonical" href="https://mockforge.dev/faq.html" />
     <link rel="icon" href="/public/favicon.ico" sizes="any" />
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is MockForge open source?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. MockForge is available under MIT or Apache-2.0. See the source repository and licenses."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need a Cloud account to run it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can run the CLI on your own machine without a Cloud account. Follow the installation guide to get started."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which API protocols can I mock?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "MockForge supports HTTP APIs, gRPC, GraphQL, WebSocket, and messaging protocols. Available commands depend on the features enabled in your build. Check the protocol documentation for setup and configuration."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use it in CI?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Run MockForge alongside your tests and point your application at its local endpoints. Keep your specification and configuration in version control so the same setup can run locally and in CI."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where can I get help?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Support page explains how to report a bug, ask about a Cloud account, or contact the team privately."
+          }
+        }
+      ]
+    }
+    </script>
     <link rel="stylesheet" href="/public/styles.css" />
     <link rel="alternate" type="application/rss+xml" title="MockForge Engineering Notes" href="/rss.xml" />
     <script>
