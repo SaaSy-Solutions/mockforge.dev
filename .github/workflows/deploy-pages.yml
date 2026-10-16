@@ -32,6 +32,9 @@ jobs:
       - run: npm ci
       - run: npm run build:css
       - run: npm run build:site
+        env:
+          # PostHog project key (public by design). Unset = analytics stays off.
+          POSTHOG_KEY: ${{ secrets.POSTHOG_KEY }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
