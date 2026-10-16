@@ -31,6 +31,7 @@ function renderSharedHeadBlock(includeOrgLd = true) {
   return `
     <link rel="stylesheet" href="/public/styles.css" />
     <link rel="alternate" type="application/rss+xml" title="MockForge Engineering Notes" href="/rss.xml" />
+    <script src="/public/analytics.js" defer></script>
     <script>
       (function () {
         try {
@@ -668,6 +669,23 @@ if (outputRoot !== projectRoot && !flagCheck) {
   }
 
   fs.writeFileSync(path.join(outputRoot, 'public', 'sitemap.xml'), sitemap);
+
+  // PostHog project key comes from the deploy environment (POSTHOG_KEY secret)
+  // so the committed source keeps the inert placeholder. Unset = analytics off.
+  const posthogKey = (process.env.POSTHOG_KEY || '').trim();
+  if (posthogKey) {
+    if (!/^phc_[A-Za-z0-9_-]+$/.test(posthogKey)) {
+      throw new Error('POSTHOG_KEY must be a PostHog project key (phc_...)');
+    }
+    const analyticsPath = path.join(outputRoot, 'public', 'analytics.js');
+    const analytics = fs.readFileSync(analyticsPath, 'utf8');
+    const placeholder = '"__POSTHOG_KEY__"';
+    if (analytics.split(placeholder).length !== 2) {
+      throw new Error(`Expected exactly one ${placeholder} in public/analytics.js`);
+    }
+    fs.writeFileSync(analyticsPath, analytics.replace(placeholder, JSON.stringify(posthogKey)));
+    console.log('Injected POSTHOG_KEY into public/analytics.js');
+  }
   fs.writeFileSync(path.join(outputRoot, 'sitemap.xml'), sitemap);
 
   // Serve agent/SEO discovery files from the dist root, not only under

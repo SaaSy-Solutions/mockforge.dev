@@ -30,6 +30,19 @@ node scripts/build-pages.js --force    # build and overwrite all root files (los
 If `--check` reports drift, port the root edits back into `src/pages/` before
 running the build, so future builds stay idempotent.
 
+## Analytics
+
+`public/analytics.js` loads PostHog (US cloud) on every page through the shared head
+block in `scripts/build-pages.js`, and tags visits referred by AI assistants (ChatGPT,
+Perplexity, Claude, Gemini, Copilot, Meta AI, Grok, DeepSeek, Mistral, You.com, Phind)
+with an `ai_referral_landing` event and an `ai_referrer` property. It is cookieless and
+does not record sessions or capture form input.
+
+The committed file keeps the placeholder `"__POSTHOG_KEY__"`, which leaves analytics off.
+`npm run build:site` swaps in the `POSTHOG_KEY` environment variable when it is set; the
+deploy workflow passes the `POSTHOG_KEY` repository secret. Run `npm test` to check the
+classifier and the build injection.
+
 ## Deployment
 
 This site is deployed using GitHub Pages:
