@@ -17,14 +17,16 @@
 
 ## How an agent should use it
 
-- Install the CLI (`cargo install mockforge-cli`, Homebrew, npm SDKs, or Docker) and run `mockforge http --spec <openapi-file>` to serve a mock from an OpenAPI spec. See https://docs.mockforge.dev for all protocols and flags.
-- The admin UI runs by default; every behavior is also scriptable over HTTP and config files (`mockforge.yaml`), so agents can drive it without a browser.
+- Install the CLI with `cargo install mockforge-cli` (installs the `mockforge` binary), or use the container image `ghcr.io/saasy-solutions/mockforge:latest`. Installation guide: https://docs.mockforge.dev/getting-started/installation.html
+- Serve a mock from an OpenAPI spec: `mockforge serve --spec <openapi-file> --http-port 3000`. With Docker: `docker run --rm -p 3000:3000 -v "$PWD":/work ghcr.io/saasy-solutions/mockforge:latest serve --spec /work/<openapi-file> --http-port 3000`. Run `mockforge serve --help` for protocol ports (`--grpc-port`, `--ws-port`, `--graphql-port`, `--kafka-port`, `--mqtt-port`, `--smtp-port`) and other flags; see https://docs.mockforge.dev for all protocols.
+- The admin UI is off by default; add `--admin` (default port 9080) to enable it. Every behavior is also scriptable over HTTP and config files (`mockforge.yaml`), so agents can drive it without a browser.
 - Config is declarative: generate or edit a `mockforge.yaml` rather than clicking through the UI.
 
 ## Docs
 
 - Documentation home: https://docs.mockforge.dev
-- Installation & quickstart: https://docs.mockforge.dev
+- Installation: https://docs.mockforge.dev/getting-started/installation.html
+- Quick start: https://docs.mockforge.dev/getting-started/quick-start.html
 - Configuration reference: https://docs.mockforge.dev/configuration/environment.html
 
 ## Site
