@@ -85,8 +85,15 @@ function renderSharedHeadBlock(includeOrgLd = true) {
       {
         "@context": "https://schema.org",
         "@type": "Organization",
+        "@id": "https://mockforge.dev/#organization",
         "name": "MockForge",
         "url": "https://mockforge.dev/",
+        "parentOrganization": {
+          "@type": "Organization",
+          "@id": "https://saasierinc.com/#organization",
+          "name": "SaaSier Inc",
+          "url": "https://saasierinc.com"
+        },
         "logo": "https://mockforge.dev/public/logo-transparent.png",
         "description": "Open-source API mocking framework for REST, gRPC, GraphQL, WebSockets, and SMTP.",
         "sameAs": [
@@ -324,11 +331,13 @@ function renderJsonLd(meta) {
     mainEntityOfPage: { '@type': 'WebPage', '@id': meta.url },
     author: {
       '@type': 'Organization',
+      '@id': 'https://mockforge.dev/#organization',
       name: 'MockForge',
       url: 'https://mockforge.dev/',
     },
     publisher: {
       '@type': 'Organization',
+      '@id': 'https://mockforge.dev/#organization',
       name: 'MockForge',
       logo: {
         '@type': 'ImageObject',
@@ -673,7 +682,15 @@ if (outputRoot !== projectRoot && !flagCheck) {
   // Serve agent/SEO discovery files from the dist root, not only under
   // /public/. Scanners and agents expect /robots.txt, /sitemap.xml,
   // /llms.txt, /openapi.json, and /openapi.registry.json at the domain root.
-  for (const rootAsset of ['robots.txt', 'llms.txt', 'openapi.json', 'openapi.registry.json']) {
+  // The IndexNow key file must live at the domain root (it is the keyLocation
+  // the deploy workflow submits to api.indexnow.org).
+  for (const rootAsset of [
+    'robots.txt',
+    'llms.txt',
+    'openapi.json',
+    'openapi.registry.json',
+    'b7e4c2a9f1d84630a5c7e2b9d0f3a614.txt',
+  ]) {
     const assetPath = path.join(projectRoot, 'public', rootAsset);
     if (fs.existsSync(assetPath)) {
       fs.copyFileSync(assetPath, path.join(outputRoot, rootAsset));
