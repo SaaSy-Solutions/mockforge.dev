@@ -34,9 +34,10 @@
       "@graph": [
         {
           "@type": "Organization",
-          "@id": "https://mockforge.dev/#org",
+          "@id": "https://mockforge.dev/#organization",
           "name": "MockForge",
           "url": "https://mockforge.dev/",
+          "parentOrganization": { "@type": "Organization", "@id": "https://saasierinc.com/#organization", "name": "SaaSier Inc", "url": "https://saasierinc.com" },
           "logo": "https://mockforge.dev/public/logo-transparent.png",
           "sameAs": ["https://github.com/SaaSy-Solutions/mockforge", "https://www.linkedin.com/company/mockforge"],
           "contactPoint": [
@@ -55,13 +56,13 @@
         },
         {
           "@type": "SoftwareApplication",
-          "@id": "https://mockforge.dev/#app",
+          "@id": "https://mockforge.dev/#software",
           "name": "MockForge",
           "description": "A comprehensive mocking framework for REST, gRPC, GraphQL, WebSocket, Kafka, MQTT and more. Generate realistic data, inject latency and failures, and deploy hosted mocks with a single command.",
           "url": "https://mockforge.dev/",
           "applicationCategory": "DeveloperApplication",
           "operatingSystem": "Linux, macOS, Windows",
-          "publisher": { "@id": "https://mockforge.dev/#org" },
+          "publisher": { "@id": "https://mockforge.dev/#organization" },
           "offers": [
             { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD", "url": "https://mockforge.dev/pricing.html" },
             { "@type": "Offer", "name": "Pro", "price": "29", "priceCurrency": "USD", "url": "https://mockforge.dev/pricing.html" },
