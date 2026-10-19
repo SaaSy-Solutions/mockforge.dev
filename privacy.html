@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Privacy — MockForge</title>
-    <meta name="description" content="What the mockforge.dev marketing site collects: no analytics or tracking scripts, just a local theme preference in localStorage. No accounts, forms, or ads on this site." />
+    <meta name="description" content="What the mockforge.dev marketing site collects: cookieless PostHog analytics and a local theme preference. No accounts, forms, or ads on this site." />
     <meta name="robots" content="noindex, follow" />
 
     <meta property="og:title" content="Privacy — MockForge" />
@@ -23,6 +23,7 @@
 
     <link rel="stylesheet" href="/public/styles.css" />
     <link rel="alternate" type="application/rss+xml" title="MockForge Engineering Notes" href="/rss.xml" />
+    <script src="/public/analytics.js" defer></script>
     <script>
       (function () {
         try {
@@ -164,7 +165,7 @@
         <h1 class="mt-3 text-4xl font-semibold tracking-tight text-brand-dark dark:text-white">
           What this website collects
         </h1>
-        <p class="mt-3 text-sm text-text-secondary">Last updated: September 27, 2026</p>
+        <p class="mt-3 text-sm text-text-secondary">Last updated: October 16, 2026</p>
         <p class="mt-4 text-lg text-text-secondary leading-relaxed">
           This policy covers the public marketing site at mockforge.dev. It is intentionally short
           because the site is static: it has no user accounts, no comment forms, no advertising,
@@ -175,7 +176,10 @@
           <div>
             <h2 class="text-xl font-semibold text-brand-dark">Analytics</h2>
             <p class="mt-2 text-text-secondary leading-relaxed">
-              This site does not run analytics or tracking scripts and sets no cookies. Like any
+              This site uses PostHog to count page views and link clicks in aggregate, including
+              whether a visit came from an AI assistant such as ChatGPT, Perplexity, or Claude. It
+              runs without cookies, does not keep an identifier across visits, does not record
+              sessions, and does not capture form input. The site sets no cookies. Like any
               web server, our static host (GitHub Pages) may keep standard request logs such as IP
               address and user agent for security and abuse prevention. Web fonts are served by
               Google Fonts, which receives a normal request when a page loads.
@@ -185,9 +189,10 @@
           <div>
             <h2 class="text-xl font-semibold text-brand-dark">Local storage</h2>
             <p class="mt-2 text-text-secondary leading-relaxed">
-              The only value this site stores in your browser is a single
-              <code>theme</code> key in localStorage that remembers whether you chose light or
-              dark mode. It never leaves your device and is not shared with anyone.
+              This site stores a <code>theme</code> key in localStorage that remembers whether you
+              chose light or dark mode; it never leaves your device. When a visit comes from an AI
+              assistant, an <code>ai_referrer</code> key in sessionStorage notes which one so the
+              analytics above can attribute the visit; it is cleared when you close the tab.
             </p>
           </div>
 

@@ -6,7 +6,8 @@
     "build:pages": "node ./scripts/build-pages.js",
     "build:site": "node ./scripts/build-pages.js dist",
     "sync:shells": "npm run build:pages",
-    "check:links": "node ./scripts/check-links.mjs"
+    "check:links": "node ./scripts/check-links.mjs",
+    "test": "node --test scripts/analytics.test.js"
   },
   "devDependencies": {
     "tailwindcss": "3.4.17"
