@@ -591,7 +591,9 @@ function emit(file, text) {
   }
 }
 
-const sitemapUrls = new Set();
+// url -> lastmod (YYYY-MM-DD) or null. Notes carry their published date
+// from the engineering-notes index; other pages have no reliable date.
+const sitemapUrls = new Map();
 const siteOrigin = 'https://mockforge.dev';
 
 for (const file of pageFiles) {
@@ -642,7 +644,8 @@ for (const file of pageFiles) {
       text = text.replace('</head>', `    <link rel="canonical" href="${escapeHtmlAttr(canonical)}" />\n  </head>`);
     }
     const noindex = /<meta\b(?=[^>]*\bname=["'](?:robots|googlebot)["'])[^>]*\bcontent=["'][^"']*\bnoindex\b/gi.test(text);
-    if (!noindex) sitemapUrls.add(url.href);
+    const lastmod = noteMetaBySlug.get(file)?.dateIso?.slice(0, 10) || null;
+    if (!noindex) sitemapUrls.set(url.href, lastmod);
   }
 
   emit(outputFile, text);
@@ -653,7 +656,10 @@ for (const file of pageFiles) {
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${[...sitemapUrls].sort().map(url => `  <url><loc>${escapeXml(url)}</loc></url>`).join('\n')}
+${[...sitemapUrls.keys()].sort().map(url => {
+  const lastmod = sitemapUrls.get(url);
+  return `  <url><loc>${escapeXml(url)}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}</url>`;
+}).join('\n')}
 </urlset>
 `;
 emit('public/sitemap.xml', sitemap);
