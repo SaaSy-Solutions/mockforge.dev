@@ -25,7 +25,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+          # No `cache:`: the npm cache was billed GitHub Actions storage
+          # (see .github/scripts/runner_guard.py).
 
       - uses: actions/configure-pages@v5
 
