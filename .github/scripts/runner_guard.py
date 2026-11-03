@@ -10,6 +10,14 @@ Fail-closed: runs-on must be literal labels or ${{ matrix.os }} over a literal
 os list. Any other shape raises and is rejected, including other expressions,
 expression-built matrices, runner groups and reusable workflows from other
 repositories.
+
+Actions storage is billed to the org even for public repositories, and the org
+runs out of free storage early in the month. So the guard also rejects writes
+to GitHub cache storage: actions/cache, a `cache:` input on setup-node or
+setup-python, setup-uv without `enable-cache: false` (it caches by default on
+GitHub-hosted runners), and setup-go without `cache: false`. Artifact uploads
+must set retention-days of 3 or less; the Pages artifact is exempt because the
+deploy needs it.
 """
 
 import os
@@ -42,11 +50,35 @@ def runner_labels(job: dict) -> set:
     return set(labels)
 
 
+def storage_problems(key: str, job: dict) -> list:
+    """Steps that would write GitHub Actions cache or long-lived artifacts."""
+    found = []
+    for index, step in enumerate(job.get("steps") or []):
+        uses = str(step.get("uses", ""))
+        name = uses.split("@", 1)[0]
+        options = step.get("with") or {}
+        where = f"{key}: step {index + 1} ({uses or step.get('name', 'run')})"
+        if name in ("actions/cache", "actions/cache/save"):
+            found.append(f"{where}: writes GitHub cache storage")
+        elif name in ("actions/setup-node", "actions/setup-python") and options.get("cache"):
+            found.append(f"{where}: cache: writes GitHub cache storage")
+        elif name == "astral-sh/setup-uv" and str(options.get("enable-cache", "")).lower() != "false":
+            found.append(f"{where}: needs enable-cache: false")
+        elif name == "actions/setup-go" and str(options.get("cache", "")).lower() != "false":
+            found.append(f"{where}: needs cache: false")
+        elif name == "actions/upload-artifact":
+            days = options.get("retention-days")
+            if not isinstance(days, int) or days > 3:
+                found.append(f"{where}: needs retention-days of 3 or less")
+    return found
+
+
 def problems(workflows: pathlib.Path, approved: set) -> list:
     found = []
     for workflow in sorted(workflows.glob("*.y*ml")):
         for job_id, job in (yaml.safe_load(workflow.read_text()).get("jobs") or {}).items():
             key = f"{workflow.name}:{job_id}"
+            found.extend(storage_problems(key, job))
             try:
                 labels = runner_labels(job)
             except UNPROVABLE as error:
@@ -62,5 +94,5 @@ def problems(workflows: pathlib.Path, approved: set) -> list:
 if __name__ == "__main__":
     approved = set(filter(None, os.environ.get("SELF_HOSTED_OK", "").replace(" ", "").split(",")))
     found = problems(pathlib.Path(".github/workflows"), approved)
-    print("\n".join(found) or "All jobs use free standard runners or approved self-hosted ones.")
+    print("\n".join(found) or "All jobs use free standard runners or approved self-hosted ones, and no job writes GitHub cache storage.")
     sys.exit(1 if found else 0)
