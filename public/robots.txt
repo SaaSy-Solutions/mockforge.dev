@@ -2,3 +2,5 @@ User-agent: *
 Allow: /
 
 Sitemap: https://mockforge.dev/sitemap.xml
+
+# AI and search crawlers may use the public product and documentation pages.

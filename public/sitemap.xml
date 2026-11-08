@@ -3,6 +3,7 @@
   <url><loc>https://mockforge.dev/</loc></url>
   <url><loc>https://mockforge.dev/compare-mockserver.html</loc></url>
   <url><loc>https://mockforge.dev/comparisons.html</loc></url>
+  <url><loc>https://mockforge.dev/cve-exposure-labs.html</loc></url>
   <url><loc>https://mockforge.dev/engineering-notes.html</loc></url>
   <url><loc>https://mockforge.dev/faq.html</loc></url>
   <url><loc>https://mockforge.dev/note-announcing-v1.html</loc><lastmod>2025-10-23</lastmod></url>
@@ -12,6 +13,7 @@
   <url><loc>https://mockforge.dev/note-conformance-maturity.html</loc><lastmod>2026-05-23</lastmod></url>
   <url><loc>https://mockforge.dev/note-conformance-testing.html</loc><lastmod>2026-03-07</lastmod></url>
   <url><loc>https://mockforge.dev/note-cost-cap-design.html</loc><lastmod>2026-05-17</lastmod></url>
+  <url><loc>https://mockforge.dev/note-cve-toolkit.html</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://mockforge.dev/note-fault-injection-patterns.html</loc><lastmod>2026-05-20</lastmod></url>
   <url><loc>https://mockforge.dev/note-grpc-dynamic-routing-release.html</loc><lastmod>2026-05-22</lastmod></url>
   <url><loc>https://mockforge.dev/note-grpc-mocking-in-ci.html</loc><lastmod>2026-05-13</lastmod></url>
@@ -34,6 +36,7 @@
   <url><loc>https://mockforge.dev/note-v0-2-6-security-infrastructure.html</loc><lastmod>2025-11-04</lastmod></url>
   <url><loc>https://mockforge.dev/note-v0-2-7-api-sync-tcp.html</loc><lastmod>2025-11-05</lastmod></url>
   <url><loc>https://mockforge.dev/note-v0-3-227-release.html</loc><lastmod>2026-10-02</lastmod></url>
+  <url><loc>https://mockforge.dev/note-v0-3-241-release.html</loc><lastmod>2026-11-07</lastmod></url>
   <url><loc>https://mockforge.dev/note-v0-3-migration-playbook.html</loc><lastmod>2026-03-08</lastmod></url>
   <url><loc>https://mockforge.dev/note-vs-postman-mock.html</loc><lastmod>2026-05-25</lastmod></url>
   <url><loc>https://mockforge.dev/note-wafbench-security-hardening.html</loc><lastmod>2026-03-07</lastmod></url>

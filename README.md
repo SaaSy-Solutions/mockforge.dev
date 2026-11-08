@@ -2,6 +2,26 @@
 
 This repository contains the static marketing site for [mockforge.dev](https://mockforge.dev).
 
+## Company name
+
+MockForge is owned and published by **MockForge LLC** (its own independent legal entity).
+
+The legal entity name is defined in **one place** in the site generator:
+- `scripts/build-pages.js`: `const LEGAL_ENTITY = 'MockForge LLC';`
+
+The build script renders this constant everywhere MockForge's owner/publisher/copyright holder is named:
+- Organization JSON-LD (`name` and `legalName`) in `renderSharedHeadBlock()`
+- Page footers (`© <year> MockForge LLC. MIT or Apache-2.0.`) in `renderFooter()`
+- BlogPosting JSON-LD author and publisher for engineering note pages in `renderJsonLd()`
+- Source template placeholders (`{{LEGAL_ENTITY}}` / `{{COMPANY_NAME}}`) in `src/pages/index.html`
+
+To rename the entity in the future, change `LEGAL_ENTITY` in `scripts/build-pages.js` and run `npm run build:pages` (or `npm run build:site`).
+
+Generated root files that receive this value from the generator:
+- `index.html` (rendered from `src/pages/index.html`)
+- `404.html`, `pricing.html`, `faq.html`, `contact.html`, `privacy.html`, `trust.html`, `support.html`, `cve-exposure-labs.html`, `engineering-notes.html`, `comparisons.html`, `compare-*.html`, `vs/*.html`, and all `note-*.html` pages (via shared head and footer blocks)
+- `dist/` (when building production distribution via `npm run build:site`)
+
 ## Development
 
 This site builds plain HTML files for GitHub Pages. To make changes:
