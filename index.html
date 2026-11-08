@@ -35,9 +35,9 @@
         {
           "@type": "Organization",
           "@id": "https://mockforge.dev/#organization",
-          "name": "MockForge",
+          "name": "MockForge LLC",
+          "legalName": "MockForge LLC",
           "url": "https://mockforge.dev/",
-          "parentOrganization": { "@type": "Organization", "@id": "https://saasierinc.com/#organization", "name": "SaaSier Inc", "url": "https://saasierinc.com" },
           "logo": "https://mockforge.dev/public/logo-transparent.png",
           "sameAs": ["https://github.com/SaaSy-Solutions/mockforge", "https://www.linkedin.com/company/mockforge"],
           "contactPoint": [
@@ -146,7 +146,7 @@
           </a>
           <nav class="hidden md:flex items-center gap-3 lg:gap-4">
             <a href="https://docs.mockforge.dev" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Docs</a>
-            <a href="/engineering-notes.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Notes</a>
+            <a href="/engineering-notes.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">What's new</a>
             <a href="#features" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Features</a>
             <a href="/pricing.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Pricing</a>
             <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">GitHub</a>
@@ -167,7 +167,7 @@
       <div id="mobileMenu" class="md:hidden hidden border-t border-black/5 dark:border-white/10 bg-white dark:bg-brand-dark">
         <div class="px-4 py-3 space-y-2">
           <a href="https://docs.mockforge.dev" class="block text-text-primary dark:text-white">Docs</a>
-          <a href="/engineering-notes.html" class="block text-text-primary dark:text-white">Notes</a>
+          <a href="/engineering-notes.html" class="block text-text-primary dark:text-white">What's new</a>
           <a href="#features" class="block text-text-primary dark:text-white">Features</a>
           <a href="/pricing.html" class="block text-text-primary dark:text-white">Pricing</a>
           <a href="https://github.com/SaaSy-Solutions/mockforge" class="block text-text-primary dark:text-white">GitHub</a>
@@ -435,6 +435,14 @@ Listening on <span class="text-emerald-400">http://localhost:8080</span></pre>
     </section>
 
     <!-- FAQ: 2-col -->
+    <section class="py-12 border-y border-black/5 bg-white" aria-labelledby="release-241-heading">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 id="release-241-heading" class="text-2xl font-semibold tracking-tight text-brand-dark">What shipped in MockForge 0.3.241?</h2>
+        <p class="mt-3 max-w-3xl leading-7 text-text-secondary">Release 0.3.241 adds data-driven CVE lab packs, clear EXPOSED / NOT exposed verdicts, a printed run plan, optional TLS verification bypass for lab targets, and air-gapped lab host guidance.</p>
+        <a href="/cve-exposure-labs.html" class="mt-4 inline-flex text-brand-orange underline underline-offset-4">Read about CVE exposure labs</a>
+      </div>
+    </section>
+
     <section id="faq" class="py-20 lg:py-24">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[0.6fr_1.4fr] gap-10">
         <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-brand-dark reveal">Questions, answered</h2>
@@ -482,11 +490,11 @@ Listening on <span class="text-emerald-400">http://localhost:8080</span></pre>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-3">
           <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-6 w-6" />
-          <span class="text-sm text-text-secondary">© <span id="year"></span> MockForge. MIT or Apache-2.0.</span>
+          <span class="text-sm text-text-secondary">© <span id="year"></span> MockForge LLC. MIT or Apache-2.0.</span>
         </div>
         <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm">
           <a href="https://docs.mockforge.dev" class="text-text-secondary hover:text-text-primary">Docs</a>
-          <a href="/engineering-notes.html" class="text-text-secondary hover:text-text-primary">Notes</a>
+          <a href="/engineering-notes.html" class="text-text-secondary hover:text-text-primary">What's new</a>
           <a href="/pricing.html" class="text-text-secondary hover:text-text-primary">Pricing</a>
           <a href="/faq.html" class="text-text-secondary hover:text-text-primary">FAQ</a>
           <a href="/support.html" class="text-text-secondary hover:text-text-primary">Support</a>

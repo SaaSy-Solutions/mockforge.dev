@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>What’s new in MockForge 0.3.241: CVE exposure labs</title>
+    <meta name="description" content="MockForge 0.3.241 adds data-driven CVE lab packs, explicit exposure verdicts, run plans, self-signed target support, and air-gapped lab host guidance." />
+    <link rel="icon" href="/public/favicon.ico" sizes="any" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    {{SHARED_HEAD_BLOCK}}
+  </head>
+  <body class="bg-surface-subtle text-text-primary antialiased font-sans">
+    {{HEADER}}
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <article class="rounded-2xl bg-white p-8 shadow-note ring-1 ring-black/5 sm:p-10">
+        <a href="/engineering-notes.html" class="text-sm font-medium text-brand-orange">Back to What’s new</a>
+        <p class="mt-6 text-xs uppercase tracking-[0.24em] text-slate-500">November 7, 2026</p>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">What’s new in MockForge 0.3.241: CVE exposure labs</h1>
+        <p class="mt-6 text-lg leading-8 text-slate-700">MockForge 0.3.241 expands managed CVE labs with data-driven pack definitions, clearer evidence and verdicts, and support for lab workflows that use self-signed targets or air-gapped hosts.</p>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">CVE packs describe their own checks</h2>
+        <p class="mt-4 leading-8 text-slate-700">Each pack now declares its catalog entry and evidence checks as data. The lab recorder can forward POST bodies, which body-injection reproductions require. Only reviewed packs are available. This release includes the managed Next.js CVE-2025-29927 lab. PHP2Shell and Node2Shell are planned and are not shipped in this release.</p>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Runs show a plan, then a plain verdict</h2>
+        <p class="mt-4 leading-8 text-slate-700"><code>mockforge cve run</code> prints its recorder endpoint and target before starting, and warns when the default localhost bind cannot receive traffic from a remote load balancer. The final result states whether the target is EXPOSED or NOT exposed, gives the reason, and lists each evidence check. Evidence is also stored in <code>report.json</code>.</p>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">TLS and air-gapped lab hosts</h2>
+        <p class="mt-4 leading-8 text-slate-700">For self-signed lab targets, <code>--skip-tls-verify</code> opts out of certificate verification for control requests and the test client. Verification stays enabled by default; the active flag prints a warning and the setting is recorded in the report. The managed labs guide now explains exporting pinned images with <code>docker save</code>, loading them on the isolated host, and using <code>prepare</code> to verify their digests without pulling.</p>
+        <h2 class="mt-10 text-2xl font-semibold tracking-tight text-brand-dark">Other fixes and changes</h2>
+        <ul class="mt-4 list-disc space-y-2 pl-6 leading-8 text-slate-700">
+          <li>Cloud tunnels refuse unauthenticated cloud destinations.</li>
+          <li>Bundled demo samples serve their real image responses.</li>
+          <li>Stripe subscription webhooks reconcile ordered subscription state and handle API-version changes, repeated and unknown events, and prices.</li>
+          <li>Protocol support is split out of transport builds, reducing compilation for builds that do not need every protocol.</li>
+        </ul>
+        <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <a href="https://github.com/SaaSy-Solutions/mockforge/releases/tag/v0.3.241" class="inline-flex items-center rounded-xl bg-brand-orange px-4 py-2 font-medium text-white">0.3.241 GitHub release</a>
+          <a href="https://github.com/SaaSy-Solutions/mockforge/blob/main/book/src/reference/changelog.md" class="inline-flex items-center rounded-xl border border-black/10 px-4 py-2 font-medium">Changelog</a>
+          <a href="https://docs.mockforge.dev/user-guide/managed-cve-labs.html" class="inline-flex items-center rounded-xl border border-black/10 px-4 py-2 font-medium">Managed CVE labs guide</a>
+        </div>
+      </article>
+    </main>
+    {{FOOTER}}
+    {{SHELL_SCRIPT}}
+  </body>
+</html>

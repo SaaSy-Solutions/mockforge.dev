@@ -1,0 +1,37 @@
+# MockForge: product and documentation guide
+
+MockForge is an open-source API mocking framework for development and testing. It can serve realistic mock responses based on API specifications and configuration, and supports failure behavior for testing client handling. Consult the linked docs for current requirements, flags, and protocol coverage.
+
+## Start here
+
+- Site: https://mockforge.dev/
+- Documentation: https://docs.mockforge.dev/
+- Installation: https://docs.mockforge.dev/getting-started/installation.html
+- Quick start: https://docs.mockforge.dev/getting-started/quick-start.html
+- Configuration: https://docs.mockforge.dev/configuration/environment.html
+- FAQ: https://mockforge.dev/faq.html
+- Pricing: https://mockforge.dev/pricing.html
+
+## MockForge 0.3.241 managed CVE labs
+
+In version 0.3.241, CVE lab packs declare catalog metadata and evidence checks as data. The recorder can forward POST bodies. A CVE run prints its plan before starting, including the recorder endpoint and target, with guidance if a remote load balancer cannot reach the default localhost bind. Results state whether the target is EXPOSED or NOT exposed, include the reason and evidence checks, and store checks in report.json.
+
+The release supports `mockforge cve run --skip-tls-verify` for self-signed lab targets. Certificate verification remains enabled by default. When enabled, the flag applies to control requests and the test client, prints a warning, and is recorded in the report. The managed labs documentation includes an air-gapped workflow: save pinned container images on a connected machine, load them on the lab host, then use `prepare` to verify digests without pulling.
+
+The managed Next.js CVE-2025-29927 pack is included. PHP2Shell and Node2Shell are planned and were not included in 0.3.241.
+
+- Feature guide: https://mockforge.dev/cve-exposure-labs.html
+- Release note: https://mockforge.dev/note-v0-3-241-release.html
+- GitHub release: https://github.com/SaaSy-Solutions/mockforge/releases/tag/v0.3.241
+- Managed CVE labs guide: https://docs.mockforge.dev/user-guide/managed-cve-labs.html
+- Changelog: https://github.com/SaaSy-Solutions/mockforge/blob/main/book/src/reference/changelog.md
+
+Other 0.3.241 changes: cloud tunnels refuse unauthenticated cloud destinations; bundled demo samples serve their real image responses; Stripe subscription webhooks reconcile ordered subscription state and handle API-version changes, repeats, unknown events, and prices; protocol support is split from transport builds so builds that do not need every protocol compile less.
+
+## Site resources
+
+- What's new: https://mockforge.dev/engineering-notes.html
+- Full sitemap: https://mockforge.dev/sitemap.xml
+- Source repository: https://github.com/SaaSy-Solutions/mockforge
+- Security: https://mockforge.dev/trust.html
+- Support: https://mockforge.dev/support.html

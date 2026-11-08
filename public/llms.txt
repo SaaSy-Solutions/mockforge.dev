@@ -2,6 +2,16 @@
 
 > MockForge is an open-source API mocking framework that simulates real backend behavior across HTTP/REST, gRPC, GraphQL, WebSockets, SMTP, and more. Point it at an OpenAPI spec, protobuf, or GraphQL schema and it serves realistic responses with intelligent synthetic data, stateful scenarios, and failure injection. MIT or Apache-2.0 licensed, with an optional cloud offering for hosted mocks.
 
+## MockForge 0.3.241
+
+- CVE exposure labs feature page: https://mockforge.dev/cve-exposure-labs.html
+- Release notes: https://mockforge.dev/note-v0-3-241-release.html
+- GitHub release: https://github.com/SaaSy-Solutions/mockforge/releases/tag/v0.3.241
+- Managed CVE labs guide: https://docs.mockforge.dev/user-guide/managed-cve-labs.html
+- Changelog: https://github.com/SaaSy-Solutions/mockforge/blob/main/book/src/reference/changelog.md
+- The release provides data-driven CVE lab packs, plain EXPOSED / NOT exposed verdicts with evidence checks, run plans printed before execution, an opt-in --skip-tls-verify flag, and guidance for air-gapped lab hosts.
+- The managed Next.js CVE-2025-29927 pack is available. PHP2Shell and Node2Shell are planned, not shipped.
+
 ## When to use MockForge
 
 - You are developing or testing against a backend API that is unfinished, unstable, rate-limited, or expensive to call, and you need a faithful stand-in.
@@ -34,6 +44,7 @@
 - Homepage: https://mockforge.dev/
 - Pricing (cloud tiers): https://mockforge.dev/pricing.html
 - Engineering notes: https://mockforge.dev/engineering-notes.html
+- FAQ: https://mockforge.dev/faq.html
 - Contact: https://mockforge.dev/contact.html
 - Privacy: https://mockforge.dev/privacy.html
 - Source code (GitHub): https://github.com/SaaSy-Solutions/mockforge
@@ -53,3 +64,7 @@
 - Sales and enterprise: sales@mockforge.dev
 - Privacy and data requests: privacy@mockforge.dev
 - Legal and agreements: legal@mockforge.dev
+
+## Further information
+
+- Full agent and product guide: https://mockforge.dev/llms-full.txt

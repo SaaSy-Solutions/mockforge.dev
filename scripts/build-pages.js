@@ -16,6 +16,12 @@
 const fs = require('fs');
 const path = require('path');
 
+// Canonical legal entity owning MockForge. Keep this in ONE place:
+// this value renders into Organization JSON-LD, footers, BlogPosting
+// metadata, and any {{LEGAL_ENTITY}} / {{COMPANY_NAME}} template tags.
+const LEGAL_ENTITY = 'MockForge LLC';
+const COMPANY_NAME = LEGAL_ENTITY;
+
 const projectRoot = path.resolve(__dirname, '..');
 const sourceRoot = path.join(projectRoot, 'src', 'pages');
 
@@ -87,14 +93,9 @@ function renderSharedHeadBlock(includeOrgLd = true) {
         "@context": "https://schema.org",
         "@type": "Organization",
         "@id": "https://mockforge.dev/#organization",
-        "name": "MockForge",
+        "name": "${LEGAL_ENTITY}",
+        "legalName": "${LEGAL_ENTITY}",
         "url": "https://mockforge.dev/",
-        "parentOrganization": {
-          "@type": "Organization",
-          "@id": "https://saasierinc.com/#organization",
-          "name": "SaaSier Inc",
-          "url": "https://saasierinc.com"
-        },
         "logo": "https://mockforge.dev/public/logo-transparent.png",
         "description": "Open-source API mocking framework for REST, gRPC, GraphQL, WebSockets, and SMTP.",
         "sameAs": [
@@ -145,7 +146,7 @@ function renderHeader({ logoHref, featuresHref }) {
           </a>
           <nav class="hidden md:flex items-center gap-3 lg:gap-4">
             <a href="https://docs.mockforge.dev" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Docs</a>
-            <a href="/engineering-notes.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Notes</a>
+            <a href="/engineering-notes.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">What's new</a>
             <a href="${featuresHref}" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Features</a>
             <a href="/pricing.html" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">Pricing</a>
             <a href="https://github.com/SaaSy-Solutions/mockforge" class="text-text-secondary dark:text-gray-300 hover:text-text-primary dark:hover:text-white text-sm lg:text-base">GitHub</a>
@@ -166,7 +167,7 @@ function renderHeader({ logoHref, featuresHref }) {
       <div id="mobileMenu" class="md:hidden hidden border-t border-black/5 dark:border-white/10 bg-white dark:bg-brand-dark">
         <div class="px-4 py-3 space-y-2">
           <a href="https://docs.mockforge.dev" class="block text-text-primary dark:text-white">Docs</a>
-          <a href="/engineering-notes.html" class="block text-text-primary dark:text-white">Notes</a>
+          <a href="/engineering-notes.html" class="block text-text-primary dark:text-white">What's new</a>
           <a href="${featuresHref}" class="block text-text-primary dark:text-white">Features</a>
           <a href="/pricing.html" class="block text-text-primary dark:text-white">Pricing</a>
           <a href="https://github.com/SaaSy-Solutions/mockforge" class="block text-text-primary dark:text-white">GitHub</a>
@@ -184,11 +185,11 @@ function renderFooter() {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-3">
           <img src="/public/logo-transparent.png" alt="MockForge logo" class="h-6 w-6" />
-          <span class="text-sm text-text-secondary">© <span id="year"></span> MockForge. MIT or Apache-2.0.</span>
+          <span class="text-sm text-text-secondary">© <span id="year"></span> ${LEGAL_ENTITY}. MIT or Apache-2.0.</span>
         </div>
         <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm">
           <a href="https://docs.mockforge.dev" class="text-text-secondary hover:text-text-primary">Docs</a>
-          <a href="/engineering-notes.html" class="text-text-secondary hover:text-text-primary">Notes</a>
+          <a href="/engineering-notes.html" class="text-text-secondary hover:text-text-primary">What's new</a>
           <a href="/pricing.html" class="text-text-secondary hover:text-text-primary">Pricing</a>
           <a href="/faq.html" class="text-text-secondary hover:text-text-primary">FAQ</a>
           <a href="/support.html" class="text-text-secondary hover:text-text-primary">Support</a>
@@ -333,13 +334,13 @@ function renderJsonLd(meta) {
     author: {
       '@type': 'Organization',
       '@id': 'https://mockforge.dev/#organization',
-      name: 'MockForge',
+      name: LEGAL_ENTITY,
       url: 'https://mockforge.dev/',
     },
     publisher: {
       '@type': 'Organization',
       '@id': 'https://mockforge.dev/#organization',
-      name: 'MockForge',
+      name: LEGAL_ENTITY,
       logo: {
         '@type': 'ImageObject',
         url: 'https://mockforge.dev/public/logo-transparent.png',
@@ -610,6 +611,8 @@ for (const file of pageFiles) {
   text = text.replace('{{HEADER}}', renderHeader(config));
   text = text.replace('{{FOOTER}}', renderFooter());
   text = text.replace('{{SHELL_SCRIPT}}', renderShellScript());
+  text = text.replaceAll('{{LEGAL_ENTITY}}', LEGAL_ENTITY);
+  text = text.replaceAll('{{COMPANY_NAME}}', COMPANY_NAME);
 
   // Inject BlogPosting JSON-LD into note pages so search engines and feed
   // aggregators see structured metadata (title, date, author, publisher).
@@ -644,7 +647,8 @@ for (const file of pageFiles) {
       text = text.replace('</head>', `    <link rel="canonical" href="${escapeHtmlAttr(canonical)}" />\n  </head>`);
     }
     const noindex = /<meta\b(?=[^>]*\bname=["'](?:robots|googlebot)["'])[^>]*\bcontent=["'][^"']*\bnoindex\b/gi.test(text);
-    const lastmod = noteMetaBySlug.get(file)?.dateIso?.slice(0, 10) || null;
+    const dateMatch = text.match(/"date(?:Modified|Published)":\s*"(\d{4}-\d{2}-\d{2})"/);
+    const lastmod = noteMetaBySlug.get(file)?.dateIso?.slice(0, 10) || (dateMatch ? dateMatch[1] : null);
     if (!noindex) sitemapUrls.set(url.href, lastmod);
   }
 
@@ -711,6 +715,7 @@ if (outputRoot !== projectRoot && !flagCheck) {
   for (const rootAsset of [
     'robots.txt',
     'llms.txt',
+    'llms-full.txt',
     'openapi.json',
     'openapi.registry.json',
     'b7e4c2a9f1d84630a5c7e2b9d0f3a614.txt',
