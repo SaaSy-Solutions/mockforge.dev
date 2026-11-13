@@ -1,6 +1,6 @@
 # MockForge
 
-> MockForge is an open-source API mocking framework that simulates real backend behavior across HTTP/REST, gRPC, GraphQL, WebSockets, SMTP, and more. Point it at an OpenAPI spec, protobuf, or GraphQL schema and it serves realistic responses with intelligent synthetic data, stateful scenarios, and failure injection. MIT or Apache-2.0 licensed, with an optional cloud offering for hosted mocks.
+> MockForge is an open source mock API generator in Rust. It simulates real backend behavior across 10 protocols — HTTP, gRPC, WebSocket, GraphQL, Kafka, MQTT, AMQP, SMTP, FTP, and TCP — with SOAP/XML APIs supported over the HTTP adapter. Point it at an OpenAPI spec, protobuf, or GraphQL schema and it serves realistic responses with intelligent synthetic data, stateful scenarios, and failure injection. MIT or Apache-2.0 licensed, with an optional cloud offering for hosted mocks.
 
 ## MockForge 0.3.241
 
