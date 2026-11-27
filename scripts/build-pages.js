@@ -97,7 +97,7 @@ function renderSharedHeadBlock(includeOrgLd = true) {
         "legalName": "${LEGAL_ENTITY}",
         "url": "https://mockforge.dev/",
         "logo": "https://mockforge.dev/public/logo-transparent.png",
-        "description": "Open-source API mocking framework for REST, gRPC, GraphQL, WebSockets, and SMTP.",
+        "description": "Open source mock API generator in Rust for 10 protocols: HTTP, gRPC, WebSocket, GraphQL, Kafka, MQTT, AMQP, SMTP, FTP, and TCP, with SOAP/XML over the HTTP adapter.",
         "sameAs": [
           "https://github.com/SaaSy-Solutions/mockforge",
           "https://www.linkedin.com/company/mockforge"

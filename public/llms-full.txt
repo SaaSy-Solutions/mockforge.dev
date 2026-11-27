@@ -1,6 +1,6 @@
 # MockForge: product and documentation guide
 
-MockForge is an open-source API mocking framework for development and testing. It can serve realistic mock responses based on API specifications and configuration, and supports failure behavior for testing client handling. Consult the linked docs for current requirements, flags, and protocol coverage.
+MockForge is an open source mock API generator in Rust, for development and testing. It can serve realistic mock responses based on API specifications and configuration, and supports failure behavior for testing client handling. Consult the linked docs for current requirements, flags, and protocol coverage.
 
 ## Start here
 
